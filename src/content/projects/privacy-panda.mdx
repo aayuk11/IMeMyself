@@ -1,0 +1,39 @@
+---
+title: Privacy Panda
+order: 3
+what: DPDP compliance, 0 → 1
+sector: Privacy · DPDP
+year: '2025'
+line: A dual-portal compliance product, prototyped solo and approved as the build baseline.
+key: { n: '58', l: 'endpoint API spec' }
+dek: Compliance is two opposing workflows. So we built two portals on one backbone.
+role: Product owner, solo prototyper
+tools: Claude Code, GPT, Antigravity, PostHog
+tags: ['0 → 1', Prototyping, Privacy]
+link: { label: 'Public prototype', href: 'https://dpdpshield.netlify.app' }
+---
+
+import Figure from '../../components/doc/Figure.astro';
+import FlowDiagram from '../../components/doc/FlowDiagram.astro';
+
+Data Principals need frictionless consent control. Data Fiduciaries need auditable evidence. I framed DPDP compliance as those two opposing workflows and designed a dual-portal product on a shared backbone.
+
+With no dedicated engineering capacity, I built the working prototype myself using Claude Code, GPT and Antigravity. The executive team approved it as the build baseline.
+
+<Figure caption="Each statutory obligation maps to one product capability.">
+  <FlowDiagram
+    title="Dual portal on a shared backbone"
+    rows={[
+      [
+        { label: 'Principal portal', note: 'consent and rights' },
+        { label: 'Fiduciary portal', note: 'evidence and audit' },
+      ],
+      [{ label: 'Shared backbone', note: 'one consent record' }],
+      [{ label: 'Multi-tenant API', note: '58 endpoints', tone: 'strong' }],
+    ]}
+  />
+</Figure>
+
+- Product vision, personas, user stories and flows
+- Compliance architecture and a 58-endpoint multi-tenant API spec
+- PostHog event taxonomy set before build: consent funnel, data-rights drop-off, task success

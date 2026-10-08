@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet data-dc-atomics>
+<title>Aayush Kumar — Résumé</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="anonymous">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Funnel+Display:wght@400..700&amp;family=Funnel+Sans:wght@400;500;600&amp;family=Geist+Mono:wght@400;500&amp;display=swap">
+<style>
+html,body{margin:0;background:#F4F5F0}
+a{color:#1D211B}a:hover{color:#1D211B}
+a:focus-visible,button:focus-visible{outline:2px solid #1D211B;outline-offset:2px}
+</style>
+</helmet>
+<div style="min-height:100vh;background:#F4F5F0;color:#1D211B;font:400 15px/1.55 'Funnel Sans',system-ui,sans-serif;-webkit-font-smoothing:antialiased">
+<header ref="{{ barRef }}" style="position:sticky;top:0;z-index:10;display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:12px;padding:12px clamp(14px,3vw,32px);background:rgba(244,245,240,0.88);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);border-bottom:1px solid #DADED1">
+<div style="display:flex;align-items:center;gap:16px;min-width:0">
+<a href="PortfolioApp.dc.html" style="font:500 11px/1 'Geist Mono',ui-monospace,monospace;letter-spacing:0.08em;text-transform:uppercase;text-decoration:none;color:#5C6357;padding:10px 0;white-space:nowrap">← aayush.site</a>
+<span style="font:500 11px/1 'Geist Mono',ui-monospace,monospace;letter-spacing:0.08em;text-transform:uppercase;color:#5C6357;white-space:nowrap">Résumé · 1 page · PDF</span>
+</div>
+<div style="display:flex;align-items:center;gap:8px">
+<button type="button" onClick="{{ print }}" style="height:44px;padding:0 16px;border:1px solid #DADED1;border-radius:999px;background:transparent;color:#1D211B;font:500 11.5px/1 'Geist Mono',ui-monospace,monospace;letter-spacing:0.08em;text-transform:uppercase;cursor:pointer;transition:opacity 150ms ease" style-hover="opacity:0.7">Print</button>
+<a href="assets/Aayush_Kumar_Resume.pdf" download="Aayush_Kumar_Resume.pdf" style="height:44px;display:inline-flex;align-items:center;gap:10px;padding:0 20px;border-radius:999px;background:#4B6731;color:#FFFFFF;font:600 14px/1 'Funnel Sans',system-ui,sans-serif;text-decoration:none;transition:opacity 150ms ease" style-hover="opacity:0.85"><span aria-hidden="true" style="font:500 15px/1 'Geist Mono',ui-monospace,monospace">↓</span>Download PDF</a>
+</div>
+</header>
+
+<main style="padding:clamp(16px,4vw,48px) clamp(0px,3vw,32px) 80px">
+<article data-screen-label="Résumé" style="max-width:840px;margin:0 auto;background:#FFFFFF;border:1px solid #DADED1;border-radius:clamp(0px,1.4vw,14px);padding:clamp(24px,6vw,64px) clamp(20px,6vw,64px);box-sizing:border-box;display:flex;flex-direction:column;gap:32px">
+
+<header style="display:flex;flex-wrap:wrap;justify-content:space-between;align-items:flex-end;gap:16px 32px;padding-bottom:24px;border-bottom:1px solid #1D211B">
+<div style="display:flex;flex-direction:column;gap:6px">
+<h1 style="margin:0;font:500 clamp(40px,6vw,56px)/1 'Funnel Display',system-ui,sans-serif;letter-spacing:-0.03em">Aayush Kumar</h1>
+<p style="margin:0;font:400 19px/1.3 'Funnel Sans',system-ui,sans-serif;color:#5C6357">Product manager who builds</p>
+</div>
+<div style="display:flex;flex-direction:column;gap:4px;font:500 11.5px/1.6 'Geist Mono',ui-monospace,monospace;letter-spacing:0.02em;text-align:left">
+<a href="mailto:aayushkr117@gmail.com" style="text-decoration:none">aayushkr117@gmail.com</a>
+<span>+91 62028 53016 · New Delhi</span>
+<span><a href="https://www.linkedin.com/" style="text-decoration:none">LinkedIn ↗</a> · <a href="https://github.com/" style="text-decoration:none">GitHub ↗</a></span>
+</div>
+</header>
+
+<section style="display:flex;flex-direction:column;gap:10px">
+<h2 style="margin:0;font:500 11px/1.4 'Geist Mono',ui-monospace,monospace;letter-spacing:0.1em;text-transform:uppercase;color:#4B6731">Summary</h2>
+<p style="margin:0;font:400 16px/1.6 'Funnel Sans',system-ui,sans-serif;text-wrap:pretty">Product manager who builds. I own three B2B SaaS platforms end to end and personally build the AI systems behind them, including a generative AI workflow that took a surveillance product from 1 to 20+ clients in two months.</p>
+</section>
+
+<section style="display:flex;flex-direction:column;gap:18px">
+<h2 style="margin:0;font:500 11px/1.4 'Geist Mono',ui-monospace,monospace;letter-spacing:0.1em;text-transform:uppercase;color:#4B6731">Experience</h2>
+<div style="display:flex;flex-wrap:wrap;justify-content:space-between;align-items:baseline;gap:4px 16px">
+<div style="display:flex;flex-direction:column;gap:2px"><span style="font:500 26px/1.15 'Funnel Display',system-ui,sans-serif;letter-spacing:-0.02em">ZIGRAM <span style="font:500 10.5px/1 'Geist Mono',ui-monospace,monospace;letter-spacing:0.08em;text-transform:uppercase;color:#5C6357;vertical-align:middle">B2B RegTech &amp; AI SaaS</span></span><span style="font:500 15px/1.4 'Funnel Sans',system-ui,sans-serif">Senior Analyst, Product Management</span></div>
+<span style="font:500 11px/1.4 'Geist Mono',ui-monospace,monospace;letter-spacing:0.08em;text-transform:uppercase;color:#5C6357">Jan 2025 — Present · India</span>
+</div>
+<p style="margin:0;color:#5C6357">Own strategy, requirements and delivery across three platforms with a cross-functional team.</p>
+
+<sc-for list="{{ roles }}" as="r" hint-placeholder-count="3">
+<div style="display:flex;flex-direction:column;gap:8px;padding-top:14px;border-top:1px solid #DADED1">
+<p style="margin:0;display:flex;flex-wrap:wrap;align-items:baseline;gap:4px 10px"><strong style="font:600 15.5px/1.3 'Funnel Sans',system-ui,sans-serif">{{ r.name }}</strong><span style="font:500 10.5px/1.4 'Geist Mono',ui-monospace,monospace;letter-spacing:0.06em;text-transform:uppercase;color:#5C6357">{{ r.what }}</span></p>
+<ul style="margin:0;padding:0;list-style:none;display:flex;flex-direction:column;gap:6px">
+<sc-for list="{{ r.points }}" as="pt" hint-placeholder-count="4">
+<li style="display:flex;gap:12px;font:400 14.5px/1.55 'Funnel Sans',system-ui,sans-serif;text-wrap:pretty"><span aria-hidden="true" style="color:#4B6731">—</span><span>{{ pt }}</span></li>
+</sc-for>
+</ul>
+</div>
+</sc-for>
+</section>
+
+<section style="display:flex;flex-direction:column;gap:14px">
+<h2 style="margin:0;font:500 11px/1.4 'Geist Mono',ui-monospace,monospace;letter-spacing:0.1em;text-transform:uppercase;color:#4B6731">Skills</h2>
+<dl style="margin:0;display:flex;flex-direction:column;gap:10px">
+<sc-for list="{{ skills }}" as="s" hint-placeholder-count="4">
+<div style="display:flex;flex-wrap:wrap;gap:2px 16px"><dt style="flex:0 0 120px;font:600 14px/1.55 'Funnel Sans',system-ui,sans-serif">{{ s.k }}</dt><dd style="flex:1 1 360px;margin:0;font:400 14px/1.55 'Funnel Sans',system-ui,sans-serif;color:#3A4037">{{ s.v }}</dd></div>
+</sc-for>
+</dl>
+</section>
+
+<section style="display:flex;flex-direction:column;gap:10px">
+<h2 style="margin:0;font:500 11px/1.4 'Geist Mono',ui-monospace,monospace;letter-spacing:0.1em;text-transform:uppercase;color:#4B6731">Education</h2>
+<div style="display:flex;flex-wrap:wrap;justify-content:space-between;align-items:baseline;gap:4px 16px">
+<div style="display:flex;flex-direction:column;gap:2px"><span style="font:500 22px/1.2 'Funnel Display',system-ui,sans-serif;letter-spacing:-0.02em">B.Tech, Information Technology</span><span style="color:#5C6357">Guru Gobind Singh Indraprastha University, New Delhi · CGPA 9.08 / 10</span></div>
+<span style="font:500 11px/1.4 'Geist Mono',ui-monospace,monospace;letter-spacing:0.08em;text-transform:uppercase;color:#5C6357">2021 — 2025</span>
+</div>
+</section>
+</article>
+<p style="max-width:840px;margin:20px auto 0;padding:0 20px;box-sizing:border-box;font:500 11px/1.6 'Geist Mono',ui-monospace,monospace;letter-spacing:0.04em;color:#5C6357;text-align:center">Prefer a file? The PDF is the same résumé, ATS-friendly.</p>
+</main>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script>
+class Component extends DCLogic {
+  barRef = React.createRef();
+  componentDidMount() {
+    this.hide = () => { const b = this.barRef.current; if (b) b.style.display = 'none'; };
+    this.show = () => { const b = this.barRef.current; if (b) b.style.display = 'flex'; };
+    window.addEventListener('beforeprint', this.hide); window.addEventListener('afterprint', this.show);
+  }
+  componentWillUnmount() { window.removeEventListener('beforeprint', this.hide); window.removeEventListener('afterprint', this.show); }
+  renderVals() {
+    return {
+      barRef: this.barRef,
+      print: () => window.print(),
+      roles: [
+        { name: 'Transact Comply', what: 'AI transaction monitoring & surveillance', points: [
+          'Grew the platform from 1 to 20+ clients in two months across banking, NBFC, insurance, housing finance, crypto and payments in India, UK and Nepal.',
+          'Designed and built a generative AI workflow (Claude Code) converting regulatory scenarios into production rules, edge-case test data and deployment, cutting client configuration from 1 month to under 48 hours.',
+          'Created 500+ production rules across cross-border, crypto, capital markets and NBFC segments, removing the delivery ceiling on pre-sales and onboarding.',
+          'Built a Source of Truth layer with AI similarity search, now used by sales, implementation and product to scope deals and prove coverage in live demos.',
+          'Engineered guardrails: schema validation, a golden-rule regression suite and generated positive, negative and edge tests.',
+          'Cut AI inference cost 50% and raised detection coverage 10% via cross-account identity resolution; automated SFTP ingestion across 40+ file formats.'
+        ] },
+        { name: 'Profile Builder', what: 'Risk intelligence platform, 35M+ entities', points: [
+          'Led end-to-end Agile delivery of a full tech-stack revamp, owning backlog grooming, sprint planning, story writing and release management.',
+          'Built the listing module for entity resolution and classification, and shipped Advanced Global Search across 35M+ entities.',
+          'Defined an AI extraction pipeline with source attribution and confidence thresholds routing low-certainty output to human review.',
+          'Ran user interviews, authored PRDs, FRDs and journeys, and drove UAT sign-off through to production.'
+        ] },
+        { name: 'Privacy Panda', what: 'DPDP Act 2023 compliance SaaS, 0 → 1', points: [
+          'Framed DPDP compliance as two opposing workflows and designed a dual-portal product on a shared backbone.',
+          'Built the working prototype independently with Claude Code, GPT and Antigravity; approved by the executive team as the build baseline.',
+          'Authored vision, personas, flows, compliance architecture and a 58-endpoint multi-tenant API specification.',
+          'Instrumented PostHog with an event taxonomy for consent funnels, data-rights drop-off and task success.'
+        ] }
+      ],
+      skills: [
+        { k: 'Product', v: 'Strategy, discovery, user research, PRD / BRD / FRD, user stories, wireframing, roadmapping, prioritisation, 0 → 1, GTM, KPIs' },
+        { k: 'Delivery', v: 'Agile, Scrum, sprint planning, release management, JIRA, SDLC, UAT, functional & UI testing, stakeholder management' },
+        { k: 'AI & technical', v: 'Generative AI, LLM applications, prompt & context engineering, RAG, agentic workflows, AI evaluation & guardrails, Claude Code, GPT, MCP, SQL, Python, REST APIs, Postman, PostHog, Git, CI/CD' },
+        { k: 'Domain', v: 'RegTech, FinTech, transaction monitoring, AML / CFT, KYC, fraud, capital markets surveillance, sanctions & PEP screening, entity resolution, DPDP Act 2023' }
+      ]
+    };
+  }
+}
+</script>
+</body>
+</html>

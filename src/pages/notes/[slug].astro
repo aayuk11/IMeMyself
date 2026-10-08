@@ -1,0 +1,54 @@
+---
+import type { GetStaticPaths } from 'astro';
+import { render } from 'astro:content';
+import { site } from '../../../site.config';
+import Doc from '../../layouts/Doc.astro';
+import { essayReadTime, getEssays, type Essay } from '../../lib/content';
+import { formatDate } from '../../lib/format';
+
+export const getStaticPaths = (async () => {
+  const essays = await getEssays(); // newest first
+  return essays.map((essay, i) => ({
+    params: { slug: essay.id },
+    props: { essay, older: essays[i + 1] },
+  }));
+}) satisfies GetStaticPaths;
+
+interface Props {
+  essay: Essay;
+  older?: Essay | undefined;
+}
+
+const { essay, older } = Astro.props;
+const { data } = essay;
+const { Content } = await render(essay);
+const minutes = essayReadTime(essay);
+
+const jsonLd = {
+  '@context': 'https://schema.org',
+  '@type': 'BlogPosting',
+  headline: data.title,
+  description: data.dek,
+  datePublished: data.date.toISOString(),
+  author: { '@type': 'Person', name: site.name, url: Astro.site?.toString() },
+  keywords: data.tags.join(', '),
+};
+---
+
+<Doc
+  kind="essay"
+  slug={essay.id}
+  title={data.title}
+  dek={data.dek}
+  meta={`Wrote · ${formatDate(data.date)} · ${minutes} min read${data.draft ? ' · Draft' : ''}`}
+  tags={data.tags}
+  back={{ href: '/notes/', label: site.notesName }}
+  next={older ? { href: `/notes/${older.id}/`, label: `Older: ${older.data.title}` } : undefined}
+  medium={data.medium}
+  current="notes"
+  crumb={`~/notes/${essay.id}`}
+  publishedTime={data.date}
+  jsonLd={jsonLd}
+>
+  <Content />
+</Doc>

@@ -1,0 +1,51 @@
+---
+title: Guardrails are the product
+dek: The validation layer between an LLM and a regulated system matters more than the model behind it.
+date: 2026-09-14
+tags: [AI, RegTech]
+draft: true
+---
+
+import CodeBlock from '../../components/doc/CodeBlock.astro';
+import Figure from '../../components/doc/Figure.astro';
+
+{/* DRAFT from the design handoff. Rewrite in your own words, then set draft: false to publish.
+    It shows every reader style: steps, pull-quote, code, figure. */}
+
+The first rule our model wrote for a client was wrong in a way that would have passed review. It flagged outbound transfers to new jurisdictions, exactly as asked, but counted the time window from the wrong timestamp.
+
+That rule is why I stopped thinking of the model as the product. In a regulated system, the product is the set of checks that decide whether anything the model says is allowed to matter.
+
+## Plausible is the failure mode
+
+Language models are very good at producing output that looks correct. That’s useful when a person reads every line. It’s dangerous when the output is detection logic for a bank, where the cost of a quiet miss is a regulator’s finding.
+
+> “If a rule can’t prove it fires, it doesn’t ship. The model doesn’t get a vote.”
+
+## Three checks, in order
+
+1. **Schema validation.** The rule must parse, reference fields that exist, and stay inside the DSL’s grammar.
+2. **Golden regression.** Known-good rules re-run on every change, so a new rule can’t quietly break an old one.
+3. **Generated tests.** Positive, negative and edge cases written with the rule. It has to fire, stay quiet, and survive the boundaries.
+
+<CodeBlock file="rules/cross_border/rapid_outbound.yaml" lang="YAML">
+
+```yaml
+rule: rapid_outbound_new_jurisdiction
+segment: cross_border
+window: 7d            # from value_date, not created_at
+when:
+  - txn.direction == "outbound"
+  - txn.country not in customer.known_jurisdictions
+  - count(txn) >= 5
+severity: high
+tests: { positive: 12, negative: 9, edge: 6 }
+```
+
+</CodeBlock>
+
+<Figure label="Chart · failures by gate, first 500 rules" caption="Fig. 1 — Where generated rules failed, by gate." height={240} />
+
+## What this changes for a PM
+
+Most of my time didn’t go into prompts. It went into deciding what “correct” meant, writing that down as tests, and getting compliance, engineering and QA to agree on it. The model gave us speed. The guardrails are why anyone was willing to use it.

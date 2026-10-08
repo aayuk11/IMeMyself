@@ -1,0 +1,88 @@
+---
+import { site } from '../../../site.config';
+import Base from '../../layouts/Base.astro';
+import { getProjects } from '../../lib/content';
+
+const projects = await getProjects();
+const currentOrg = site.experience[0]?.org;
+const productsOf = (org: string) => projects.filter((p) => (p.data.org ?? currentOrg) === org);
+const h2 = 'display m-0 text-[clamp(24px,3.4cqi,30px)] leading-[1.2] tracking-[-0.02em]';
+const period = 'eyebrow leading-normal whitespace-nowrap text-ink';
+---
+
+<Base title="Experience" description="Where Aayush Kumar works and what he’s shipped, with a case study for each product." crumb="~/experience" current="experience">
+  <section class="mx-auto box-border flex w-full max-w-[880px] flex-col gap-10 px-[clamp(18px,4cqi,40px)] pt-[clamp(20px,4cqi,40px)] pb-12">
+    <span class="user-bubble" aria-hidden="true">/experience</span>
+    <header class="flex flex-col gap-3">
+      <h1 class="display m-0 text-[clamp(36px,5.6cqi,52px)] leading-[1.05] tracking-[-0.03em]">Experience</h1>
+      <p class="m-0 max-w-[600px] text-[17px] leading-[1.6] text-pretty text-muted">
+        Where I work and what I’ve shipped. Open any product for the full case study.
+      </p>
+    </header>
+
+    {
+      site.experience.map((e) => (
+        <article class="flex flex-col gap-3.5 border-t border-text pt-5">
+          <div class="flex flex-wrap items-baseline justify-between gap-x-5 gap-y-1.5">
+            <h2 class={h2}>
+              {e.org}
+              <span class="text-muted"> — {e.role}</span>
+            </h2>
+            <span class={period}>{e.period}</span>
+          </div>
+          <p class="m-0 text-[16px] leading-[1.6] text-muted">
+            {e.kind} · {e.place}. {e.summary}
+          </p>
+          {productsOf(e.org).length > 0 && (
+            <div class="mt-1.5 flex flex-col border-t border-border">
+              {productsOf(e.org).map((p) => (
+                <a
+                  href={`/experience/${p.id}/`}
+                  data-snap
+                  class="flex flex-wrap items-center gap-x-7 gap-y-2 border-b border-border py-5 text-text no-underline transition-opacity duration-fast hover:opacity-70"
+                >
+                  <span class="flex min-w-0 flex-[1_1_320px] flex-col gap-1">
+                    <span class="flex flex-wrap items-baseline gap-x-3 gap-y-1">
+                      <strong class="text-[17px] leading-[1.3] font-semibold">{p.data.title}</strong>
+                      <span class="font-mono text-[10.5px] leading-[1.4] font-medium tracking-[0.08em] text-muted uppercase">{p.data.what}</span>
+                    </span>
+                    <span class="text-[15px] leading-normal text-pretty text-muted">{p.data.line}</span>
+                  </span>
+                  <span class="flex flex-[0_0_170px] flex-col gap-0.5">
+                    <strong class="display text-[22px] leading-[1.1] tabular-nums">{p.data.key.n}</strong>
+                    <span class="font-mono text-[10.5px] leading-[1.4] font-medium tracking-[0.06em] text-muted uppercase">{p.data.key.l}</span>
+                  </span>
+                  <span class="eyebrow flex-none leading-none whitespace-nowrap">
+                    Case study →<span class="sr-only">: {p.data.title}</span>
+                  </span>
+                </a>
+              ))}
+            </div>
+          )}
+        </article>
+      ))
+    }
+
+    <article class="flex flex-wrap items-baseline justify-between gap-x-5 gap-y-1.5 border-t border-text pt-5">
+      <div class="flex flex-col gap-1">
+        <h2 class="display m-0 text-[clamp(22px,3cqi,26px)] leading-[1.2] tracking-[-0.02em]">{site.education.degree}</h2>
+        <p class="m-0 text-[15.5px] leading-[1.55] text-muted">{site.education.school} · {site.education.note}</p>
+      </div>
+      <span class={period}>{site.education.period}</span>
+    </article>
+
+    <div class="flex flex-col border-t border-text pt-5">
+      <h2 class="eyebrow m-0 mb-1.5 tracking-[0.1em] text-muted">Toolkit</h2>
+      <dl class="m-0 flex flex-col">
+        {
+          site.toolkit.map((t) => (
+            <div class="flex flex-wrap gap-x-5 gap-y-0.5 border-b border-border py-3">
+              <dt class="eyebrow flex-[0_0_110px] leading-[1.9] text-ink">{t.group}</dt>
+              <dd class="m-0 flex-[1_1_360px] text-[15.5px] leading-[1.6]">{t.items}</dd>
+            </div>
+          ))
+        }
+      </dl>
+    </div>
+  </section>
+</Base>

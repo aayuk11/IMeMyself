@@ -1,0 +1,19 @@
+---
+// Outcome numbers in a hairline grid.
+interface Props {
+  items: { n: string; l: string }[];
+}
+
+const { items } = Astro.props;
+---
+
+<dl class="not-prose m-0 grid grid-cols-[repeat(auto-fill,minmax(150px,1fr))] gap-px overflow-hidden rounded-[14px] border border-border bg-border">
+  {
+    items.map((m) => (
+      <div class="flex flex-col-reverse justify-end gap-1.5 bg-card p-[18px]">
+        <dt class="font-mono text-[10.5px] leading-[1.4] font-medium tracking-[0.06em] text-muted uppercase">{m.l}</dt>
+        <dd class="display m-0 text-[30px] leading-none tracking-[-0.02em] tabular-nums">{m.n}</dd>
+      </div>
+    ))
+  }
+</dl>

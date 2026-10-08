@@ -1,0 +1,183 @@
+---
+// Printable résumé. Opens in a new tab from the sidebar, header and /resume.
+// Always light; follows the visitor's palette and type pairing.
+import '@fontsource-variable/funnel-display/wght.css';
+import '@fontsource-variable/funnel-sans/wght.css';
+import '@fontsource-variable/geist-mono/wght.css';
+import '@fontsource-variable/host-grotesk/wght.css';
+import '@fontsource-variable/reddit-mono/wght.css';
+import '@fontsource/fragment-mono/latin-400.css';
+import '../styles/global.css';
+
+import { site } from '../../site.config';
+import { PALETTES, PREFS_KEY, TYPES } from '../lib/look';
+
+const r = site.resumePage;
+const work = site.experience[0];
+const canonical = new URL('/resume/', Astro.site);
+const lookConfig = JSON.stringify({
+  key: PREFS_KEY,
+  palettes: PALETTES.map((p) => p.id),
+  types: Object.fromEntries(TYPES.map((t) => [t.id, t.fontshare ?? ''])),
+});
+const section = 'font-mono text-[11px] leading-[1.4] font-medium tracking-[0.1em] text-ink uppercase m-0';
+const metaMono = 'font-mono text-[11px] leading-[1.4] font-medium tracking-[0.08em] text-muted uppercase';
+---
+
+<!doctype html>
+<html lang="en" data-palette={site.look.palette} data-mode="light" data-type={site.look.type}>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>{site.name} — Résumé</title>
+    <meta name="description" content={`Résumé of ${site.name}: ${r.headline}.`} />
+    <link rel="canonical" href={canonical} />
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+    <link rel="icon" href="/favicon-32.png" sizes="32x32" type="image/png" />
+    <meta property="og:title" content={`${site.name} — Résumé`} />
+    <meta property="og:image" content={new URL('/og.png', Astro.site)} />
+    <script is:inline data-look={lookConfig}>
+      (function () {
+        var d = document.documentElement;
+        var cfg = JSON.parse(document.currentScript.dataset.look);
+        var p = {};
+        try { p = JSON.parse(localStorage.getItem(cfg.key) || '{}') || {}; } catch (e) {}
+        if (cfg.palettes.indexOf(p.palette) > -1) d.dataset.palette = p.palette;
+        if (p.type && Object.prototype.hasOwnProperty.call(cfg.types, p.type)) d.dataset.type = p.type;
+        var q = cfg.types[d.dataset.type];
+        if (q) {
+          var l = document.createElement('link');
+          l.rel = 'stylesheet';
+          l.href = 'https://api.fontshare.com/v2/css?' + q + '&display=swap';
+          document.head.appendChild(l);
+        }
+      })();
+    </script>
+  </head>
+  <body class="text-[15px] leading-[1.55]">
+    <header
+      class="no-print sticky top-0 z-10 flex flex-wrap items-center justify-between gap-3 border-b border-border bg-bg/88 px-[clamp(14px,3vw,32px)] py-3 backdrop-blur-[12px]"
+    >
+      <div class="flex min-w-0 items-center gap-4">
+        <a href="/" class={`${metaMono} py-2.5 whitespace-nowrap no-underline`}>← {site.handle}</a>
+        <span class={`${metaMono} whitespace-nowrap max-sm:hidden`}>Résumé · 1 page · PDF</span>
+      </div>
+      <div class="flex items-center gap-2">
+        <button
+          type="button"
+          data-print
+          class="h-11 rounded-full border border-border bg-transparent px-4 font-mono text-[11.5px] leading-none font-medium tracking-[0.08em] text-text uppercase transition-opacity duration-fast hover:opacity-70"
+        >
+          Print
+        </button>
+        <a
+          href={site.resume.pdf}
+          download={site.resume.filename}
+          data-track="resume_downloaded"
+          class="inline-flex h-11 items-center gap-2.5 rounded-full bg-ink px-5 text-[14px] leading-none font-semibold text-on-accent no-underline transition-opacity duration-fast hover:opacity-85"
+        >
+          <span aria-hidden="true" class="font-mono text-[15px] font-medium">↓</span>Download PDF
+        </a>
+      </div>
+    </header>
+
+    <main class="px-[clamp(0px,3vw,32px)] pt-[clamp(16px,4vw,48px)] pb-20 print:p-0">
+      <article
+        aria-label="Résumé"
+        class="mx-auto box-border flex max-w-[840px] flex-col gap-8 rounded-[clamp(0px,1.4vw,14px)] border border-border bg-card px-[clamp(20px,6vw,64px)] py-[clamp(24px,6vw,64px)] print:max-w-none print:rounded-none print:border-0 print:p-0"
+      >
+        <header class="flex flex-wrap items-end justify-between gap-x-8 gap-y-4 border-b border-text pb-6">
+          <div class="flex flex-col gap-1.5">
+            <h1 class="display m-0 text-[clamp(40px,6vw,56px)] leading-none tracking-[-0.03em]">{site.name}</h1>
+            <p class="m-0 text-[19px] leading-[1.3] text-muted">{r.headline}</p>
+          </div>
+          <div class="flex flex-col gap-1 font-mono text-[11.5px] leading-[1.6] font-medium tracking-[0.02em]">
+            <a href={`mailto:${site.email}`} class="text-text no-underline">{site.email}</a>
+            <span>{site.phone} · {site.city}</span>
+            <span>
+              <a href={site.socials.linkedin} class="text-text no-underline">LinkedIn ↗</a> ·{' '}
+              <a href={site.socials.github} class="text-text no-underline">GitHub ↗</a>
+            </span>
+          </div>
+        </header>
+
+        <section class="flex flex-col gap-2.5">
+          <h2 class={section}>Summary</h2>
+          <p class="m-0 text-[16px] leading-[1.6] text-pretty">{r.summary}</p>
+        </section>
+
+        {
+          work && (
+            <section class="flex flex-col gap-[18px]">
+              <h2 class={section}>Experience</h2>
+              <div class="flex flex-wrap items-baseline justify-between gap-x-4 gap-y-1">
+                <div class="flex flex-col gap-0.5">
+                  <span class="display text-[26px] leading-[1.15] tracking-[-0.02em]">
+                    {work.org}{' '}
+                    <span class="align-middle font-mono text-[10.5px] leading-none font-medium tracking-[0.08em] text-muted uppercase">{work.kind}</span>
+                  </span>
+                  <span class="text-[15px] leading-[1.4] font-medium">{work.role}</span>
+                </div>
+                <span class={metaMono}>
+                  {work.period} · {work.place}
+                </span>
+              </div>
+              <p class="m-0 text-muted">{work.summary}</p>
+              {r.roles.map((role) => (
+                <div class="flex flex-col gap-2 border-t border-border pt-3.5 print:break-inside-avoid">
+                  <p class="m-0 flex flex-wrap items-baseline gap-x-2.5 gap-y-1">
+                    <strong class="text-[15.5px] leading-[1.3] font-semibold">{role.name}</strong>
+                    <span class="font-mono text-[10.5px] leading-[1.4] font-medium tracking-[0.06em] text-muted uppercase">{role.what}</span>
+                  </p>
+                  <ul class="m-0 flex list-none flex-col gap-1.5 p-0">
+                    {role.points.map((pt) => (
+                      <li class="flex gap-3 text-[14.5px] leading-[1.55] text-pretty">
+                        <span aria-hidden="true" class="text-ink">—</span>
+                        <span>{pt}</span>
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              ))}
+            </section>
+          )
+        }
+
+        <section class="flex flex-col gap-3.5">
+          <h2 class={section}>Skills</h2>
+          <dl class="m-0 flex flex-col gap-2.5">
+            {
+              r.skills.map((s) => (
+                <div class="flex flex-wrap gap-x-4 gap-y-0.5">
+                  <dt class="flex-[0_0_120px] text-[14px] leading-[1.55] font-semibold">{s.group}</dt>
+                  <dd class="m-0 flex-[1_1_360px] text-[14px] leading-[1.55] text-muted">{s.items}</dd>
+                </div>
+              ))
+            }
+          </dl>
+        </section>
+
+        <section class="flex flex-col gap-2.5">
+          <h2 class={section}>Education</h2>
+          <div class="flex flex-wrap items-baseline justify-between gap-x-4 gap-y-1">
+            <div class="flex flex-col gap-0.5">
+              <span class="display text-[22px] leading-[1.2] tracking-[-0.02em]">{site.education.degree}</span>
+              <span class="text-muted">{site.education.schoolFull} · {site.education.note}</span>
+            </div>
+            <span class={metaMono}>{site.education.period}</span>
+          </div>
+        </section>
+      </article>
+      <p class="no-print mx-auto mt-5 box-border max-w-[840px] px-5 text-center font-mono text-[11px] leading-[1.6] font-medium tracking-[0.04em] text-muted">
+        Prefer a file? The PDF is the same résumé, ATS-friendly.
+      </p>
+    </main>
+
+    <script>
+      import { initTracking } from '../scripts/analytics';
+
+      document.querySelector('[data-print]')?.addEventListener('click', () => window.print());
+      initTracking();
+    </script>
+  </body>
+</html>

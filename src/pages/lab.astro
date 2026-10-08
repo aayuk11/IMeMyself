@@ -1,0 +1,59 @@
+---
+import { site } from '../../site.config';
+import Base from '../layouts/Base.astro';
+---
+
+<Base title="Lab" description="Weekend builds, experiments and the AI tools Aayush is currently trying out." crumb="~/lab" current="lab">
+  <section class="mx-auto box-border flex w-full max-w-[880px] flex-col gap-8 px-[clamp(18px,4cqi,40px)] pt-[clamp(20px,4cqi,40px)] pb-12">
+    <span class="user-bubble" aria-hidden="true">/lab</span>
+    <header class="flex flex-col gap-3">
+      <h1 class="display m-0 text-[clamp(36px,5.6cqi,52px)] leading-[1.05] tracking-[-0.03em]">Lab</h1>
+      <p class="m-0 max-w-[600px] text-[17px] leading-[1.6] text-pretty text-muted">
+        Weekend builds, experiments and the AI tools I’m currently trying out.
+      </p>
+    </header>
+
+    <div class="flex flex-col border-t border-text">
+      {
+        site.lab.map((item) => (
+          <div data-snap class="flex flex-wrap items-baseline gap-x-7 gap-y-2.5 border-b border-border py-6">
+            <span class="flex-[0_0_72px]">
+              <span
+                class:list={[
+                  'eyebrow inline-block rounded-full border px-2.5 py-1.5 text-[10.5px] leading-none',
+                  item.status === 'Live' ? 'border-accent bg-accent text-on-accent' : 'border-border bg-transparent text-text',
+                ]}
+              >
+                {item.status}
+              </span>
+            </span>
+            <span class="flex min-w-0 flex-[1_1_320px] flex-col gap-1.5">
+              <span class="display text-[28px] leading-[1.1] tracking-[-0.02em]">{item.name}</span>
+              <span class="text-[15.5px] leading-[1.55] text-muted">{item.line}</span>
+            </span>
+            {item.href ? (
+              <a href={item.href} target="_blank" rel="noopener" class="hl-link flex-none font-mono text-[11.5px] leading-[1.4] font-medium tracking-[0.04em]">
+                {item.cta}
+              </a>
+            ) : (
+              <button
+                type="button"
+                data-focus-composer
+                class="hl-link flex-none border-0 font-mono text-[11.5px] leading-[1.4] font-medium tracking-[0.04em]"
+              >
+                {item.cta}
+              </button>
+            )}
+          </div>
+        ))
+      }
+    </div>
+
+    <div class="flex flex-col gap-3.5">
+      <h2 class="eyebrow m-0 tracking-[0.1em] text-muted">In rotation</h2>
+      <ul class="m-0 flex list-none flex-wrap gap-2 p-0">
+        {site.toolbox.map((t) => <li class="rounded-[10px] bg-surface px-[13px] py-2.5 font-mono text-[12.5px] leading-none font-medium">{t}</li>)}
+      </ul>
+    </div>
+  </section>
+</Base>

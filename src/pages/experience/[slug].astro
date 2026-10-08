@@ -1,0 +1,45 @@
+---
+import type { GetStaticPaths } from 'astro';
+import { render } from 'astro:content';
+import Doc from '../../layouts/Doc.astro';
+import { getProjects, type Project } from '../../lib/content';
+
+export const getStaticPaths = (async () => {
+  const projects = await getProjects();
+  return projects.map((project, i) => ({
+    params: { slug: project.id },
+    props: { project, next: projects.length > 1 ? projects[(i + 1) % projects.length] : undefined },
+  }));
+}) satisfies GetStaticPaths;
+
+interface Props {
+  project: Project;
+  next?: Project | undefined;
+}
+
+const { project, next } = Astro.props;
+const { data } = project;
+const { Content } = await render(project);
+
+const facts = [
+  { k: 'Role', v: data.role },
+  { k: 'Tools', v: data.tools },
+  ...(data.link ? [{ k: data.link.label, v: data.link.href.replace(/^https?:\/\//, ''), href: data.link.href }] : []),
+];
+---
+
+<Doc
+  kind="project"
+  slug={project.id}
+  title={data.title}
+  dek={data.dek}
+  meta={`Case study · ${data.sector} · ${data.year}`}
+  facts={facts}
+  tags={data.tags}
+  back={{ href: '/experience/', label: 'Experience' }}
+  next={next ? { href: `/experience/${next.id}/`, label: `Next case: ${next.data.title}` } : undefined}
+  current="experience"
+  crumb={`~/experience/${project.id}`}
+>
+  <Content />
+</Doc>

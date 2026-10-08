@@ -1,0 +1,402 @@
+@import 'tailwindcss';
+@import './tokens.css';
+
+@config '../../tailwind.config.mjs';
+
+/* Never scan the design export. */
+@source not '../../_design';
+
+@layer base {
+  html {
+    background: var(--bg);
+    color: var(--text);
+    scroll-padding-top: calc(var(--header-h) + 16px);
+    -webkit-text-size-adjust: 100%;
+    text-size-adjust: 100%;
+  }
+
+  body {
+    min-height: 100dvh;
+    background: var(--bg);
+    color: var(--text);
+    font: 400 16px/1.6 var(--font-sans);
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+
+  *, ::before, ::after { border-color: var(--border); }
+
+  :focus-visible {
+    outline: 2px solid var(--text);
+    outline-offset: 2px;
+    border-radius: 4px;
+  }
+
+  ::selection { background: var(--highlight); }
+
+  button { cursor: pointer; }
+
+  /* Code shows the characters typed: no ==/>= ligatures. */
+  code, kbd, pre { font-variant-ligatures: none; }
+
+  /* Monochrome code: Shiki's css-variables theme mapped to theme tokens. */
+  :root {
+    --astro-code-foreground: var(--text);
+    --astro-code-background: transparent;
+    --astro-code-token-constant: var(--text);
+    --astro-code-token-string: var(--text);
+    --astro-code-token-comment: var(--muted);
+    --astro-code-token-keyword: var(--text);
+    --astro-code-token-parameter: var(--text);
+    --astro-code-token-function: var(--text);
+    --astro-code-token-string-expression: var(--text);
+    --astro-code-token-punctuation: var(--text);
+    --astro-code-token-link: var(--text);
+  }
+
+  @media (prefers-reduced-motion: no-preference) {
+    html:focus-within { scroll-behavior: smooth; }
+  }
+}
+
+/* ---------- App shell ----------
+   <html> state: data-drawer="open" (mobile nav), data-side="collapsed" (desktop sidebar hidden),
+   data-focus (reading focus on essays and case studies). */
+
+.shell {
+  display: flex;
+  min-height: 100dvh;
+}
+
+.sidebar {
+  position: fixed;
+  inset: 0 auto 0 0;
+  z-index: 40;
+  width: min(304px, 86%);
+  display: none;
+  flex-direction: column;
+  background: var(--side);
+  color: var(--side-text);
+  border-right: 1px solid var(--side-border);
+  box-shadow: var(--shadow-drawer);
+}
+html[data-drawer='open'] .sidebar { display: flex; }
+
+.scrim {
+  position: fixed;
+  inset: 0;
+  z-index: 35;
+  background: var(--scrim);
+  display: none;
+}
+html[data-drawer='open'] .scrim { display: block; }
+
+.column {
+  flex: 1;
+  min-width: 0;
+  min-height: 100dvh;
+  display: flex;
+  flex-direction: column;
+}
+
+/* Sidebar width that the main column currently gives up (for centring fixed elements). */
+html { --side-now: 0px; }
+
+@media (min-width: 1024px) {
+  .sidebar {
+    position: sticky;
+    top: 0;
+    width: var(--sidebar-w);
+    height: 100dvh;
+    flex: none;
+    display: flex;
+    box-shadow: none;
+  }
+  .scrim, html[data-drawer='open'] .scrim { display: none; }
+  html[data-side='collapsed'] .sidebar,
+  html[data-focus] .sidebar { display: none; }
+  html:not([data-side='collapsed']):not([data-focus]) { --side-now: var(--sidebar-w); }
+}
+
+/* Header controls that only exist while the sidebar is out of flow. */
+@media (min-width: 1024px) {
+  html:not([data-side='collapsed']):not([data-focus]) .when-side-hidden { display: none; }
+}
+
+.topbar {
+  position: sticky;
+  top: 0;
+  z-index: 20;
+  height: var(--header-h);
+  flex: none;
+  background: var(--bg);
+}
+
+.page {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  container-type: inline-size;
+}
+
+.composer-wrap {
+  position: sticky;
+  bottom: 0;
+  z-index: 25;
+  flex: none;
+  background: var(--bg);
+}
+
+/* Toasts centre over the main column, not the whole viewport. */
+.toast {
+  position: fixed;
+  top: 64px;
+  left: calc(50% + var(--side-now) / 2);
+  transform: translateX(-50%);
+  z-index: 50;
+}
+
+@layer components {
+  .eyebrow {
+    font-family: var(--font-mono);
+    font-weight: 500;
+    font-size: 11px;
+    line-height: 1.4;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+  }
+
+  .display {
+    font-family: var(--font-display);
+    font-weight: var(--display-weight);
+  }
+
+  /* Highlighter link: a soft bar under the text that fills on hover. */
+  .hl-link {
+    color: var(--text);
+    text-decoration: none;
+    padding: 1px 2px;
+    background-image: linear-gradient(var(--highlight), var(--highlight));
+    background-size: 100% 0.42em;
+    background-position: 0 92%;
+    background-repeat: no-repeat;
+    transition: background-size var(--t-fast);
+  }
+  .hl-link:hover { background-size: 100% 100%; }
+
+  /* Command chip: "/experience  Experience". */
+  .cmd-chip {
+    display: inline-flex;
+    align-items: baseline;
+    gap: 8px;
+    padding: 10px 14px;
+    border: 1px solid var(--border);
+    border-radius: 999px;
+    background: var(--card);
+    color: var(--text);
+    text-decoration: none;
+    transition: opacity var(--t-fast);
+  }
+  .cmd-chip:hover { opacity: 0.7; }
+  .cmd-chip > :first-child { font: 500 12.5px/1 var(--font-mono); color: var(--ink); }
+  .cmd-chip > :last-child { font: 400 13.5px/1 var(--font-sans); color: var(--muted); }
+
+  /* The command a page answers, echoed as a chat bubble. */
+  .user-bubble {
+    align-self: flex-end;
+    font: 500 13px/1 var(--font-mono);
+    padding: 10px 14px;
+    border-radius: 14px 14px 4px 14px;
+    background: var(--surface);
+  }
+
+  .pill {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 9px 14px;
+    border: 1px solid var(--border);
+    border-radius: 999px;
+    background: transparent;
+    color: var(--text);
+    font: 500 11px/1 var(--font-mono);
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    text-decoration: none;
+    transition: opacity var(--t-fast);
+  }
+  .pill:hover { opacity: 0.7; }
+
+  .tag {
+    font: 500 10.5px/1 var(--font-mono);
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    padding: 7px 10px;
+    border-radius: 999px;
+    background: var(--surface);
+  }
+
+  /* Kind marker: learned = hollow circle, built = filled square, wrote = filled circle. */
+  .kind-dot {
+    width: 8px;
+    height: 8px;
+    flex: none;
+    box-sizing: border-box;
+    border: 1.5px solid currentColor;
+    border-radius: 50%;
+    background: transparent;
+  }
+  .kind-dot[data-dot='built'] { border-radius: 1px; background: currentColor; }
+  .kind-dot[data-dot='wrote'] { background: currentColor; }
+
+  .hatch {
+    background: repeating-linear-gradient(135deg, var(--surface) 0 10px, var(--bg) 10px 20px);
+  }
+
+  .code-body pre {
+    margin: 0;
+    padding: 18px 20px;
+    font: 400 13.5px/1.75 var(--font-mono);
+    color: var(--text);
+    overflow-x: auto;
+    tab-size: 2;
+  }
+  .code-body pre code { font: inherit; }
+
+  /* ---------- Reader (essays and case studies) ----------
+     Scoped with :where() so utilities win; .not-prose opts components out. */
+
+  .doc-body {
+    display: flex;
+    flex-direction: column;
+    gap: 24px;
+  }
+
+  .doc-body :where(p):not(:where(.not-prose, .not-prose *)) {
+    margin: 0;
+    font: 400 clamp(17px, 2.2cqi, 18px) / 1.75 var(--font-sans);
+    text-wrap: pretty;
+  }
+
+  .doc-body :where(h2):not(:where(.not-prose, .not-prose *)) {
+    margin: 20px 0 0;
+    font: var(--display-weight) clamp(24px, 3.4cqi, 30px) / 1.2 var(--font-display);
+    letter-spacing: -0.02em;
+    text-wrap: balance;
+  }
+  .doc-body :where(h3):not(:where(.not-prose, .not-prose *)) {
+    margin: 8px 0 0;
+    font: 600 19px/1.35 var(--font-sans);
+  }
+
+  .doc-body :where(a:not([class])):not(:where(.not-prose, .not-prose *)) {
+    color: var(--text);
+    text-decoration: none;
+    padding: 1px 2px;
+    background-image: linear-gradient(var(--highlight), var(--highlight));
+    background-size: 100% 0.42em;
+    background-position: 0 92%;
+    background-repeat: no-repeat;
+    transition: background-size var(--t-fast);
+  }
+  .doc-body :where(a:not([class]):hover):not(:where(.not-prose, .not-prose *)) { background-size: 100% 100%; }
+
+  .doc-body :where(strong):not(:where(.not-prose, .not-prose *)) { font-weight: 600; }
+  .doc-body :where(em):not(:where(.not-prose, .not-prose *)) { font-style: italic; }
+
+  .doc-body :where(:not(pre) > code):not(:where(.not-prose, .not-prose *)) {
+    font: 400 0.88em var(--font-mono);
+    background: var(--surface);
+    border-radius: 4px;
+    padding: 1px 5px;
+  }
+
+  .doc-body :where(blockquote):not(:where(.not-prose, .not-prose *)) {
+    margin: 12px 0;
+    padding: 24px 0;
+    border-top: 1px solid var(--text);
+    border-bottom: 1px solid var(--border);
+  }
+  .doc-body :where(blockquote p):not(:where(.not-prose, .not-prose *)) {
+    margin: 0;
+    font: var(--dek-style) var(--display-weight) clamp(24px, 3.6cqi, 32px) / 1.25 var(--font-display);
+    letter-spacing: -0.02em;
+    text-wrap: balance;
+  }
+
+  /* Numbered steps: mono numbers in the ink colour, hairlines between. */
+  .doc-body :where(ol):not(:where(.not-prose, .not-prose *)) {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+    counter-reset: step;
+    border-top: 1px solid var(--border);
+  }
+  .doc-body :where(ol > li):not(:where(.not-prose, .not-prose *)) {
+    counter-increment: step;
+    position: relative;
+    padding: 16px 0 16px 44px;
+    border-bottom: 1px solid var(--border);
+    font: 400 16.5px/1.6 var(--font-sans);
+  }
+  .doc-body :where(ol > li)::before {
+    content: counter(step, decimal-leading-zero);
+    position: absolute;
+    left: 0;
+    top: 16px;
+    font: 500 12px / 26.4px var(--font-mono);
+    color: var(--ink);
+  }
+  .doc-body :where(li > p):not(:where(.not-prose, .not-prose *)) { margin: 0; font: inherit; }
+
+  /* Bullets: an em dash in the ink colour. */
+  .doc-body :where(ul):not(:where(.not-prose, .not-prose *)) {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+  .doc-body :where(ul > li):not(:where(.not-prose, .not-prose *)) {
+    position: relative;
+    padding-left: 28px;
+    font: 400 17px/1.65 var(--font-sans);
+  }
+  .doc-body :where(ul > li)::before {
+    content: '—';
+    position: absolute;
+    left: 0;
+    color: var(--ink);
+  }
+
+  .doc-body :where(hr):not(:where(.not-prose, .not-prose *)) {
+    margin: 12px 0;
+    border: 0;
+    border-top: 1px solid var(--border);
+  }
+
+  .doc-body :where(pre):not(:where(.not-prose, .not-prose *)) {
+    margin: 8px 0;
+    padding: 18px 20px;
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    background: var(--surface);
+    font: 400 13.5px/1.75 var(--font-mono);
+    overflow-x: auto;
+  }
+  .doc-body :where(pre code) { font: inherit; }
+
+  .doc-body :where(img):not(:where(.not-prose, .not-prose *)) {
+    max-width: 100%;
+    height: auto;
+    border-radius: 14px;
+  }
+}
+
+.pokedex::backdrop { background: var(--scrim-modal, rgba(8, 8, 8, 0.55)); }
+
+/* Print: the résumé page prints as a clean sheet. */
+@media print {
+  .no-print { display: none !important; }
+}

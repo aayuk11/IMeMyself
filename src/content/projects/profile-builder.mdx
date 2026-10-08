@@ -1,0 +1,38 @@
+---
+title: Profile Builder
+order: 2
+what: Risk intelligence
+sector: Risk intelligence
+year: '2025'
+line: A full tech-stack revamp and AI extraction across a 35M+ entity database.
+key: { n: '35M+', l: 'entities searchable' }
+dek: Replacing spreadsheet-driven analyst work with structured, auditable workflows.
+role: Product manager
+tools: JIRA, SQL, Postman
+tags: [Search, Entity resolution, Agile]
+---
+
+import Figure from '../../components/doc/Figure.astro';
+import FlowDiagram from '../../components/doc/FlowDiagram.astro';
+
+Led end-to-end Agile delivery of a full tech-stack revamp: backlog, sprint planning, stories and release management.
+
+- Listing module for entity resolution and classification
+- Advanced Global Search with filtered queries across 35M+ entities
+- AI extraction pipeline with source attribution and confidence thresholds that route low-certainty output to human review
+- User interviews, PRDs, journeys and wireframes; owned UAT through to release
+
+<Figure caption="The model proposes; a confidence threshold decides whether a person looks first.">
+  <FlowDiagram
+    title="Extraction pipeline"
+    rows={[
+      [{ label: 'Sources', note: 'documents and records' }],
+      [{ label: 'AI extraction', note: 'with source attribution' }],
+      [{ label: 'Confidence gate', note: 'thresholds decide the route' }],
+      [
+        { label: 'Record', note: 'high confidence', tone: 'strong' },
+        { label: 'Human review', note: 'low confidence', tone: 'muted' },
+      ],
+    ]}
+  />
+</Figure>

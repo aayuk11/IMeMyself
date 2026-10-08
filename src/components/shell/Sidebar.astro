@@ -1,0 +1,216 @@
+---
+// Desktop: in-flow sidebar (collapsible). Below 1024px: a drawer opened from the top bar.
+// Palette / type / theme pressed states are drawn by CSS from <html> attributes (see the <style>),
+// so they are right on first paint; src/scripts/prefs.ts keeps aria-pressed in sync.
+import { site } from '../../../site.config';
+import type { FeedItem } from '../../lib/content';
+import { pad2 } from '../../lib/format';
+import { PALETTES, TYPES } from '../../lib/look';
+
+export type PageId = 'home' | 'experience' | 'notes' | 'lab';
+
+interface Props {
+  current?: PageId | undefined;
+  counts: { projects: number; notes: number };
+  recent: FeedItem[];
+  /** Essay currently open, to highlight it under Recent. */
+  currentNote?: string | undefined;
+}
+
+const { current, counts, recent, currentNote } = Astro.props;
+
+const nav: { id: PageId; href: string; label: string; meta: string }[] = [
+  { id: 'home', href: '/', label: 'Home', meta: '' },
+  { id: 'experience', href: '/experience/', label: 'Experience', meta: counts.projects ? pad2(counts.projects) : '' },
+  { id: 'notes', href: '/notes/', label: site.notesName, meta: counts.notes ? pad2(counts.notes) : '' },
+  { id: 'lab', href: '/lab/', label: 'Lab', meta: '' },
+];
+
+const links = [
+  { label: 'Email', href: `mailto:${site.email}`, external: false },
+  { label: 'LinkedIn ↗', href: site.socials.linkedin, external: true },
+  { label: 'GitHub ↗', href: site.socials.github, external: true },
+  ...(site.socials.medium ? [{ label: 'Medium ↗', href: `https://medium.com/@${site.socials.medium}`, external: true }] : []),
+];
+
+const rowLabel = 'm-0 mb-1.5 px-2.5 font-mono text-[10.5px] leading-[1.4] font-medium tracking-[0.1em] text-side-muted uppercase';
+const footLabel = 'font-mono text-[10.5px] leading-none font-medium tracking-[0.1em] text-side-muted uppercase';
+---
+
+<aside id="sidebar" class="sidebar no-print" aria-label="Site navigation">
+  <div class="flex items-start justify-between gap-3 pt-5 pr-3.5 pb-3.5 pl-5">
+    <a href="/" class="flex flex-col gap-[5px] text-side-text no-underline">
+      <span class="display text-[22px] leading-none tracking-[-0.02em]">{site.name}</span>
+      <span class="font-mono text-[10.5px] leading-[1.3] font-medium tracking-[0.08em] text-side-muted uppercase">{site.tagline}</span>
+    </a>
+    <button
+      type="button"
+      data-side-close
+      aria-label="Close navigation"
+      class="grid size-8 flex-none place-items-center rounded-lg border border-side-border bg-transparent font-mono text-[14px] leading-none font-medium text-side-muted"
+    >
+      <span aria-hidden="true" class="md:hidden">×</span><span aria-hidden="true" class="max-md:hidden">«</span>
+    </button>
+  </div>
+
+  <div class="px-3 pt-1 pb-1.5">
+    <button
+      type="button"
+      data-new-chat
+      class="flex w-full items-center justify-between gap-2 rounded-[10px] border border-side-border bg-transparent px-3 py-2.5 text-[14px] leading-[1.2] font-medium text-side-text transition-opacity duration-fast hover:opacity-75"
+    >
+      <span>+ New conversation</span>
+      <kbd class="rounded border border-side-border px-1.5 py-[3px] font-mono text-[11px] leading-none font-medium text-side-muted">/</kbd>
+    </button>
+  </div>
+
+  <nav aria-label="Pages" class="flex min-h-0 flex-1 flex-col gap-6 overflow-y-auto px-3 py-3.5">
+    <div class="flex flex-col gap-0.5">
+      <p class={rowLabel}>Pages</p>
+      {
+        nav.map((n) => (
+          <a
+            href={n.href}
+            data-nav={n.id}
+            aria-current={current === n.id ? 'page' : undefined}
+            class="flex items-center justify-between gap-2 rounded-lg px-2.5 py-[9px] text-[14.5px] leading-[1.3] text-side-text no-underline transition-opacity duration-fast hover:opacity-75 aria-[current=page]:bg-side-active aria-[current=page]:text-side-active-text"
+          >
+            <span>{n.label}</span>
+            <span class="font-mono text-[11px] leading-none font-medium opacity-70">{n.meta}</span>
+          </a>
+        ))
+      }
+      <a
+        href="/resume/"
+        target="_blank"
+        rel="noopener"
+        data-track="resume_opened"
+        class="flex items-center justify-between gap-2 rounded-lg px-2.5 py-[9px] text-[14.5px] leading-[1.3] text-side-text no-underline transition-opacity duration-fast hover:opacity-75"
+      >
+        <span>Résumé</span>
+        <span aria-hidden="true" class="font-mono text-[11px] leading-none font-medium opacity-70">↗</span>
+      </a>
+    </div>
+
+    {
+      recent.length > 0 && (
+        <div class="flex flex-col gap-0.5">
+          <p class={rowLabel}>Recent</p>
+          {recent.map((r) => {
+            const on = r.kind === 'wrote' && r.id === currentNote;
+            const href = r.href ?? `/notes/#${r.id}`;
+            return (
+              <a
+                href={href}
+                title={r.title}
+                target={r.external ? '_blank' : undefined}
+                rel={r.external ? 'noopener' : undefined}
+                aria-current={on ? 'page' : undefined}
+                class:list={[
+                  'flex items-center gap-2.5 rounded-lg px-2.5 py-2 text-[14px] leading-[1.35] no-underline transition-opacity duration-fast hover:opacity-75',
+                  on ? 'bg-side-hover text-side-text' : 'text-side-muted',
+                ]}
+              >
+                <span aria-hidden="true" class="kind-dot size-[7px] text-side-muted" data-dot={r.kind} />
+                <span class="sr-only">{r.kind === 'learned' ? 'Learned:' : r.kind === 'built' ? 'Built:' : 'Wrote:'}</span>
+                <span class="min-w-0 truncate">{r.title}</span>
+              </a>
+            );
+          })}
+        </div>
+      )
+    }
+  </nav>
+
+  <div class="flex flex-col gap-3.5 border-t border-side-border px-[18px] pt-3.5 pb-[18px]">
+    <div class="flex items-center justify-between gap-3">
+      <span class={footLabel}>Palette</span>
+      <div class="flex gap-[7px]" role="group" aria-label="Colour palette">
+        {
+          PALETTES.map((p) => (
+            <button
+              type="button"
+              data-palette-pick={p.id}
+              aria-label={`${p.label} palette`}
+              title={p.label}
+              aria-pressed="false"
+              class="swatch size-5 rounded-full border-2 border-side-border bg-transparent p-0.5"
+            >
+              <span data-palette={p.id} data-mode="light" class="block size-full rounded-full bg-accent" />
+            </button>
+          ))
+        }
+      </div>
+    </div>
+    <div class="flex items-center justify-between gap-3">
+      <span class={footLabel}>Type</span>
+      <button
+        type="button"
+        data-type-cycle
+        aria-label="Next font pairing"
+        class="rounded-full border border-side-border bg-transparent px-3 py-1.5 font-mono text-[11px] leading-none font-medium tracking-[0.06em] text-side-text uppercase transition-opacity duration-fast hover:opacity-70"
+      >
+        {TYPES.map((t) => <span class="type-name" data-type-label={t.id}>{t.label}</span>)} ↻
+      </button>
+    </div>
+    <div class="flex items-center justify-between gap-3">
+      <span class={footLabel}>Theme</span>
+      <div role="group" aria-label="Theme" class="flex rounded-full border border-side-border p-0.5">
+        <button type="button" data-mode-pick="light" aria-pressed="false" class="mode-btn">Light</button>
+        <button type="button" data-mode-pick="dark" aria-pressed="false" class="mode-btn">Dark</button>
+      </div>
+    </div>
+    <div class="flex flex-wrap gap-x-3.5 gap-y-1.5">
+      {
+        links.map((l) => (
+          <a
+            href={l.href}
+            target={l.external ? '_blank' : undefined}
+            rel={l.external ? 'me noopener' : undefined}
+            class="font-mono text-[11px] leading-[1.6] font-medium tracking-[0.04em] text-side-muted no-underline transition-opacity duration-fast hover:opacity-70"
+          >
+            {l.label}
+          </a>
+        ))
+      }
+    </div>
+  </div>
+</aside>
+<div class="scrim" data-scrim aria-hidden="true"></div>
+
+<style is:global>
+  /* Pressed states follow <html> attributes, so they are correct before any script runs. */
+  html[data-palette='matcha']:not([data-gotham]) .swatch[data-palette-pick='matcha'],
+  html[data-palette='espresso']:not([data-gotham]) .swatch[data-palette-pick='espresso'],
+  html[data-palette='midnight']:not([data-gotham]) .swatch[data-palette-pick='midnight'],
+  html[data-palette='oxblood']:not([data-gotham]) .swatch[data-palette-pick='oxblood'],
+  html[data-palette='graphite']:not([data-gotham]) .swatch[data-palette-pick='graphite'] {
+    border-color: var(--side-text);
+  }
+
+  .type-name { display: none; }
+  html[data-type='funnel'] .type-name[data-type-label='funnel'],
+  html[data-type='cabinet'] .type-name[data-type-label='cabinet'],
+  html[data-type='host'] .type-name[data-type-label='host'],
+  html[data-type='sentient'] .type-name[data-type-label='sentient'],
+  html[data-type='arcade'] .type-name[data-type-label='arcade'] {
+    display: inline;
+  }
+
+  .mode-btn {
+    padding: 5px 12px;
+    border: 0;
+    border-radius: 999px;
+    background: transparent;
+    color: var(--side-muted);
+    font: 500 11px/1 var(--font-mono);
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+  }
+  html[data-mode='light']:not([data-gotham]) .mode-btn[data-mode-pick='light'],
+  html[data-mode='dark'] .mode-btn[data-mode-pick='dark'],
+  html[data-gotham] .mode-btn[data-mode-pick='dark'] {
+    background: var(--side-text);
+    color: var(--side);
+  }
+</style>

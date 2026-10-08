@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet data-dc-atomics>
+<meta name="design_doc_mode" content="canvas">
+<style>
+body{margin:0;background:#E4E5E0;font-family:system-ui,sans-serif}
+a{color:#1a1a1a}a:hover{color:#1a1a1a}
+</style>
+</helmet>
+<section id="t2" style="padding:40px 44px 64px;display:flex;flex-direction:column;gap:12px">
+<div style="display:flex;align-items:baseline;gap:10px"><span style="font:600 10px ui-monospace,Menlo,monospace;padding:3px 7px;background:#1a1a1a;color:#fff;border-radius:4px">2</span><span style="font:600 13px/1.2 system-ui,sans-serif;color:#1a1a1a">v2 · new type, five palettes, Experience + Field notes</span></div>
+<p style="margin:0;max-width:960px;font:12.5px/1.6 system-ui,sans-serif;color:rgba(0,0,0,.62)">Every frame is the real site and you can click around in it. Work and Experience are now one page, and each product opens its case study. Writing and Learnings are one feed (Learned / Built / Wrote). The easter eggs only show up after you type / in the chat box. Tweaks: palette, light/dark, sidebar tone, type, and the name of the notes page.</p>
+
+<p style="margin:36px 0 2px;font:600 11px/1 ui-monospace,Menlo,monospace;letter-spacing:.08em;text-transform:uppercase;color:rgba(0,0,0,.45)">Pages · desktop 1440 · Matcha</p>
+<div style="display:flex;flex-wrap:wrap;gap:28px;align-items:flex-start">
+<sc-for list="{{ desktop }}" as="f" hint-placeholder-count="6">
+<div id="{{ f.id }}" style="display:flex;flex-direction:column;gap:9px">
+<div style="display:flex;align-items:center;gap:8px;font:400 11px/1.3 system-ui,sans-serif;color:rgba(0,0,0,.55)"><a href="#{{ f.id }}" style="font:600 10.5px ui-monospace,Menlo,monospace;padding:3px 7px;background:rgba(0,0,0,.08);border-radius:5px;text-decoration:none">{{ f.id }}</a>{{ f.label }}</div>
+<div style="width:1440px;height:900px;border-radius:10px;overflow:hidden;border:1px solid rgba(0,0,0,.1);box-shadow:0 2px 6px rgba(0,0,0,.06);background:#fff">
+<dc-import name="PortfolioApp" embedded="{{ true }}" start-view="{{ f.view }}" palette="{{ f.palette }}" mode="{{ f.mode }}" intro="{{ f.intro }}" type-pairing="{{ tp }}" notes-name="{{ nn }}" sidebar-tone="{{ tone }}" style="display:block;width:1440px;height:900px" hint-size="1440px,900px"></dc-import>
+</div>
+</div>
+</sc-for>
+</div>
+
+<p style="margin:36px 0 2px;font:600 11px/1 ui-monospace,Menlo,monospace;letter-spacing:.08em;text-transform:uppercase;color:rgba(0,0,0,.45)">Type · five pairings, no Instrument / Inter</p>
+<div style="display:flex;flex-wrap:wrap;gap:28px;align-items:flex-start">
+<sc-for list="{{ types }}" as="f" hint-placeholder-count="5">
+<div id="{{ f.id }}" style="display:flex;flex-direction:column;gap:9px">
+<div style="display:flex;align-items:center;gap:8px;font:400 11px/1.3 system-ui,sans-serif;color:rgba(0,0,0,.55)"><a href="#{{ f.id }}" style="font:600 10.5px ui-monospace,Menlo,monospace;padding:3px 7px;background:rgba(0,0,0,.08);border-radius:5px;text-decoration:none">{{ f.id }}</a>{{ f.label }}</div>
+<div style="width:1180px;height:760px;border-radius:10px;overflow:hidden;border:1px solid rgba(0,0,0,.1);box-shadow:0 2px 6px rgba(0,0,0,.06);background:#fff">
+<dc-import name="PortfolioApp" embedded="{{ true }}" start-view="{{ f.view }}" palette="Matcha" mode="light" intro="off" type-pairing="{{ f.type }}" notes-name="{{ nn }}" sidebar-tone="{{ tone }}" style="display:block;width:1180px;height:760px" hint-size="1180px,760px"></dc-import>
+</div>
+</div>
+</sc-for>
+</div>
+
+<p style="margin:36px 0 2px;font:600 11px/1 ui-monospace,Menlo,monospace;letter-spacing:.08em;text-transform:uppercase;color:rgba(0,0,0,.45)">Palettes · light and dark</p>
+<div style="display:flex;flex-wrap:wrap;gap:28px;align-items:flex-start">
+<sc-for list="{{ palettes }}" as="f" hint-placeholder-count="10">
+<div id="{{ f.id }}" style="display:flex;flex-direction:column;gap:9px">
+<div style="display:flex;align-items:center;gap:8px;font:400 11px/1.3 system-ui,sans-serif;color:rgba(0,0,0,.55)"><a href="#{{ f.id }}" style="font:600 10.5px ui-monospace,Menlo,monospace;padding:3px 7px;background:rgba(0,0,0,.08);border-radius:5px;text-decoration:none">{{ f.id }}</a>{{ f.label }}</div>
+<div style="width:1180px;height:760px;border-radius:10px;overflow:hidden;border:1px solid rgba(0,0,0,.1);box-shadow:0 2px 6px rgba(0,0,0,.06);background:#fff">
+<dc-import name="PortfolioApp" embedded="{{ true }}" start-view="{{ f.view }}" palette="{{ f.palette }}" mode="{{ f.mode }}" intro="off" type-pairing="{{ tp }}" notes-name="{{ nn }}" sidebar-tone="{{ f.tone }}" style="display:block;width:1180px;height:760px" hint-size="1180px,760px"></dc-import>
+</div>
+</div>
+</sc-for>
+</div>
+
+<p style="margin:36px 0 2px;font:600 11px/1 ui-monospace,Menlo,monospace;letter-spacing:.08em;text-transform:uppercase;color:rgba(0,0,0,.45)">Tablet · 834 and mobile · 390</p>
+<div style="display:flex;flex-wrap:wrap;gap:28px;align-items:flex-start">
+<sc-for list="{{ small }}" as="f" hint-placeholder-count="4">
+<div id="{{ f.id }}" style="display:flex;flex-direction:column;gap:9px">
+<div style="display:flex;align-items:center;gap:8px;font:400 11px/1.3 system-ui,sans-serif;color:rgba(0,0,0,.55)"><a href="#{{ f.id }}" style="font:600 10.5px ui-monospace,Menlo,monospace;padding:3px 7px;background:rgba(0,0,0,.08);border-radius:5px;text-decoration:none">{{ f.id }}</a>{{ f.label }}</div>
+<div style="width:{{ f.w }}px;height:{{ f.h }}px;border-radius:{{ f.r }}px;overflow:hidden;border:1px solid rgba(0,0,0,.12);box-shadow:0 2px 6px rgba(0,0,0,.06);background:#fff">
+<dc-import name="PortfolioApp" embedded="{{ true }}" start-view="{{ f.view }}" drawer-open="{{ f.drawer }}" palette="{{ f.palette }}" mode="{{ f.mode }}" intro="off" type-pairing="{{ tp }}" notes-name="{{ nn }}" sidebar-tone="{{ tone }}" style="display:block;width:100%;height:100%" hint-size="390px,844px"></dc-import>
+</div>
+</div>
+</sc-for>
+</div>
+
+<p style="margin:36px 0 2px;font:600 11px/1 ui-monospace,Menlo,monospace;letter-spacing:.08em;text-transform:uppercase;color:rgba(0,0,0,.45)">Résumé · opens in a new tab</p>
+<div id="R1" style="display:flex;flex-direction:column;gap:9px">
+<div style="display:flex;align-items:center;gap:8px;font:400 11px/1.3 system-ui,sans-serif;color:rgba(0,0,0,.55)"><a href="#R1" style="font:600 10.5px ui-monospace,Menlo,monospace;padding:3px 7px;background:rgba(0,0,0,.08);border-radius:5px;text-decoration:none">R1</a>Résumé · Download PDF (your real file) and Print</div>
+<div style="width:1280px;height:900px;border-radius:10px;overflow:auto;border:1px solid rgba(0,0,0,.1);background:#F4F5F0">
+<dc-import name="Resume" style="display:block;width:100%" hint-size="1280px,900px"></dc-import>
+</div>
+</div>
+</section>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;typePairing&quot;:{&quot;editor&quot;:&quot;enum&quot;,&quot;options&quot;:[&quot;Funnel&quot;,&quot;Cabinet&quot;,&quot;Host&quot;,&quot;Sentient&quot;,&quot;Arcade&quot;],&quot;default&quot;:&quot;Funnel&quot;,&quot;tsType&quot;:&quot;string&quot;,&quot;section&quot;:&quot;Look&quot;},&quot;sidebarTone&quot;:{&quot;editor&quot;:&quot;enum&quot;,&quot;options&quot;:[&quot;tinted&quot;,&quot;ink&quot;],&quot;default&quot;:&quot;tinted&quot;,&quot;tsType&quot;:&quot;string&quot;,&quot;section&quot;:&quot;Look&quot;},&quot;notesName&quot;:{&quot;editor&quot;:&quot;enum&quot;,&quot;options&quot;:[&quot;Field notes&quot;,&quot;Logbook&quot;,&quot;Learn / Build / Write&quot;,&quot;Notebook&quot;],&quot;default&quot;:&quot;Field notes&quot;,&quot;tsType&quot;:&quot;string&quot;,&quot;section&quot;:&quot;Content&quot;},&quot;introStyle&quot;:{&quot;editor&quot;:&quot;enum&quot;,&quot;options&quot;:[&quot;rip&quot;,&quot;peel&quot;,&quot;shred&quot;],&quot;default&quot;:&quot;rip&quot;,&quot;tsType&quot;:&quot;string&quot;,&quot;section&quot;:&quot;Intro&quot;}}">
+class Component extends DCLogic {
+  renderVals() {
+    const intro = this.props.introStyle ?? 'rip';
+    const pals = [['Matcha', 'sage + olive'], ['Espresso', 'cream + caramel'], ['Midnight', 'mist + periwinkle'], ['Oxblood', 'ivory + wine'], ['Graphite', 'stone + citron']];
+    let n = 0;
+    const palettes = [];
+    pals.forEach(([p, d]) => {
+      palettes.push({ id: 'P' + (++n), label: `${p} · light — ${d}`, palette: p, mode: 'light', view: 'experience', tone: 'tinted' });
+      palettes.push({ id: 'P' + (++n), label: `${p} · dark`, palette: p, mode: 'dark', view: 'home', tone: 'tinted' });
+    });
+    palettes.push({ id: 'P' + (++n), label: 'Midnight · light with ink sidebar (sidebarTone tweak)', palette: 'Midnight', mode: 'light', view: 'notes', tone: 'ink' });
+    return {
+      tp: this.props.typePairing ?? 'Funnel',
+      nn: this.props.notesName ?? 'Field notes',
+      tone: this.props.sidebarTone ?? 'tinted',
+      desktop: [
+        { id: 'D1', label: 'Home · the PRD tears away on load', view: 'home', palette: 'Matcha', mode: 'light', intro },
+        { id: 'D2', label: 'Experience · short, and each product opens its case study', view: 'experience', palette: 'Matcha', mode: 'light', intro: 'off' },
+        { id: 'D3', label: 'Case study · Transact Comply', view: 'project', palette: 'Matcha', mode: 'light', intro: 'off' },
+        { id: 'D4', label: 'Field notes · Learned / Built / Wrote in one feed', view: 'notes', palette: 'Matcha', mode: 'light', intro: 'off' },
+        { id: 'D5', label: 'Essay reader', view: 'article', palette: 'Matcha', mode: 'light', intro: 'off' },
+        { id: 'D6', label: 'Conversation · free text routes to pages until AI is wired in', view: 'chat', palette: 'Matcha', mode: 'light', intro: 'off' }
+      ],
+      types: [
+        { id: 'F1', label: 'Funnel — Funnel Display / Funnel Sans / Geist Mono · default', type: 'Funnel', view: 'home' },
+        { id: 'F2', label: 'Cabinet — Cabinet Grotesk / Switzer / Fragment Mono · bold', type: 'Cabinet', view: 'home' },
+        { id: 'F3', label: 'Host — Host Grotesk / Reddit Mono · quiet Swiss', type: 'Host', view: 'home' },
+        { id: 'F4', label: 'Sentient — Sentient / Switzer / Geist Mono · modern serif', type: 'Sentient', view: 'home' },
+        { id: 'F5', label: 'Arcade — Array / Supreme / Geist Mono · retro-tech', type: 'Arcade', view: 'home' }
+      ],
+      palettes,
+      small: [
+        { id: 'T1', label: 'Tablet · Field notes', view: 'notes', palette: 'Matcha', mode: 'light', w: 834, h: 1112, r: 18, drawer: false },
+        { id: 'M1', label: 'Mobile · Home', view: 'home', palette: 'Matcha', mode: 'light', w: 390, h: 844, r: 28, drawer: false },
+        { id: 'M2', label: 'Mobile · navigation drawer', view: 'experience', palette: 'Matcha', mode: 'light', w: 390, h: 844, r: 28, drawer: true },
+        { id: 'M3', label: 'Mobile · Essay, dark', view: 'article', palette: 'Matcha', mode: 'dark', w: 390, h: 844, r: 28, drawer: false }
+      ]
+    };
+  }
+}
+</script>
+</body>
+</html>

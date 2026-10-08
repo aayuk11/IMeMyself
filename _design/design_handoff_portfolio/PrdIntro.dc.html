@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet data-dc-atomics>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&amp;family=Inter:wght@400;500;600&amp;family=JetBrains+Mono:wght@400;500&amp;family=Newsreader:ital,opsz,wght@0,6..72,400;0,6..72,500;1,6..72,400&amp;display=swap">
+</helmet>
+<div onClick="{{ skip }}" style="position:absolute;inset:0;overflow:hidden;container-type:size;cursor:pointer;pointer-events:{{ pe }};visibility:{{ vis }}">
+
+<sc-if value="{{ isRip }}" hint-placeholder-val="{{ true }}">
+<div style="position:absolute;inset:0;transform:{{ leftT }};transition:{{ tr }};filter:drop-shadow(0 14px 30px rgba(20,18,12,0.22))">
+<div style="position:absolute;inset:0;background:#E9E4D8;opacity:{{ fiberO }};clip-path:polygon(0 0,50.6% 0%,52.2% 4%,49.8% 8%,51.5% 12%,49.3% 16%,51.9% 20%,50.2% 24%,52.6% 28%,50.9% 32%,49.5% 36%,51.7% 40%,50% 44%,52.4% 48%,50.7% 52%,49.2% 56%,51.4% 60%,52.8% 64%,50.1% 68%,51.6% 72%,49.4% 76%,51.2% 80%,52.7% 84%,49.9% 88%,51.5% 92%,49.5% 96%,51% 100%,0 100%)"></div>
+<div style="position:absolute;inset:0;background:#FFFFFF;clip-path:polygon(0 0,50% 0%,51.6% 4%,49.2% 8%,50.9% 12%,48.7% 16%,51.3% 20%,49.6% 24%,52% 28%,50.3% 32%,48.9% 36%,51.1% 40%,49.4% 44%,51.8% 48%,50.1% 52%,48.6% 56%,50.8% 60%,52.2% 64%,49.5% 68%,51% 72%,48.8% 76%,50.6% 80%,52.1% 84%,49.3% 88%,50.9% 92%,48.9% 96%,50.4% 100%,0 100%)">
+<div style="position:absolute;inset:0;padding:7cqh 10cqw;box-sizing:border-box;font-family:Inter,system-ui,sans-serif;color:#1E1D1A;display:flex;flex-direction:column;gap:2.6cqh">
+<div style="display:flex;justify-content:space-between;font:500 max(9px,0.95cqw)/1 'JetBrains Mono',ui-monospace,monospace;letter-spacing:0.08em;text-transform:uppercase;color:#77746C"><span>PRD · v0.3 · Draft</span><span>Last edited 2 min ago</span></div>
+<div style="font:600 3.4cqw/1.1 Inter,system-ui,sans-serif;letter-spacing:-0.02em">Untitled product</div>
+<div style="display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:2cqw;padding:1.8cqh 0;border-top:1px solid #E6E3DB;border-bottom:1px solid #E6E3DB;font:400 max(9px,1cqw)/1.5 Inter,system-ui,sans-serif"><span><b style="display:block;font:500 max(8px,0.85cqw)/1.6 'JetBrains Mono',monospace;letter-spacing:0.08em;text-transform:uppercase;color:#77746C">Owner</b>TBD</span><span><b style="display:block;font:500 max(8px,0.85cqw)/1.6 'JetBrains Mono',monospace;letter-spacing:0.08em;text-transform:uppercase;color:#77746C">Status</b>Draft</span><span><b style="display:block;font:500 max(8px,0.85cqw)/1.6 'JetBrains Mono',monospace;letter-spacing:0.08em;text-transform:uppercase;color:#77746C">Reviewers</b>Eng, Design, Legal</span><span><b style="display:block;font:500 max(8px,0.85cqw)/1.6 'JetBrains Mono',monospace;letter-spacing:0.08em;text-transform:uppercase;color:#77746C">Target</b>Q? 20??</span></div>
+<div style="display:flex;flex-direction:column;gap:1.4cqh"><span style="font:600 1.45cqw/1.2 Inter,system-ui,sans-serif">1. Problem statement</span><span style="display:block;height:1.2cqh;border-radius:1cqh;background:#ECE9E2;width:94%"></span><span style="display:block;height:1.2cqh;border-radius:1cqh;background:#ECE9E2;width:88%"></span><span style="display:block;height:1.2cqh;border-radius:1cqh;background:#ECE9E2;width:61%"></span></div>
+<div style="display:flex;flex-direction:column;gap:1.4cqh"><span style="font:600 1.45cqw/1.2 Inter,system-ui,sans-serif">2. Goals &amp; non-goals</span><span style="display:block;height:1.2cqh;border-radius:1cqh;background:#ECE9E2;width:72%"></span><span style="display:block;height:1.2cqh;border-radius:1cqh;background:#ECE9E2;width:80%"></span></div>
+<div style="display:flex;flex-direction:column;gap:1.2cqh"><span style="font:600 1.45cqw/1.2 Inter,system-ui,sans-serif">3. Requirements</span>
+<div style="display:grid;grid-template-columns:7cqw minmax(0,1fr) 4cqw;gap:1.5cqw;align-items:center;font:500 max(8px,0.9cqw)/1 'JetBrains Mono',monospace;color:#77746C"><span>REQ-01</span><span style="display:block;height:1.2cqh;border-radius:1cqh;background:#ECE9E2;width:84%"></span><span>P0</span></div>
+<div style="display:grid;grid-template-columns:7cqw minmax(0,1fr) 4cqw;gap:1.5cqw;align-items:center;font:500 max(8px,0.9cqw)/1 'JetBrains Mono',monospace;color:#77746C"><span>REQ-02</span><span style="display:block;height:1.2cqh;border-radius:1cqh;background:#ECE9E2;width:66%"></span><span>P0</span></div>
+<div style="display:grid;grid-template-columns:7cqw minmax(0,1fr) 4cqw;gap:1.5cqw;align-items:center;font:500 max(8px,0.9cqw)/1 'JetBrains Mono',monospace;color:#77746C"><span>REQ-03</span><span style="display:block;height:1.2cqh;border-radius:1cqh;background:#ECE9E2;width:75%"></span><span>P1</span></div>
+</div>
+<div style="display:flex;flex-direction:column;gap:1.4cqh"><span style="font:600 1.45cqw/1.2 Inter,system-ui,sans-serif">4. Success metrics</span><span style="display:block;height:1.2cqh;border-radius:1cqh;background:#ECE9E2;width:58%"></span></div>
+<span style="position:absolute;top:15cqh;right:10cqw;transform:rotate(-8deg);padding:0.8cqh 1.4cqw;border:max(2px,0.22cqw) solid #C2412D;border-radius:0.4cqw;color:#C2412D;font:600 1.7cqw/1 'JetBrains Mono',monospace;letter-spacing:0.2em">DRAFT</span>
+</div>
+</div>
+</div>
+<div style="position:absolute;inset:0;transform:{{ rightT }};transition:{{ tr }};filter:drop-shadow(0 14px 30px rgba(20,18,12,0.22))">
+<div style="position:absolute;inset:0;background:#E9E4D8;opacity:{{ fiberO }};clip-path:polygon(100% 0,49.4% 0%,51% 4%,48.6% 8%,50.3% 12%,48.1% 16%,50.7% 20%,49% 24%,51.4% 28%,49.7% 32%,48.3% 36%,50.5% 40%,48.8% 44%,51.2% 48%,49.5% 52%,48% 56%,50.2% 60%,51.6% 64%,48.9% 68%,50.4% 72%,48.2% 76%,50% 80%,51.5% 84%,48.7% 88%,50.3% 92%,48.3% 96%,49.8% 100%,100% 100%)"></div>
+<div style="position:absolute;inset:0;background:#FFFFFF;clip-path:polygon(100% 0,50% 0%,51.6% 4%,49.2% 8%,50.9% 12%,48.7% 16%,51.3% 20%,49.6% 24%,52% 28%,50.3% 32%,48.9% 36%,51.1% 40%,49.4% 44%,51.8% 48%,50.1% 52%,48.6% 56%,50.8% 60%,52.2% 64%,49.5% 68%,51% 72%,48.8% 76%,50.6% 80%,52.1% 84%,49.3% 88%,50.9% 92%,48.9% 96%,50.4% 100%,100% 100%)">
+<div style="position:absolute;inset:0;padding:7cqh 10cqw;box-sizing:border-box;font-family:Inter,system-ui,sans-serif;color:#1E1D1A;display:flex;flex-direction:column;gap:2.6cqh">
+<div style="display:flex;justify-content:space-between;font:500 max(9px,0.95cqw)/1 'JetBrains Mono',ui-monospace,monospace;letter-spacing:0.08em;text-transform:uppercase;color:#77746C"><span>PRD · v0.3 · Draft</span><span>Last edited 2 min ago</span></div>
+<div style="font:600 3.4cqw/1.1 Inter,system-ui,sans-serif;letter-spacing:-0.02em">Untitled product</div>
+<div style="display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:2cqw;padding:1.8cqh 0;border-top:1px solid #E6E3DB;border-bottom:1px solid #E6E3DB;font:400 max(9px,1cqw)/1.5 Inter,system-ui,sans-serif"><span><b style="display:block;font:500 max(8px,0.85cqw)/1.6 'JetBrains Mono',monospace;letter-spacing:0.08em;text-transform:uppercase;color:#77746C">Owner</b>TBD</span><span><b style="display:block;font:500 max(8px,0.85cqw)/1.6 'JetBrains Mono',monospace;letter-spacing:0.08em;text-transform:uppercase;color:#77746C">Status</b>Draft</span><span><b style="display:block;font:500 max(8px,0.85cqw)/1.6 'JetBrains Mono',monospace;letter-spacing:0.08em;text-transform:uppercase;color:#77746C">Reviewers</b>Eng, Design, Legal</span><span><b style="display:block;font:500 max(8px,0.85cqw)/1.6 'JetBrains Mono',monospace;letter-spacing:0.08em;text-transform:uppercase;color:#77746C">Target</b>Q? 20??</span></div>
+<div style="display:flex;flex-direction:column;gap:1.4cqh"><span style="font:600 1.45cqw/1.2 Inter,system-ui,sans-serif">1. Problem statement</span><span style="display:block;height:1.2cqh;border-radius:1cqh;background:#ECE9E2;width:94%"></span><span style="display:block;height:1.2cqh;border-radius:1cqh;background:#ECE9E2;width:88%"></span><span style="display:block;height:1.2cqh;border-radius:1cqh;background:#ECE9E2;width:61%"></span></div>
+<div style="display:flex;flex-direction:column;gap:1.4cqh"><span style="font:600 1.45cqw/1.2 Inter,system-ui,sans-serif">2. Goals &amp; non-goals</span><span style="display:block;height:1.2cqh;border-radius:1cqh;background:#ECE9E2;width:72%"></span><span style="display:block;height:1.2cqh;border-radius:1cqh;background:#ECE9E2;width:80%"></span></div>
+<div style="display:flex;flex-direction:column;gap:1.2cqh"><span style="font:600 1.45cqw/1.2 Inter,system-ui,sans-serif">3. Requirements</span>
+<div style="display:grid;grid-template-columns:7cqw minmax(0,1fr) 4cqw;gap:1.5cqw;align-items:center;font:500 max(8px,0.9cqw)/1 'JetBrains Mono',monospace;color:#77746C"><span>REQ-01</span><span style="display:block;height:1.2cqh;border-radius:1cqh;background:#ECE9E2;width:84%"></span><span>P0</span></div>
+<div style="display:grid;grid-template-columns:7cqw minmax(0,1fr) 4cqw;gap:1.5cqw;align-items:center;font:500 max(8px,0.9cqw)/1 'JetBrains Mono',monospace;color:#77746C"><span>REQ-02</span><span style="display:block;height:1.2cqh;border-radius:1cqh;background:#ECE9E2;width:66%"></span><span>P0</span></div>
+<div style="display:grid;grid-template-columns:7cqw minmax(0,1fr) 4cqw;gap:1.5cqw;align-items:center;font:500 max(8px,0.9cqw)/1 'JetBrains Mono',monospace;color:#77746C"><span>REQ-03</span><span style="display:block;height:1.2cqh;border-radius:1cqh;background:#ECE9E2;width:75%"></span><span>P1</span></div>
+</div>
+<div style="display:flex;flex-direction:column;gap:1.4cqh"><span style="font:600 1.45cqw/1.2 Inter,system-ui,sans-serif">4. Success metrics</span><span style="display:block;height:1.2cqh;border-radius:1cqh;background:#ECE9E2;width:58%"></span></div>
+<span style="position:absolute;top:15cqh;right:10cqw;transform:rotate(-8deg);padding:0.8cqh 1.4cqw;border:max(2px,0.22cqw) solid #C2412D;border-radius:0.4cqw;color:#C2412D;font:600 1.7cqw/1 'JetBrains Mono',monospace;letter-spacing:0.2em">DRAFT</span>
+</div>
+</div>
+</div>
+</sc-if>
+
+<sc-if value="{{ isPeel }}" hint-placeholder-val="{{ false }}">
+<div style="position:absolute;inset:0;perspective:1800px">
+<div style="position:absolute;inset:0;transform-origin:50% 0;transform:{{ peelT }};transition:{{ tr }};filter:drop-shadow(0 18px 36px rgba(20,18,12,0.25))">
+<div style="position:absolute;inset:0;background:#FFFFFF;clip-path:polygon(0 4%,5% 4.6%,10% 3.6%,15% 4.4%,20% 3.4%,25% 4.8%,30% 3.9%,35% 4.5%,40% 3.5%,45% 4.2%,50% 3.7%,55% 4.9%,60% 3.8%,65% 4.3%,70% 3.3%,75% 4.6%,80% 4%,85% 3.6%,90% 4.7%,95% 3.9%,100% 4.2%,100% 100%,0 100%)">
+<div style="position:absolute;inset:0;padding:9cqh 10cqw 7cqh;box-sizing:border-box;font-family:Inter,system-ui,sans-serif;color:#1E1D1A;display:flex;flex-direction:column;gap:2.6cqh">
+<div style="display:flex;justify-content:space-between;font:500 max(9px,0.95cqw)/1 'JetBrains Mono',ui-monospace,monospace;letter-spacing:0.08em;text-transform:uppercase;color:#77746C"><span>PRD · v0.3 · Draft</span><span>Last edited 2 min ago</span></div>
+<div style="font:600 3.4cqw/1.1 Inter,system-ui,sans-serif;letter-spacing:-0.02em">Untitled product</div>
+<div style="display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:2cqw;padding:1.8cqh 0;border-top:1px solid #E6E3DB;border-bottom:1px solid #E6E3DB;font:400 max(9px,1cqw)/1.5 Inter,system-ui,sans-serif"><span><b style="display:block;font:500 max(8px,0.85cqw)/1.6 'JetBrains Mono',monospace;letter-spacing:0.08em;text-transform:uppercase;color:#77746C">Owner</b>TBD</span><span><b style="display:block;font:500 max(8px,0.85cqw)/1.6 'JetBrains Mono',monospace;letter-spacing:0.08em;text-transform:uppercase;color:#77746C">Status</b>Draft</span><span><b style="display:block;font:500 max(8px,0.85cqw)/1.6 'JetBrains Mono',monospace;letter-spacing:0.08em;text-transform:uppercase;color:#77746C">Reviewers</b>Eng, Design, Legal</span><span><b style="display:block;font:500 max(8px,0.85cqw)/1.6 'JetBrains Mono',monospace;letter-spacing:0.08em;text-transform:uppercase;color:#77746C">Target</b>Q? 20??</span></div>
+<div style="display:flex;flex-direction:column;gap:1.4cqh"><span style="font:600 1.45cqw/1.2 Inter,system-ui,sans-serif">1. Problem statement</span><span style="display:block;height:1.2cqh;border-radius:1cqh;background:#ECE9E2;width:94%"></span><span style="display:block;height:1.2cqh;border-radius:1cqh;background:#ECE9E2;width:88%"></span><span style="display:block;height:1.2cqh;border-radius:1cqh;background:#ECE9E2;width:61%"></span></div>
+<div style="display:flex;flex-direction:column;gap:1.4cqh"><span style="font:600 1.45cqw/1.2 Inter,system-ui,sans-serif">2. Goals &amp; non-goals</span><span style="display:block;height:1.2cqh;border-radius:1cqh;background:#ECE9E2;width:72%"></span><span style="display:block;height:1.2cqh;border-radius:1cqh;background:#ECE9E2;width:80%"></span></div>
+<div style="display:flex;flex-direction:column;gap:1.2cqh"><span style="font:600 1.45cqw/1.2 Inter,system-ui,sans-serif">3. Requirements</span>
+<div style="display:grid;grid-template-columns:7cqw minmax(0,1fr) 4cqw;gap:1.5cqw;align-items:center;font:500 max(8px,0.9cqw)/1 'JetBrains Mono',monospace;color:#77746C"><span>REQ-01</span><span style="display:block;height:1.2cqh;border-radius:1cqh;background:#ECE9E2;width:84%"></span><span>P0</span></div>
+<div style="display:grid;grid-template-columns:7cqw minmax(0,1fr) 4cqw;gap:1.5cqw;align-items:center;font:500 max(8px,0.9cqw)/1 'JetBrains Mono',monospace;color:#77746C"><span>REQ-02</span><span style="display:block;height:1.2cqh;border-radius:1cqh;background:#ECE9E2;width:66%"></span><span>P0</span></div>
+</div>
+<div style="display:flex;flex-direction:column;gap:1.4cqh"><span style="font:600 1.45cqw/1.2 Inter,system-ui,sans-serif">4. Success metrics</span><span style="display:block;height:1.2cqh;border-radius:1cqh;background:#ECE9E2;width:58%"></span></div>
+<span style="position:absolute;top:17cqh;right:10cqw;transform:rotate(-8deg);padding:0.8cqh 1.4cqw;border:max(2px,0.22cqw) solid #C2412D;border-radius:0.4cqw;color:#C2412D;font:600 1.7cqw/1 'JetBrains Mono',monospace;letter-spacing:0.2em">DRAFT</span>
+</div>
+</div>
+</div>
+<div style="position:absolute;inset:0;background:#FFFFFF;opacity:{{ stubO }};transition:opacity 450ms ease 450ms;clip-path:polygon(0 0,100% 0,100% 4.2%,95% 3.9%,90% 4.7%,85% 3.6%,80% 4%,75% 4.6%,70% 3.3%,65% 4.3%,60% 3.8%,55% 4.9%,50% 3.7%,45% 4.2%,40% 3.5%,35% 4.5%,30% 3.9%,25% 4.8%,20% 3.4%,15% 4.4%,10% 3.6%,5% 4.6%,0 4%)"></div>
+<div style="position:absolute;left:0;right:0;top:1.6cqh;display:flex;justify-content:center;gap:5cqw;opacity:{{ stubO }};transition:opacity 450ms ease 450ms"><span style="width:1.2cqw;height:1.2cqw;border-radius:50%;background:#E6E3DB"></span><span style="width:1.2cqw;height:1.2cqw;border-radius:50%;background:#E6E3DB"></span><span style="width:1.2cqw;height:1.2cqw;border-radius:50%;background:#E6E3DB"></span></div>
+</div>
+</sc-if>
+
+<sc-if value="{{ isShred }}" hint-placeholder-val="{{ false }}">
+<sc-for list="{{ strips }}" as="s" hint-placeholder-count="0">
+<div style="position:absolute;top:0;bottom:0;width:8.3334%;overflow:hidden;background:#FFFFFF;left:{{ s.left }};transform:{{ s.t }};transition:{{ s.tr }};box-shadow:0 0 0 0.5px #E6E3DB">
+<div style="position:absolute;top:0;bottom:0;width:1200%;left:{{ s.inner }}">
+<div style="position:absolute;inset:0;padding:7cqh 10cqw;box-sizing:border-box;font-family:Inter,system-ui,sans-serif;color:#1E1D1A;display:flex;flex-direction:column;gap:2.6cqh">
+<div style="display:flex;justify-content:space-between;font:500 max(9px,0.95cqw)/1 'JetBrains Mono',ui-monospace,monospace;letter-spacing:0.08em;text-transform:uppercase;color:#77746C"><span>PRD · v0.3 · Draft</span><span>Last edited 2 min ago</span></div>
+<div style="font:600 3.4cqw/1.1 Inter,system-ui,sans-serif;letter-spacing:-0.02em">Untitled product</div>
+<div style="height:7cqh;border-top:1px solid #E6E3DB;border-bottom:1px solid #E6E3DB"></div>
+<div style="display:flex;flex-direction:column;gap:1.4cqh"><span style="font:600 1.45cqw/1.2 Inter,system-ui,sans-serif">1. Problem statement</span><span style="display:block;height:1.2cqh;border-radius:1cqh;background:#ECE9E2;width:94%"></span><span style="display:block;height:1.2cqh;border-radius:1cqh;background:#ECE9E2;width:88%"></span><span style="display:block;height:1.2cqh;border-radius:1cqh;background:#ECE9E2;width:61%"></span></div>
+<div style="display:flex;flex-direction:column;gap:1.4cqh"><span style="font:600 1.45cqw/1.2 Inter,system-ui,sans-serif">2. Goals &amp; non-goals</span><span style="display:block;height:1.2cqh;border-radius:1cqh;background:#ECE9E2;width:72%"></span><span style="display:block;height:1.2cqh;border-radius:1cqh;background:#ECE9E2;width:80%"></span></div>
+<div style="display:flex;flex-direction:column;gap:1.4cqh"><span style="font:600 1.45cqw/1.2 Inter,system-ui,sans-serif">3. Requirements</span><span style="display:block;height:1.2cqh;border-radius:1cqh;background:#ECE9E2;width:84%"></span><span style="display:block;height:1.2cqh;border-radius:1cqh;background:#ECE9E2;width:66%"></span><span style="display:block;height:1.2cqh;border-radius:1cqh;background:#ECE9E2;width:75%"></span></div>
+<span style="position:absolute;top:15cqh;right:10cqw;transform:rotate(-8deg);padding:0.8cqh 1.4cqw;border:max(2px,0.22cqw) solid #C2412D;border-radius:0.4cqw;color:#C2412D;font:600 1.7cqw/1 'JetBrains Mono',monospace;letter-spacing:0.2em">DRAFT</span>
+</div>
+</div>
+</div>
+</sc-for>
+</sc-if>
+
+<div style="position:absolute;left:0;right:0;bottom:3cqh;display:flex;justify-content:center;pointer-events:none;opacity:{{ hintO }};transition:opacity 200ms ease"><span style="font:500 max(9px,0.85cqw)/1 'JetBrains Mono',ui-monospace,monospace;letter-spacing:0.1em;text-transform:uppercase;color:#77746C;background:#FFFFFF;padding:0.8cqh 1cqw">Click to skip</span></div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;$preview&quot;:{&quot;width&quot;:1280,&quot;height&quot;:800},&quot;variant&quot;:{&quot;editor&quot;:&quot;enum&quot;,&quot;options&quot;:[&quot;rip&quot;,&quot;peel&quot;,&quot;shred&quot;],&quot;default&quot;:&quot;rip&quot;,&quot;tsType&quot;:&quot;'rip' | 'peel' | 'shred'&quot;},&quot;playKey&quot;:{&quot;editor&quot;:&quot;int&quot;,&quot;default&quot;:0,&quot;tsType&quot;:&quot;number&quot;},&quot;delay&quot;:{&quot;editor&quot;:&quot;int&quot;,&quot;default&quot;:700,&quot;tsType&quot;:&quot;number&quot;},&quot;onDone&quot;:{&quot;editor&quot;:null,&quot;tsType&quot;:&quot;() =&gt; void&quot;}}">
+class Component extends DCLogic {
+  state = { phase: 'idle' };
+  timers = [];
+  clear() { this.timers.forEach(clearTimeout); this.timers = []; }
+  later(ms, fn) { this.timers.push(setTimeout(fn, ms)); }
+  play() {
+    this.clear();
+    this.setState({ phase: 'idle' });
+    const d = Number(this.props.delay ?? 700);
+    this.later(d, () => this.setState({ phase: 'tension' }));
+    this.later(d + 230, () => this.setState({ phase: 'out' }));
+    this.later(d + 230 + 1500, () => this.finish());
+  }
+  finish() { this.clear(); this.setState({ phase: 'done' }); this.props.onDone && this.props.onDone(); }
+  componentDidMount() { this.play(); }
+  componentDidUpdate(prev) { if (prev.playKey !== this.props.playKey || prev.variant !== this.props.variant) this.play(); }
+  componentWillUnmount() { this.clear(); }
+  renderVals() {
+    const v = this.props.variant ?? 'rip';
+    const p = this.state.phase;
+    const out = p === 'out' || p === 'done';
+    const ten = p === 'tension';
+    const tr = p === 'idle' ? 'none' : ten ? 'transform 220ms ease-out' : 'transform 1100ms cubic-bezier(.6,.02,.3,1)';
+    const order = [3, 7, 1, 9, 5, 0, 11, 4, 8, 2, 10, 6];
+    const strips = order.map((o, i) => ({
+      left: (i * 100 / 12) + '%',
+      inner: (-i * 100) + '%',
+      t: out ? `translateY(120%) rotate(${(i % 2 ? 1 : -1) * (1 + (o % 4))}deg)` : ten ? 'scaleX(0.93)' : 'none',
+      tr: p === 'idle' ? 'none' : ten ? 'transform 200ms ease-out' : `transform 900ms cubic-bezier(.55,0,.8,.25) ${o * 45}ms`
+    }));
+    return {
+      isRip: v === 'rip', isPeel: v === 'peel', isShred: v === 'shred',
+      pe: p === 'done' ? 'none' : 'auto',
+      vis: p === 'done' ? 'hidden' : 'visible',
+      tr,
+      leftT: out ? 'translate(-64%, 7%) rotate(-9deg)' : ten ? 'translateX(-0.7%) rotate(-0.5deg)' : 'none',
+      rightT: out ? 'translate(64%, 5%) rotate(8deg)' : ten ? 'translateX(0.7%) rotate(0.5deg)' : 'none',
+      fiberO: p === 'idle' ? 0 : 1,
+      peelT: out ? 'translateY(-120%) rotateX(40deg) rotate(-3deg)' : ten ? 'rotateX(12deg)' : 'none',
+      stubO: out ? 0 : 1,
+      hintO: p === 'idle' ? 1 : 0,
+      strips,
+      skip: () => this.finish()
+    };
+  }
+}
+</script>
+</body>
+</html>

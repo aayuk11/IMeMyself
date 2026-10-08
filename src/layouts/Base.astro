@@ -1,0 +1,193 @@
+---
+// Default pairing (Funnel), self-hosted and preloaded.
+import '@fontsource-variable/funnel-display/wght.css';
+import '@fontsource-variable/funnel-sans/wght.css';
+import '@fontsource-variable/geist-mono/wght.css';
+// Alternate pairings. @font-face rules only; files download only if a visitor picks one.
+import '@fontsource-variable/host-grotesk/wght.css';
+import '@fontsource-variable/reddit-mono/wght.css';
+import '@fontsource/fragment-mono/latin-400.css';
+import '../styles/global.css';
+
+import displayFont from '@fontsource-variable/funnel-display/files/funnel-display-latin-wght-normal.woff2?url';
+import sansFont from '@fontsource-variable/funnel-sans/files/funnel-sans-latin-wght-normal.woff2?url';
+import monoFont from '@fontsource-variable/geist-mono/files/geist-mono-latin-wght-normal.woff2?url';
+
+import { site } from '../../site.config';
+import Pokedex from '../components/Pokedex.astro';
+import PrdIntro from '../components/PrdIntro.astro';
+import ChatPanel from '../components/shell/ChatPanel.astro';
+import Composer from '../components/shell/Composer.astro';
+import Sidebar, { type PageId } from '../components/shell/Sidebar.astro';
+import Topbar from '../components/shell/Topbar.astro';
+import { getFeed, getProjects } from '../lib/content';
+import { PALETTES, PREFS_KEY, TYPES } from '../lib/look';
+
+interface Props {
+  /** Page title. Omit on Home to use the site title. */
+  title?: string;
+  description?: string;
+  /** Header breadcrumb, e.g. "~/notes". */
+  crumb: string;
+  current?: PageId | undefined;
+  /** Essay or case study being read: sets the composer context and enables Focus. */
+  doc?: { kind: 'project' | 'essay'; title: string; slug: string } | undefined;
+  /** Play the PRD-tear intro on first visit (Home). */
+  intro?: boolean;
+  type?: 'website' | 'article';
+  publishedTime?: Date | undefined;
+  /** Path to an Open Graph image in public/. */
+  image?: string;
+  jsonLd?: Record<string, unknown> | undefined;
+}
+
+const {
+  title,
+  description = site.description,
+  crumb,
+  current,
+  doc,
+  intro = false,
+  type = 'website',
+  publishedTime,
+  image = '/og.png',
+  jsonLd,
+} = Astro.props;
+
+const [projects, feed] = await Promise.all([getProjects(), getFeed()]);
+const counts = { projects: projects.length, notes: feed.length };
+const recent = feed.slice(0, 5);
+
+const fullTitle = title ? `${title} — ${site.name}` : site.title;
+const canonical = new URL(Astro.url.pathname, Astro.site);
+const ogImage = new URL(image, Astro.site);
+const autoIntro = intro && site.intro !== 'off';
+const introVariant = site.intro === 'off' ? 'rip' : site.intro;
+const structuredData = jsonLd ? JSON.stringify(jsonLd).replace(/</g, '\\u003c') : undefined;
+
+const placeholder =
+  doc?.kind === 'project'
+    ? 'Ask about this case study, or type / to jump'
+    : doc?.kind === 'essay'
+      ? 'Ask about this essay, or type / to jump'
+      : 'Ask me anything, or type / for every page';
+const placeholderShort = doc ? 'Ask about this, or type /' : 'Ask anything, or type /';
+
+// Read by the inline head script before first paint.
+const lookConfig = JSON.stringify({
+  key: PREFS_KEY,
+  palettes: PALETTES.map((p) => p.id),
+  types: Object.fromEntries(TYPES.map((t) => [t.id, t.fontshare ?? ''])),
+});
+---
+
+<!doctype html>
+<html
+  lang="en"
+  data-palette={site.look.palette}
+  data-mode="light"
+  data-type={site.look.type}
+  data-sidebar={site.look.sidebarTone === 'ink' ? 'ink' : undefined}
+>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+    <title>{fullTitle}</title>
+    <meta name="description" content={description} />
+    <link rel="canonical" href={canonical} />
+    <meta name="author" content={site.name} />
+    <meta name="theme-color" content="#F4F5F0" />
+
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+    <link rel="icon" href="/favicon-32.png" sizes="32x32" type="image/png" />
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+    <link rel="sitemap" href="/sitemap-index.xml" />
+    <link rel="alternate" type="application/rss+xml" title={`${site.name} — ${site.notesName}`} href="/rss.xml" />
+
+    <link rel="preload" href={displayFont} as="font" type="font/woff2" crossorigin />
+    <link rel="preload" href={sansFont} as="font" type="font/woff2" crossorigin />
+    <link rel="preload" href={monoFont} as="font" type="font/woff2" crossorigin />
+
+    <meta property="og:type" content={type} />
+    <meta property="og:site_name" content={site.name} />
+    <meta property="og:title" content={fullTitle} />
+    <meta property="og:description" content={description} />
+    <meta property="og:url" content={canonical} />
+    <meta property="og:image" content={ogImage} />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    {publishedTime && <meta property="article:published_time" content={publishedTime.toISOString()} />}
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content={fullTitle} />
+    <meta name="twitter:description" content={description} />
+    <meta name="twitter:image" content={ogImage} />
+
+    <!-- Look before first paint: stored palette / mode / type, else defaults and the OS light/dark setting. -->
+    <script is:inline data-look={lookConfig}>
+      (function () {
+        var d = document.documentElement;
+        var cfg = JSON.parse(document.currentScript.dataset.look);
+        var p = {};
+        try { p = JSON.parse(localStorage.getItem(cfg.key) || '{}') || {}; } catch (e) {}
+        if (cfg.palettes.indexOf(p.palette) > -1) d.dataset.palette = p.palette;
+        if (p.type && Object.prototype.hasOwnProperty.call(cfg.types, p.type)) d.dataset.type = p.type;
+        d.dataset.mode = p.mode === 'dark' || p.mode === 'light' ? p.mode
+          : (matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
+        var q = cfg.types[d.dataset.type];
+        if (q) {
+          var l = document.createElement('link');
+          l.rel = 'stylesheet';
+          l.href = 'https://api.fontshare.com/v2/css?' + q + '&display=swap';
+          document.head.appendChild(l);
+        }
+        try { if (sessionStorage.getItem('ak-side') === 'collapsed') d.dataset.side = 'collapsed'; } catch (e) {}
+      })();
+    </script>
+    {
+      autoIntro && (
+        <script is:inline>
+          (function () {
+            try {
+              if (location.hash || sessionStorage.getItem('introSeen') === '1') return;
+              if (matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+              document.documentElement.dataset.intro = 'play';
+            } catch (e) {}
+          })();
+        </script>
+      )
+    }
+    {structuredData && <script type="application/ld+json" set:html={structuredData} />}
+  </head>
+  <body data-doc={doc ? doc.kind : undefined}>
+    <a
+      href="#main"
+      class="eyebrow sr-only focus:not-sr-only focus:fixed focus:top-3 focus:left-3 focus:z-50 focus:rounded-lg focus:border focus:border-border focus:bg-card focus:px-3 focus:py-2 focus:text-text"
+    >
+      Skip to content
+    </a>
+    <div class="shell">
+      <Sidebar current={current} counts={counts} recent={recent} currentNote={doc?.kind === 'essay' ? doc.slug : undefined} />
+      <div class="column">
+        <Topbar crumb={crumb} />
+        <main id="main" data-page tabindex="-1" class="page outline-none">
+          <slot />
+        </main>
+        <ChatPanel />
+        <Composer counts={counts} placeholder={placeholder} placeholderShort={placeholderShort} context={doc?.title} />
+      </div>
+    </div>
+    <div
+      data-toast
+      role="status"
+      aria-live="polite"
+      hidden
+      class="toast box-border max-w-[calc(100%-32px)] rounded-[14px] bg-text px-4 py-[11px] text-center font-mono text-[12px] leading-[1.45] font-medium text-bg"
+    >
+    </div>
+    <Pokedex />
+    <PrdIntro variant={introVariant} />
+    <script>
+      import '../scripts/site.ts';
+    </script>
+  </body>
+</html>

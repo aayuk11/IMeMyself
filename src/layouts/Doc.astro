@@ -1,0 +1,106 @@
+---
+// Reader for case studies and essays.
+import type { PageId } from '../components/shell/Sidebar.astro';
+import Base from './Base.astro';
+
+interface Props {
+  kind: 'project' | 'essay';
+  slug: string;
+  title: string;
+  dek: string;
+  /** "Case study · RegTech · AML · 2025 — now" */
+  meta: string;
+  facts?: { k: string; v: string; href?: string | undefined }[];
+  tags: string[];
+  back: { href: string; label: string };
+  next?: { href: string; label: string } | undefined;
+  /** Published on Medium: show "Continue reading ↗". */
+  medium?: string | undefined;
+  current: PageId;
+  crumb: string;
+  publishedTime?: Date | undefined;
+  jsonLd?: Record<string, unknown> | undefined;
+}
+
+const { kind, slug, title, dek, meta, facts = [], tags, back, next, medium, current, crumb, publishedTime, jsonLd } = Astro.props;
+---
+
+<Base
+  title={title}
+  description={dek}
+  crumb={crumb}
+  current={current}
+  doc={{ kind, title, slug }}
+  type={kind === 'essay' ? 'article' : 'website'}
+  publishedTime={publishedTime}
+  jsonLd={jsonLd}
+>
+  <article class="mx-auto box-border flex w-full max-w-[740px] flex-col px-[clamp(18px,4cqi,40px)] pt-[clamp(16px,3cqi,28px)] pb-14">
+    <div class="mb-[clamp(28px,5cqi,48px)] flex items-center justify-between gap-3">
+      <a href={back.href} class="eyebrow py-2.5 text-muted no-underline transition-opacity duration-fast hover:opacity-70">← {back.label}</a>
+      <button type="button" data-focus-toggle aria-pressed="false" class="pill no-print max-md:hidden">Focus</button>
+    </div>
+
+    <p class="eyebrow m-0 text-[11.5px] leading-normal text-ink">{meta}</p>
+    <h1 class="display mt-3.5 mb-0 text-[clamp(38px,6.2cqi,56px)] leading-[1.04] tracking-[-0.03em] text-balance">{title}</h1>
+    <p class="mt-4 mb-0 font-display text-[clamp(19px,2.6cqi,22px)] leading-[1.45] font-normal text-pretty text-muted [font-style:var(--dek-style)]">
+      {dek}
+    </p>
+
+    {
+      facts.length > 0 && (
+        <dl class="mt-7 mb-0 grid grid-cols-[repeat(auto-fill,minmax(min(100%,220px),1fr))] gap-x-8 gap-y-4">
+          {facts.map((f) => (
+            <div class="flex flex-col gap-1">
+              <dt class="font-mono text-[10.5px] leading-[1.4] font-medium tracking-[0.08em] text-muted uppercase">{f.k}</dt>
+              <dd class="m-0 text-[15px] leading-normal">
+                {f.href ? (
+                  <a href={f.href} class="hl-link" target="_blank" rel="noopener">
+                    {f.v}
+                  </a>
+                ) : (
+                  f.v
+                )}
+              </dd>
+            </div>
+          ))}
+        </dl>
+      )
+    }
+
+    <div class="my-9 h-px bg-border"></div>
+
+    <div class="doc-body">
+      <slot />
+      {
+        medium && (
+          <a
+            href={medium}
+            target="_blank"
+            rel="noopener"
+            class="not-prose flex items-center justify-between gap-4 rounded-2xl border border-border bg-card px-6 py-[22px] text-text no-underline transition-opacity duration-fast hover:opacity-80"
+          >
+            <span class="flex flex-col gap-1">
+              <span class="eyebrow text-muted">Published on Medium</span>
+              <span class="display text-[21px] leading-[1.2] tracking-[-0.01em]">Continue reading</span>
+            </span>
+            <span aria-hidden="true" class="text-[18px] leading-none font-medium">↗</span>
+          </a>
+        )
+      }
+    </div>
+
+    <footer class="mt-14 flex flex-wrap items-center justify-between gap-4 border-t border-text pt-5">
+      <div class="flex flex-wrap gap-1.5">
+        {tags.map((t) => <span class="tag">{t}</span>)}
+      </div>
+      {
+        next && (
+          <a href={next.href} class="display text-[18px] leading-[1.3] tracking-[-0.01em] text-text no-underline transition-opacity duration-fast hover:opacity-70">
+            {next.label} →
+          </a>
+        )
+      }
+    </footer>
+  </article>
+</Base>

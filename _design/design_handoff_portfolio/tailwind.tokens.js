@@ -1,0 +1,41 @@
+// Spread into tailwind.config `theme.extend`. Colours resolve to the CSS variables in tokens.css,
+// so light / dark / gotham switch by setting data-theme on <html>.
+module.exports = {
+  colors: {
+    bg: 'var(--bg)', surface: 'var(--surface)', card: 'var(--card)', 'card-hover': 'var(--card-hover)',
+    text: 'var(--text)', muted: 'var(--muted)', border: 'var(--border)',
+    accent: 'var(--accent)', 'accent-soft': 'var(--accent-soft)',
+    hero: 'var(--hero)', 'hero-border': 'var(--hero-border)',
+    pill: 'var(--pill)', 'pill-border': 'var(--pill-border)',
+    chip: 'var(--chip)', 'chip-border': 'var(--chip-border)',
+    'card-meta': 'var(--card-meta)', band: 'var(--band)',
+    footer: 'var(--footer)', 'footer-border': 'var(--footer-border)', nav: 'var(--nav)',
+  },
+  fontFamily: {
+    serif: ['Instrument Serif', 'Georgia', 'serif'],
+    sans: ['Inter', 'system-ui', 'sans-serif'],
+    mono: ['JetBrains Mono', 'ui-monospace', 'monospace'],
+  },
+  fontSize: {
+    // [desktop, mobile handled with responsive prefixes]
+    display: ['56px', { lineHeight: '1.1', letterSpacing: '-0.02em' }],
+    'display-sm': ['36px', { lineHeight: '1.1', letterSpacing: '-0.02em' }],
+    h1: ['40px', { lineHeight: '1.15', letterSpacing: '-0.015em' }],
+    'h1-sm': ['30px', { lineHeight: '1.15' }],
+    h2: ['28px', { lineHeight: '1.25', letterSpacing: '-0.01em' }],
+    'h2-sm': ['23px', { lineHeight: '1.25' }],
+    h3: ['20px', { lineHeight: '1.4', letterSpacing: '-0.01em' }],
+    'h3-sm': ['18px', { lineHeight: '1.4' }],
+    body: ['17px', { lineHeight: '1.65' }],
+    'body-sm': ['16px', { lineHeight: '1.65' }],
+    small: ['15px', { lineHeight: '1.55' }],
+    'small-sm': ['14px', { lineHeight: '1.55' }],
+    label: ['12px', { lineHeight: '1.4', letterSpacing: '0.08em' }],
+    'label-sm': ['11px', { lineHeight: '1.4', letterSpacing: '0.08em' }],
+  },
+  maxWidth: { prose: '680px', grid: '1100px' },
+  borderRadius: { card: '4px', pill: '999px', cmd: '16px' },
+  boxShadow: { cmd: '0 8px 32px rgba(26,20,20,0.10)', pop: '0 12px 40px rgba(26,20,20,0.12)' },
+  screens: { sm: '640px', md: '1024px', lg: '1280px' },
+  transitionDuration: { fast: '150ms' },
+};

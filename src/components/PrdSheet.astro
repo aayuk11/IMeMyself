@@ -1,0 +1,139 @@
+---
+// The generic "Untitled product" PRD drawn by the intro. Sized in container units of .prd-intro.
+interface Props {
+  /** shred draws a simplified sheet (it is repeated in 12 strips). */
+  simple?: boolean;
+  /** peel leaves room for the torn top edge. */
+  inset?: 'default' | 'peel';
+}
+
+const { simple = false, inset = 'default' } = Astro.props;
+---
+
+<div class:list={['sheet', inset === 'peel' && 'sheet--peel']}>
+  <div class="meta-top"><span>PRD · v0.3 · Draft</span><span>Last edited 2 min ago</span></div>
+  <div class="title">Untitled product</div>
+  {
+    simple ? (
+      <div class="meta-grid meta-grid--blank" />
+    ) : (
+      <div class="meta-grid">
+        <span><b>Owner</b>TBD</span>
+        <span><b>Status</b>Draft</span>
+        <span><b>Reviewers</b>Eng, Design, Legal</span>
+        <span><b>Target</b>Q? 20??</span>
+      </div>
+    )
+  }
+  <div class="sec">
+    <span class="h">1. Problem statement</span>
+    <span class="bar" style="width:94%"></span>
+    <span class="bar" style="width:88%"></span>
+    <span class="bar" style="width:61%"></span>
+  </div>
+  <div class="sec">
+    <span class="h">2. Goals &amp; non-goals</span>
+    <span class="bar" style="width:72%"></span>
+    <span class="bar" style="width:80%"></span>
+  </div>
+  {
+    simple ? (
+      <div class="sec">
+        <span class="h">3. Requirements</span>
+        <span class="bar" style="width:84%" />
+        <span class="bar" style="width:66%" />
+        <span class="bar" style="width:75%" />
+      </div>
+    ) : (
+      <div class="sec sec--req">
+        <span class="h">3. Requirements</span>
+        <div class="req"><span>REQ-01</span><span class="bar" style="width:84%" /><span>P0</span></div>
+        <div class="req"><span>REQ-02</span><span class="bar" style="width:66%" /><span>P0</span></div>
+        <div class="req"><span>REQ-03</span><span class="bar" style="width:75%" /><span>P1</span></div>
+      </div>
+    )
+  }
+  {
+    !simple && (
+      <div class="sec">
+        <span class="h">4. Success metrics</span>
+        <span class="bar" style="width:58%" />
+      </div>
+    )
+  }
+  <span class="stamp">DRAFT</span>
+</div>
+
+<style>
+  .sheet {
+    position: absolute;
+    inset: 0;
+    padding: 7cqh 10cqw;
+    box-sizing: border-box;
+    font-family: var(--font-sans);
+    color: var(--prd-ink);
+    display: flex;
+    flex-direction: column;
+    gap: 2.6cqh;
+  }
+  .sheet--peel { padding-top: 9cqh; }
+  .meta-top {
+    display: flex;
+    justify-content: space-between;
+    font: 500 max(9px, 0.95cqw) / 1 var(--font-mono);
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--prd-meta);
+  }
+  .title {
+    font: 600 max(22px, 3.4cqw) / 1.1 var(--font-sans);
+    letter-spacing: -0.02em;
+  }
+  .meta-grid {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 2cqw;
+    padding: 1.8cqh 0;
+    border-top: 1px solid var(--prd-rule);
+    border-bottom: 1px solid var(--prd-rule);
+    font: 400 max(9px, 1cqw) / 1.5 var(--font-sans);
+  }
+  .meta-grid--blank { height: 7cqh; padding: 0; }
+  .meta-grid b {
+    display: block;
+    font: 500 max(8px, 0.85cqw) / 1.6 var(--font-mono);
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--prd-meta);
+  }
+  .sec { display: flex; flex-direction: column; gap: 1.4cqh; }
+  .sec--req { gap: 1.2cqh; }
+  .h { font: 600 max(11px, 1.45cqw) / 1.2 var(--font-sans); }
+  .bar {
+    display: block;
+    height: 1.2cqh;
+    border-radius: 1cqh;
+    background: var(--prd-bar);
+  }
+  .req {
+    display: grid;
+    grid-template-columns: max(44px, 7cqw) minmax(0, 1fr) max(18px, 4cqw);
+    gap: 1.5cqw;
+    align-items: center;
+    font: 500 max(8px, 0.9cqw) / 1 var(--font-mono);
+    color: var(--prd-meta);
+  }
+  .stamp {
+    position: absolute;
+    top: 15cqh;
+    right: 10cqw;
+    transform: rotate(-8deg);
+    padding: 0.8cqh 1.4cqw;
+    border: max(2px, 0.22cqw) solid var(--prd-stamp);
+    border-radius: 0.4cqw;
+    color: var(--prd-stamp);
+    font: 600 max(11px, 1.7cqw) / 1 var(--font-mono);
+    letter-spacing: 0.2em;
+  }
+  .sheet--peel .stamp { top: 17cqh; }
+</style>

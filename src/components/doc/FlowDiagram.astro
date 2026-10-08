@@ -1,0 +1,66 @@
+---
+// Conceptual flow diagram from rows of nodes. Stays conceptual by design: no client data,
+// no production screenshots. Replace with an Excalidraw export whenever one exists.
+export interface FlowNode {
+  label: string;
+  note?: string | undefined;
+  /** strong = an outcome (accent fill); muted = a fallback path (dashed). */
+  tone?: 'default' | 'strong' | 'muted' | undefined;
+}
+
+interface Props {
+  rows: FlowNode[][];
+  /** hero: left-to-right when there's room. card: always top-to-bottom. */
+  size?: 'card' | 'hero';
+  title?: string;
+}
+
+const { rows, size = 'card', title } = Astro.props;
+const hero = size === 'hero';
+const summary = rows.map((row) => row.map((n) => n.label).join(' and ')).join(', then ');
+const ariaLabel = `${title ? `${title}: ` : 'Diagram: '}${summary}.`;
+---
+
+<div
+  role="img"
+  aria-label={ariaLabel}
+  class:list={[
+    '@container flex flex-col gap-5 rounded-[14px] border border-border bg-surface p-5 sm:p-7',
+    hero && 'min-h-[300px] justify-center',
+  ]}
+>
+  {title && <span class="eyebrow text-[10.5px] text-muted">{title}</span>}
+  <div class:list={['flex flex-col', hero && '@min-[560px]:flex-row @min-[560px]:items-center']}>
+    {
+      rows.map((row, i) => (
+        <>
+          {i > 0 && (
+            <span
+              aria-hidden="true"
+              class:list={['mx-auto block h-3.5 w-px shrink-0 bg-muted', hero && '@min-[560px]:mx-0 @min-[560px]:h-px @min-[560px]:w-6']}
+            />
+          )}
+          <div class:list={['flex gap-2', hero && '@min-[560px]:flex-1 @min-[560px]:flex-col']}>
+            {row.map((node) => (
+              <div
+                class:list={[
+                  'flex min-w-0 flex-1 flex-col gap-1 rounded-[10px] border px-3.5 py-3',
+                  node.tone === 'strong' && 'border-accent bg-accent text-on-accent',
+                  node.tone === 'muted' && 'border-dashed border-muted bg-transparent',
+                  (!node.tone || node.tone === 'default') && 'border-border bg-card',
+                ]}
+              >
+                <span class="eyebrow text-[10.5px]">{node.label}</span>
+                {node.note && (
+                  <span class:list={['text-[13px] leading-[1.45]', node.tone === 'strong' ? 'opacity-85' : 'text-muted']}>
+                    {node.note}
+                  </span>
+                )}
+              </div>
+            ))}
+          </div>
+        </>
+      ))
+    }
+  </div>
+</div>

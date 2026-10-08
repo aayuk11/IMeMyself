@@ -1,0 +1,56 @@
+---
+// Hidden /pokedex easter egg. Native <dialog>: Esc closes, focus is trapped and restored.
+import { site } from '../../site.config';
+
+const { pokedex, name } = site;
+const firstName = name.split(' ')[0];
+---
+
+<dialog
+  id="pokedex"
+  aria-label="Pokédex entry"
+  class="pokedex m-auto w-[calc(100%-24px)] max-w-[560px] overflow-hidden rounded-[18px] bg-card p-0 text-text shadow-modal"
+>
+  <div class="flex items-center gap-2.5 bg-(--dex-red) px-[18px] py-3.5 text-(--dex-white)">
+    <span class="box-border size-[18px] rounded-full border-2 border-(--dex-white) bg-(--dex-lens)"></span>
+    <span class="size-2 rounded-full bg-(--dex-amber)"></span>
+    <span class="size-2 rounded-full bg-(--dex-green)"></span>
+    <span class="ml-auto font-mono text-[11px] leading-none font-medium tracking-[0.12em] uppercase">Entry No. {pokedex.number}</span>
+  </div>
+
+  <div class="flex flex-wrap gap-5 p-[22px]">
+    {
+      pokedex.avatar ? (
+        <img src={pokedex.avatar} alt="" width="132" height="132" class="size-[132px] flex-none rounded-xl border border-border object-cover" />
+      ) : (
+        <div aria-hidden="true" class="hatch size-[132px] flex-none rounded-xl border border-border" />
+      )
+    }
+    <div class="flex flex-[1_1_220px] flex-col justify-center gap-2">
+      <span class="eyebrow leading-none text-muted">No. {pokedex.number}</span>
+      <h2 class="display m-0 text-[38px] leading-none tracking-[-0.03em]">{firstName}</h2>
+      <span class="text-[17px] leading-[1.2] text-muted">{pokedex.species}</span>
+      <div class="mt-1 flex gap-1.5">
+        <span class="eyebrow rounded-full bg-text px-2.5 py-1.5 leading-none text-card">{pokedex.types[0]}</span>
+        <span class="eyebrow rounded-full border border-text px-2.5 py-1.5 leading-none">{pokedex.types[1]}</span>
+      </div>
+    </div>
+  </div>
+
+  <dl class="mx-[22px] grid grid-cols-[96px_minmax(0,1fr)] border-t border-border text-[14px] leading-normal">
+    {
+      pokedex.entries.map((entry) => (
+        <>
+          <dt class="eyebrow border-b border-border py-2.5 leading-[1.9] text-muted">{entry.label}</dt>
+          <dd class="m-0 border-b border-border py-2.5">{entry.value}</dd>
+        </>
+      ))
+    }
+  </dl>
+
+  <p class="m-0 px-[22px] pt-4 pb-2 text-[14px] leading-[1.6] text-muted">{pokedex.flavour}</p>
+
+  <form method="dialog" class="flex justify-end px-[22px] pt-2 pb-5">
+    <button type="submit" class="eyebrow rounded-[10px] border border-border bg-transparent px-3.5 py-3 leading-none text-text">Close</button>
+  </form>
+</dialog>

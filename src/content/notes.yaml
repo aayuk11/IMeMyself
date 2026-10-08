@@ -1,0 +1,81 @@
+# Short notes for the Field notes feed: what I learned and what I built.
+# Essays ("Wrote") are MDX files in src/content/essays instead.
+#
+# Each entry:  id (unique, used in URLs), kind (learned | built), date, title, dek,
+#              tags (optional), url (optional, shown as "Open ↗"), draft (optional).
+# draft: true  → shows in `npm run dev` only. Set it to false (or delete the line) to publish.
+#
+# DRAFTS FROM THE DESIGN HANDOFF: the wording and dates below are placeholders. Edit, then publish.
+
+- id: this-site
+  kind: built
+  date: 2026-09-28
+  title: 'This site: a portfolio you talk to'
+  dek: A command box instead of a nav bar. Commands work now; AI answers are next. Built with Claude Code.
+  tags: [Building]
+  draft: true
+
+- id: eval-before-prompt
+  kind: learned
+  date: 2026-09-02
+  title: Write the eval before the prompt.
+  dek: I built the regression suite after the first hundred rules. Every week before that was a person reading YAML.
+  tags: [AI]
+  draft: true
+
+- id: guardrails-surface
+  kind: learned
+  date: 2026-07-24
+  title: Guardrails are product surface.
+  dek: What the system refuses to ship is a product decision, not infrastructure. Spec it like a feature.
+  tags: [AI]
+  draft: true
+
+- id: dpdp-shield-v1
+  kind: built
+  date: 2026-06-15
+  title: DPDP Shield, v1
+  dek: 'A public DPDP Act compliance prototype: consent flows for people, an evidence trail for companies.'
+  tags: [Building, Privacy]
+  url: https://dpdpshield.netlify.app
+  draft: true
+
+- id: confidence-is-ux
+  kind: learned
+  date: 2026-06-03
+  title: A confidence threshold is a UX decision.
+  dek: Where low-certainty output goes — a human, a retry, a refusal — shapes trust more than accuracy does.
+  tags: [Product]
+  draft: true
+
+- id: prototype-ends-meeting
+  kind: learned
+  date: 2026-04-11
+  title: A prototype ends the meeting.
+  dek: Privacy Panda got approved because the executives could click it. Nobody asked for the PRD after that.
+  tags: [Building]
+  draft: true
+
+- id: cost-is-a-feature
+  kind: learned
+  date: 2026-02-09
+  title: Cost is a feature.
+  dek: Identity resolution halved inference cost and raised coverage. The cheapest model call is the one you don’t make.
+  tags: [AI]
+  draft: true
+
+- id: privacy-panda-prototype
+  kind: built
+  date: 2025-12-20
+  title: Privacy Panda prototype, solo
+  dek: No engineers free, so I built the working prototype with Claude Code, GPT and Antigravity. It became the build baseline.
+  tags: [Building, Privacy]
+  draft: true
+
+- id: sales-finds-tools
+  kind: learned
+  date: 2025-11-06
+  title: Sales will find your internal tool.
+  dek: The Source of Truth was built for us. Sales used it in demos within weeks. Design for the second user.
+  tags: [Product]
+  draft: true

@@ -1,0 +1,729 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet data-dc-atomics>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="anonymous">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Funnel+Display:wght@300..800&amp;family=Funnel+Sans:ital,wght@0,300..800;1,300..800&amp;family=Geist+Mono:wght@400;500&amp;family=Host+Grotesk:ital,wght@0,300..800;1,300..800&amp;family=Reddit+Mono:wght@400;500&amp;family=Fragment+Mono&amp;display=swap">
+<link rel="stylesheet" href="https://api.fontshare.com/v2/css?f[]=cabinet-grotesk@500,700,800&amp;f[]=switzer@400,500,600&amp;f[]=sentient@400,400i,500&amp;f[]=array@400,600&amp;f[]=supreme@400,500&amp;display=swap">
+<style>
+html,body{margin:0;height:100%}
+a{color:inherit}a:hover{color:inherit}
+[data-ak-root] a:focus-visible,[data-ak-root] button:focus-visible{outline:2px solid var(--tx,#1D211B);outline-offset:2px}
+[data-ak-input]:focus-visible{outline:none}
+[data-ak-input]::placeholder{color:var(--mu,#5C6357);opacity:1}
+@media (prefers-reduced-motion:reduce){*{transition:none!important}}
+</style>
+</helmet>
+<div ref="{{ rootRef }}" data-ak-root="1" data-screen-label="Portfolio" style="position:relative;width:100%;height:{{ rootH }};min-height:480px;display:flex;overflow:hidden;background:var(--bg,#F4F5F0);color:var(--tx,#1D211B);font:400 16px/1.6 var(--sans,'Funnel Sans'),system-ui,sans-serif;-webkit-font-smoothing:antialiased">
+
+<aside aria-label="Site navigation" style="display:{{ L.sbDisplay }};position:{{ L.sbPos }};top:0;left:0;bottom:0;z-index:40;width:{{ L.sbW }};flex:none;flex-direction:column;background:var(--side,#EBEDE4);color:var(--side-tx,#1D211B);border-right:1px solid var(--side-bd,#DCE0D3);box-shadow:{{ L.sbShadow }};box-sizing:border-box">
+<div style="display:flex;align-items:flex-start;justify-content:space-between;gap:12px;padding:20px 14px 14px 20px">
+<a href="#" onClick="{{ goHome }}" style="display:flex;flex-direction:column;gap:5px;text-decoration:none;color:var(--side-tx,#1D211B)">
+<span style="font:var(--dw,500) 22px/1 var(--serif,'Funnel Display'),system-ui,sans-serif;letter-spacing:-0.02em">Aayush Kumar</span>
+<span style="font:500 10.5px/1.3 var(--mono,'Geist Mono'),ui-monospace,monospace;letter-spacing:0.08em;text-transform:uppercase;color:var(--side-mu,#5E6559)">PM who builds</span>
+</a>
+<button type="button" aria-label="{{ L.closeLabel }}" onClick="{{ closeSide }}" style="width:32px;height:32px;flex:none;border:1px solid var(--side-bd,#DCE0D3);border-radius:8px;background:transparent;color:var(--side-mu,#5E6559);font:500 14px/1 var(--mono,'Geist Mono'),ui-monospace,monospace;cursor:pointer">{{ L.closeGlyph }}</button>
+</div>
+<div style="padding:4px 12px 6px">
+<button type="button" onClick="{{ newChat }}" style="width:100%;display:flex;align-items:center;justify-content:space-between;gap:8px;padding:10px 12px;border:1px solid var(--side-bd,#DCE0D3);border-radius:10px;background:transparent;color:var(--side-tx,#1D211B);font:500 14px/1.2 var(--sans,'Funnel Sans'),system-ui,sans-serif;cursor:pointer;transition:opacity 150ms ease" style-hover="opacity:0.75"><span>+ New conversation</span><span style="font:500 11px/1 var(--mono,'Geist Mono'),ui-monospace,monospace;padding:3px 6px;border:1px solid var(--side-bd,#DCE0D3);border-radius:4px;color:var(--side-mu,#5E6559)">/</span></button>
+</div>
+<nav style="flex:1;min-height:0;overflow-y:auto;padding:14px 12px;display:flex;flex-direction:column;gap:24px">
+<div style="display:flex;flex-direction:column;gap:2px">
+<p style="margin:0 0 6px;padding:0 10px;font:500 10.5px/1.4 var(--mono,'Geist Mono'),ui-monospace,monospace;letter-spacing:0.1em;text-transform:uppercase;color:var(--side-mu,#5E6559)">Pages</p>
+<sc-for list="{{ nav }}" as="n" hint-placeholder-count="4">
+<a href="#" onClick="{{ n.go }}" aria-current="{{ n.cur }}" style="display:flex;align-items:center;justify-content:space-between;gap:8px;padding:9px 10px;border-radius:8px;text-decoration:none;font:400 14.5px/1.3 var(--sans,'Funnel Sans'),system-ui,sans-serif;background:{{ n.bg }};color:{{ n.fg }};transition:opacity 150ms ease" style-hover="opacity:0.75"><span>{{ n.label }}</span><span style="font:500 11px/1 var(--mono,'Geist Mono'),ui-monospace,monospace;opacity:0.7">{{ n.meta }}</span></a>
+</sc-for>
+<a href="#" onClick="{{ openResume }}" style="display:flex;align-items:center;justify-content:space-between;gap:8px;padding:9px 10px;border-radius:8px;text-decoration:none;font:400 14.5px/1.3 var(--sans,'Funnel Sans'),system-ui,sans-serif;color:var(--side-tx,#1D211B);transition:opacity 150ms ease" style-hover="opacity:0.75"><span>Résumé</span><span style="font:500 11px/1 var(--mono,'Geist Mono'),ui-monospace,monospace;opacity:0.7">↗</span></a>
+</div>
+<div style="display:flex;flex-direction:column;gap:2px">
+<p style="margin:0 0 6px;padding:0 10px;font:500 10.5px/1.4 var(--mono,'Geist Mono'),ui-monospace,monospace;letter-spacing:0.1em;text-transform:uppercase;color:var(--side-mu,#5E6559)">Recent</p>
+<sc-for list="{{ recent }}" as="r" hint-placeholder-count="5">
+<a href="#" onClick="{{ r.go }}" title="{{ r.title }}" style="display:flex;align-items:center;gap:10px;padding:8px 10px;border-radius:8px;text-decoration:none;font:400 14px/1.35 var(--sans,'Funnel Sans'),system-ui,sans-serif;background:{{ r.bg }};color:{{ r.fg }};transition:opacity 150ms ease" style-hover="opacity:0.75"><span aria-hidden="true" style="width:7px;height:7px;flex:none;box-sizing:border-box;border:1.5px solid var(--side-mu,#5E6559);border-radius:{{ r.shapeR }};background:{{ r.shapeBg }}"></span><span style="min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{ r.title }}</span></a>
+</sc-for>
+</div>
+</nav>
+<div style="padding:14px 18px 18px;border-top:1px solid var(--side-bd,#DCE0D3);display:flex;flex-direction:column;gap:14px">
+<div style="display:flex;align-items:center;justify-content:space-between;gap:12px">
+<span style="font:500 10.5px/1 var(--mono,'Geist Mono'),ui-monospace,monospace;letter-spacing:0.1em;text-transform:uppercase;color:var(--side-mu,#5E6559)">Palette</span>
+<div style="display:flex;gap:7px">
+<sc-for list="{{ palettes }}" as="pl" hint-placeholder-count="5">
+<button type="button" aria-label="{{ pl.name }} palette" title="{{ pl.name }}" onClick="{{ pl.pick }}" style="width:20px;height:20px;padding:0;border-radius:50%;background:{{ pl.sw }};border:2px solid {{ pl.ring }};box-shadow:inset 0 0 0 2px var(--side,#EBEDE4);cursor:pointer"></button>
+</sc-for>
+</div>
+</div>
+<div style="display:flex;align-items:center;justify-content:space-between;gap:12px">
+<span style="font:500 10.5px/1 var(--mono,'Geist Mono'),ui-monospace,monospace;letter-spacing:0.1em;text-transform:uppercase;color:var(--side-mu,#5E6559)">Type</span>
+<button type="button" onClick="{{ cycleType }}" aria-label="Next font pairing" style="padding:6px 12px;border:1px solid var(--side-bd,#DCE0D3);border-radius:999px;background:transparent;color:var(--side-tx,#1D211B);font:500 11px/1 var(--mono,'Geist Mono'),ui-monospace,monospace;letter-spacing:0.06em;text-transform:uppercase;cursor:pointer;transition:opacity 150ms ease" style-hover="opacity:0.7">{{ typeName }} ↻</button>
+</div>
+<div style="display:flex;align-items:center;justify-content:space-between;gap:12px">
+<span style="font:500 10.5px/1 var(--mono,'Geist Mono'),ui-monospace,monospace;letter-spacing:0.1em;text-transform:uppercase;color:var(--side-mu,#5E6559)">Theme</span>
+<div role="group" aria-label="Theme" style="display:flex;padding:2px;border:1px solid var(--side-bd,#DCE0D3);border-radius:999px">
+<button type="button" onClick="{{ seg.light.pick }}" aria-pressed="{{ seg.light.on }}" style="padding:5px 12px;border:0;border-radius:999px;background:{{ seg.light.bg }};color:{{ seg.light.fg }};font:500 11px/1 var(--mono,'Geist Mono'),ui-monospace,monospace;letter-spacing:0.06em;text-transform:uppercase;cursor:pointer">Light</button>
+<button type="button" onClick="{{ seg.dark.pick }}" aria-pressed="{{ seg.dark.on }}" style="padding:5px 12px;border:0;border-radius:999px;background:{{ seg.dark.bg }};color:{{ seg.dark.fg }};font:500 11px/1 var(--mono,'Geist Mono'),ui-monospace,monospace;letter-spacing:0.06em;text-transform:uppercase;cursor:pointer">Dark</button>
+</div>
+</div>
+<div style="display:flex;flex-wrap:wrap;gap:6px 14px">
+<sc-for list="{{ P.links }}" as="lk" hint-placeholder-count="4">
+<a href="{{ lk.url }}" target="_blank" rel="noopener" style="font:500 11px/1.6 var(--mono,'Geist Mono'),ui-monospace,monospace;letter-spacing:0.04em;color:var(--side-mu,#5E6559);text-decoration:none;transition:opacity 150ms ease" style-hover="opacity:0.7">{{ lk.label }}</a>
+</sc-for>
+</div>
+</div>
+</aside>
+
+<div style="flex:1;min-width:0;display:flex;flex-direction:column;position:relative;container-type:inline-size">
+<header style="height:56px;flex:none;display:flex;align-items:center;gap:12px;padding:0 clamp(12px,2.4cqi,24px);box-sizing:border-box">
+<sc-if value="{{ L.menuBtn }}" hint-placeholder-val="{{ false }}">
+<button type="button" aria-label="Open navigation" onClick="{{ openSide }}" style="width:44px;height:44px;flex:none;display:grid;place-items:center;border:0;border-radius:10px;background:transparent;color:var(--tx,#1D211B);cursor:pointer"><span style="display:flex;flex-direction:column;gap:4px;width:18px"><span style="height:1.5px;background:currentColor"></span><span style="height:1.5px;background:currentColor"></span><span style="height:1.5px;width:12px;background:currentColor"></span></span></button>
+</sc-if>
+<sc-if value="{{ L.topName }}" hint-placeholder-val="{{ false }}">
+<a href="#" onClick="{{ goHome }}" style="font:var(--dw,500) 19px/1 var(--serif,'Funnel Display'),system-ui,sans-serif;letter-spacing:-0.02em;color:var(--tx,#1D211B);text-decoration:none;white-space:nowrap">Aayush Kumar</a>
+</sc-if>
+<span style="flex:1;min-width:0;font:500 11.5px/1 var(--mono,'Geist Mono'),ui-monospace,monospace;letter-spacing:0.02em;color:var(--mu,#5C6357);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;display:{{ L.crumbDisplay }}">{{ crumb }}</span>
+<span style="flex:1;display:{{ L.spacerDisplay }}"></span>
+<sc-if value="{{ L.resumeTop }}" hint-placeholder-val="{{ true }}">
+<a href="#" onClick="{{ openResume }}" style="display:inline-flex;align-items:center;gap:8px;padding:9px 14px;border:1px solid var(--bd,#DADED1);border-radius:999px;font:500 11px/1 var(--mono,'Geist Mono'),ui-monospace,monospace;letter-spacing:0.08em;text-transform:uppercase;color:var(--tx,#1D211B);text-decoration:none;transition:opacity 150ms ease" style-hover="opacity:0.7">Résumé ↗</a>
+</sc-if>
+<button type="button" aria-label="Toggle light and dark theme" onClick="{{ toggleTheme }}" style="width:40px;height:40px;flex:none;display:grid;place-items:center;border:1px solid var(--bd,#DADED1);border-radius:50%;background:transparent;color:var(--tx,#1D211B);cursor:pointer;transition:opacity 150ms ease" style-hover="opacity:0.7"><span style="width:15px;height:15px;box-sizing:border-box;border-radius:50%;border:1.5px solid currentColor;background:linear-gradient(90deg,currentColor 50%,transparent 50%)"></span></button>
+</header>
+
+<div ref="{{ scrollRef }}" style="flex:1;min-height:0;overflow-y:auto;overscroll-behavior:contain;position:relative">
+<main ref="{{ mainRef }}" style="min-height:100%;display:flex;flex-direction:column">
+
+<sc-if value="{{ v.home }}" hint-placeholder-val="{{ true }}">
+<section style="flex:1;width:100%;max-width:780px;margin:0 auto;padding:clamp(28px,6cqi,64px) clamp(20px,4cqi,40px) 28px;box-sizing:border-box;display:flex;flex-direction:column;justify-content:center;gap:28px">
+<p style="margin:0;display:flex;align-items:center;gap:10px;font:500 11.5px/1.4 var(--mono,'Geist Mono'),ui-monospace,monospace;letter-spacing:0.08em;text-transform:uppercase;color:var(--mu,#5C6357)"><span style="width:8px;height:8px;flex:none;border-radius:50%;background:var(--ac,#6F8C4E);box-shadow:0 0 0 3px var(--hl,rgba(150,184,112,0.42))"></span><span>{{ greet }}</span></p>
+<h1 style="margin:0;font:var(--dw,500) clamp(40px,7cqi,64px)/1.04 var(--serif,'Funnel Display'),system-ui,sans-serif;letter-spacing:-0.03em;text-wrap:balance">{{ P.name }}<span style="display:block;color:var(--mu,#5C6357)">{{ P.headline }}</span></h1>
+<p style="margin:0;max-width:580px;font:400 clamp(16px,2.2cqi,18px)/1.65 var(--sans,'Funnel Sans'),system-ui,sans-serif;text-wrap:pretty">{{ P.bio }}</p>
+<div style="display:flex;flex-wrap:wrap;align-items:center;gap:10px 22px">
+<sc-for list="{{ P.links }}" as="lk" hint-placeholder-count="4">
+<a href="{{ lk.url }}" target="_blank" rel="noopener" style="font:500 15px/1.5 var(--sans,'Funnel Sans'),system-ui,sans-serif;color:var(--tx,#1D211B);text-decoration:none;padding:1px 2px;background-image:linear-gradient(var(--hl,rgba(150,184,112,0.42)),var(--hl,rgba(150,184,112,0.42)));background-size:100% 0.42em;background-position:0 92%;background-repeat:no-repeat;transition:background-size 150ms ease" style-hover="background-size:100% 100%">{{ lk.label }}</a>
+</sc-for>
+<a href="{{ building.url }}" target="_blank" rel="noopener" style="display:inline-flex;align-items:center;gap:8px;padding:7px 12px;border:1px solid var(--bd,#DADED1);border-radius:999px;font:500 11px/1 var(--mono,'Geist Mono'),ui-monospace,monospace;letter-spacing:0.08em;text-transform:uppercase;color:var(--tx,#1D211B);text-decoration:none;transition:opacity 150ms ease" style-hover="opacity:0.7"><span style="color:var(--mu,#5C6357)">Building</span>{{ building.label }} ↗</a>
+</div>
+<div style="display:flex;flex-direction:column;gap:12px;margin-top:12px">
+<span style="font:500 11px/1.4 var(--mono,'Geist Mono'),ui-monospace,monospace;letter-spacing:0.08em;text-transform:uppercase;color:var(--mu,#5C6357)">Start with a command</span>
+<div style="display:flex;flex-wrap:wrap;gap:8px">
+<sc-for list="{{ quick }}" as="q" hint-placeholder-count="4">
+<button type="button" onClick="{{ q.go }}" style="display:inline-flex;align-items:baseline;gap:8px;padding:10px 14px;border:1px solid var(--bd,#DADED1);border-radius:999px;background:var(--card,#FBFCF8);color:var(--tx,#1D211B);cursor:pointer;transition:opacity 150ms ease" style-hover="opacity:0.7"><span style="font:500 12.5px/1 var(--mono,'Geist Mono'),ui-monospace,monospace;color:var(--ink,#4B6731)">{{ q.cmd }}</span><span style="font:400 13.5px/1 var(--sans,'Funnel Sans'),system-ui,sans-serif;color:var(--mu,#5C6357)">{{ q.label }}</span></button>
+</sc-for>
+</div>
+</div>
+<a href="#" onClick="{{ latest.go }}" style="display:flex;flex-wrap:wrap;align-items:baseline;gap:6px 14px;padding-top:20px;border-top:1px solid var(--bd,#DADED1);text-decoration:none;color:var(--tx,#1D211B);transition:opacity 150ms ease" style-hover="opacity:0.7"><span style="font:500 11px/1.4 var(--mono,'Geist Mono'),ui-monospace,monospace;letter-spacing:0.08em;text-transform:uppercase;color:var(--ink,#4B6731)">Latest essay · {{ latest.date }}</span><span style="font:var(--dw,500) 19px/1.3 var(--serif,'Funnel Display'),system-ui,sans-serif;letter-spacing:-0.01em">{{ latest.title }} →</span></a>
+</section>
+</sc-if>
+
+<sc-if value="{{ v.chat }}" hint-placeholder-val="{{ false }}">
+<section style="width:100%;max-width:760px;margin:0 auto;padding:clamp(24px,5cqi,48px) clamp(18px,4cqi,40px) 32px;box-sizing:border-box;display:flex;flex-direction:column;gap:28px">
+<sc-for list="{{ msgs }}" as="m" hint-placeholder-count="0">
+<div style="display:flex;flex-direction:column">
+<sc-if value="{{ m.user }}" hint-placeholder-val="{{ false }}">
+<div style="align-self:flex-end;max-width:82%;padding:12px 16px;border-radius:18px 18px 4px 18px;background:var(--sf,#E8EBE1);font:400 16px/1.55 var(--sans,'Funnel Sans'),system-ui,sans-serif">{{ m.text }}</div>
+</sc-if>
+<sc-if value="{{ m.bot }}" hint-placeholder-val="{{ false }}">
+<div style="display:flex;flex-direction:column;gap:12px;max-width:640px">
+<span style="display:flex;align-items:center;gap:8px;font:500 11px/1 var(--mono,'Geist Mono'),ui-monospace,monospace;letter-spacing:0.08em;text-transform:uppercase;color:var(--mu,#5C6357)"><span style="width:8px;height:8px;border-radius:2px;background:var(--ac,#6F8C4E)"></span>aayush.site</span>
+<p style="margin:0;font:400 16.5px/1.65 var(--sans,'Funnel Sans'),system-ui,sans-serif;text-wrap:pretty">{{ m.text }}</p>
+<div style="display:flex;flex-wrap:wrap;gap:8px">
+<sc-for list="{{ m.chips }}" as="c" hint-placeholder-count="0">
+<button type="button" onClick="{{ c.go }}" style="display:inline-flex;align-items:baseline;gap:8px;padding:9px 13px;border:1px solid var(--bd,#DADED1);border-radius:999px;background:var(--card,#FBFCF8);color:var(--tx,#1D211B);cursor:pointer;transition:opacity 150ms ease" style-hover="opacity:0.7"><span style="font:500 12.5px/1 var(--mono,'Geist Mono'),ui-monospace,monospace;color:var(--ink,#4B6731)">{{ c.cmd }}</span><span style="font:400 13.5px/1 var(--sans,'Funnel Sans'),system-ui,sans-serif;color:var(--mu,#5C6357)">{{ c.label }}</span></button>
+</sc-for>
+</div>
+</div>
+</sc-if>
+</div>
+</sc-for>
+</section>
+</sc-if>
+
+<sc-if value="{{ v.experience }}" hint-placeholder-val="{{ false }}">
+<section style="width:100%;max-width:880px;margin:0 auto;padding:clamp(20px,4cqi,40px) clamp(18px,4cqi,40px) 48px;box-sizing:border-box;display:flex;flex-direction:column;gap:40px">
+<div style="display:flex;justify-content:flex-end"><span style="font:500 13px/1 var(--mono,'Geist Mono'),ui-monospace,monospace;padding:10px 14px;border-radius:14px 14px 4px 14px;background:var(--sf,#E8EBE1)">/experience</span></div>
+<header style="display:flex;flex-direction:column;gap:12px"><h1 style="margin:0;font:var(--dw,500) clamp(36px,5.6cqi,52px)/1.05 var(--serif,'Funnel Display'),system-ui,sans-serif;letter-spacing:-0.03em">Experience</h1><p style="margin:0;max-width:600px;font:400 17px/1.6 var(--sans,'Funnel Sans'),system-ui,sans-serif;color:var(--mu,#5C6357);text-wrap:pretty">Where I work and what I’ve shipped. Open any product for the full case study.</p></header>
+<sc-for list="{{ exp }}" as="e" hint-placeholder-count="1">
+<article style="display:flex;flex-direction:column;gap:14px;padding-top:20px;border-top:1px solid var(--tx,#1D211B)">
+<div style="display:flex;flex-wrap:wrap;justify-content:space-between;align-items:baseline;gap:6px 20px">
+<h2 style="margin:0;font:var(--dw,500) clamp(24px,3.4cqi,30px)/1.2 var(--serif,'Funnel Display'),system-ui,sans-serif;letter-spacing:-0.02em">{{ e.org }}<span style="color:var(--mu,#5C6357)"> — {{ e.role }}</span></h2>
+<span style="font:500 11px/1.5 var(--mono,'Geist Mono'),ui-monospace,monospace;letter-spacing:0.08em;text-transform:uppercase;color:var(--ink,#4B6731);white-space:nowrap">{{ e.period }}</span>
+</div>
+<p style="margin:0;font:400 16px/1.6 var(--sans,'Funnel Sans'),system-ui,sans-serif;color:var(--mu,#5C6357)">{{ e.kind }} · {{ e.place }}. {{ e.summary }}</p>
+<div style="display:flex;flex-direction:column;margin-top:6px;border-top:1px solid var(--bd,#DADED1)">
+<sc-for list="{{ e.items }}" as="pr" hint-placeholder-count="3">
+<a href="#" data-snap="1" onClick="{{ pr.open }}" style="display:flex;flex-wrap:wrap;align-items:center;gap:8px 28px;padding:20px 0;border-bottom:1px solid var(--bd,#DADED1);text-decoration:none;color:var(--tx,#1D211B);transition:opacity 150ms ease" style-hover="opacity:0.7">
+<span style="flex:1 1 320px;min-width:0;display:flex;flex-direction:column;gap:4px"><span style="display:flex;flex-wrap:wrap;align-items:baseline;gap:4px 12px"><strong style="font:600 17px/1.3 var(--sans,'Funnel Sans'),system-ui,sans-serif">{{ pr.title }}</strong><span style="font:500 10.5px/1.4 var(--mono,'Geist Mono'),ui-monospace,monospace;letter-spacing:0.08em;text-transform:uppercase;color:var(--mu,#5C6357)">{{ pr.what }}</span></span><span style="font:400 15px/1.5 var(--sans,'Funnel Sans'),system-ui,sans-serif;color:var(--mu,#5C6357);text-wrap:pretty">{{ pr.line }}</span></span>
+<span style="flex:0 0 170px;display:flex;flex-direction:column;gap:2px"><strong style="font:var(--dw,500) 22px/1.1 var(--serif,'Funnel Display'),system-ui,sans-serif;font-variant-numeric:tabular-nums">{{ pr.key.n }}</strong><span style="font:500 10.5px/1.4 var(--mono,'Geist Mono'),ui-monospace,monospace;letter-spacing:0.06em;text-transform:uppercase;color:var(--mu,#5C6357)">{{ pr.key.l }}</span></span>
+<span style="flex:none;font:500 11px/1 var(--mono,'Geist Mono'),ui-monospace,monospace;letter-spacing:0.08em;text-transform:uppercase;white-space:nowrap">Case study →</span>
+</a>
+</sc-for>
+</div>
+</article>
+</sc-for>
+<article style="display:flex;flex-wrap:wrap;justify-content:space-between;align-items:baseline;gap:6px 20px;padding-top:20px;border-top:1px solid var(--tx,#1D211B)">
+<div style="display:flex;flex-direction:column;gap:4px"><h2 style="margin:0;font:var(--dw,500) clamp(22px,3cqi,26px)/1.2 var(--serif,'Funnel Display'),system-ui,sans-serif;letter-spacing:-0.02em">{{ edu.degree }}</h2><p style="margin:0;font:400 15.5px/1.55 var(--sans,'Funnel Sans'),system-ui,sans-serif;color:var(--mu,#5C6357)">{{ edu.school }} · {{ edu.note }}</p></div>
+<span style="font:500 11px/1.5 var(--mono,'Geist Mono'),ui-monospace,monospace;letter-spacing:0.08em;text-transform:uppercase;color:var(--ink,#4B6731)">{{ edu.period }}</span>
+</article>
+<div style="display:flex;flex-direction:column;padding-top:20px;border-top:1px solid var(--tx,#1D211B)">
+<h2 style="margin:0 0 6px;font:500 11px/1.4 var(--mono,'Geist Mono'),ui-monospace,monospace;letter-spacing:0.1em;text-transform:uppercase;color:var(--mu,#5C6357)">Toolkit</h2>
+<dl style="margin:0;display:flex;flex-direction:column">
+<sc-for list="{{ skills }}" as="sk" hint-placeholder-count="5">
+<div style="display:flex;flex-wrap:wrap;gap:2px 20px;padding:12px 0;border-bottom:1px solid var(--bd,#DADED1)"><dt style="flex:0 0 110px;font:500 11px/1.9 var(--mono,'Geist Mono'),ui-monospace,monospace;letter-spacing:0.08em;text-transform:uppercase;color:var(--ink,#4B6731)">{{ sk.group }}</dt><dd style="flex:1 1 360px;margin:0;font:400 15.5px/1.6 var(--sans,'Funnel Sans'),system-ui,sans-serif">{{ sk.items }}</dd></div>
+</sc-for>
+</dl>
+</div>
+</section>
+</sc-if>
+
+<sc-if value="{{ v.notes }}" hint-placeholder-val="{{ false }}">
+<section style="width:100%;max-width:900px;margin:0 auto;padding:clamp(20px,4cqi,40px) clamp(18px,4cqi,40px) 48px;box-sizing:border-box;display:flex;flex-direction:column;gap:30px">
+<div style="display:flex;justify-content:flex-end"><span style="font:500 13px/1 var(--mono,'Geist Mono'),ui-monospace,monospace;padding:10px 14px;border-radius:14px 14px 4px 14px;background:var(--sf,#E8EBE1)">/notes</span></div>
+<header style="display:flex;flex-direction:column;gap:14px">
+<h1 style="margin:0;font:var(--dw,500) clamp(36px,5.6cqi,52px)/1.05 var(--serif,'Funnel Display'),system-ui,sans-serif;letter-spacing:-0.03em">{{ notesName }}</h1>
+<p style="margin:0;display:flex;flex-wrap:wrap;align-items:center;gap:8px 14px;font:500 12px/1.4 var(--mono,'Geist Mono'),ui-monospace,monospace;letter-spacing:0.08em;text-transform:uppercase;color:var(--ink,#4B6731)"><span>Learn</span><span aria-hidden="true" style="color:var(--mu,#5C6357)">→</span><span>Build</span><span aria-hidden="true" style="color:var(--mu,#5C6357)">→</span><span>Write</span></p>
+<p style="margin:0;max-width:620px;font:400 17px/1.6 var(--sans,'Funnel Sans'),system-ui,sans-serif;color:var(--mu,#5C6357);text-wrap:pretty">Short notes on what I’m learning, logs of what I’m building, and essays once it’s worth writing up. Medium posts are merged in.</p>
+</header>
+<div role="group" aria-label="Filter" style="display:flex;flex-wrap:wrap;gap:6px">
+<sc-for list="{{ filters }}" as="f" hint-placeholder-count="4">
+<button type="button" onClick="{{ f.pick }}" aria-pressed="{{ f.on }}" style="display:inline-flex;align-items:center;gap:8px;padding:8px 14px;border:1px solid {{ f.bd }};border-radius:999px;background:{{ f.bg }};color:{{ f.fg }};font:500 11px/1 var(--mono,'Geist Mono'),ui-monospace,monospace;letter-spacing:0.08em;text-transform:uppercase;cursor:pointer;transition:opacity 150ms ease" style-hover="opacity:0.75"><span>{{ f.label }}</span><span style="opacity:0.6">{{ f.count }}</span></button>
+</sc-for>
+</div>
+<div style="display:flex;flex-direction:column;gap:36px">
+<sc-for list="{{ groups }}" as="g" hint-placeholder-count="2">
+<div style="display:flex;flex-direction:column">
+<div style="display:flex;align-items:baseline;justify-content:space-between;gap:12px;padding-bottom:10px;border-bottom:1px solid var(--tx,#1D211B)"><span style="font:var(--dw,500) 26px/1 var(--serif,'Funnel Display'),system-ui,sans-serif;letter-spacing:-0.02em">{{ g.year }}</span><span style="font:500 11px/1 var(--mono,'Geist Mono'),ui-monospace,monospace;letter-spacing:0.08em;text-transform:uppercase;color:var(--mu,#5C6357)">{{ g.count }}</span></div>
+<sc-for list="{{ g.items }}" as="n" hint-placeholder-count="4">
+<div style="display:flex;flex-direction:column">
+<sc-if value="{{ n.isLink }}" hint-placeholder-val="{{ false }}">
+<a href="#" data-snap="1" onClick="{{ n.open }}" style="display:flex;flex-wrap:wrap;align-items:baseline;gap:6px 24px;padding:22px 0;border-bottom:1px solid var(--bd,#DADED1);text-decoration:none;color:var(--tx,#1D211B);transition:opacity 150ms ease" style-hover="opacity:0.7">
+<time style="flex:0 0 64px;font:500 11.5px/1.4 var(--mono,'Geist Mono'),ui-monospace,monospace;letter-spacing:0.06em;text-transform:uppercase;color:var(--mu,#5C6357)">{{ n.short }}</time>
+<span style="flex:0 0 84px;display:inline-flex;align-items:center;gap:7px;font:500 10.5px/1.4 var(--mono,'Geist Mono'),ui-monospace,monospace;letter-spacing:0.08em;text-transform:uppercase;color:var(--ink,#4B6731)"><span aria-hidden="true" style="width:8px;height:8px;flex:none;box-sizing:border-box;border:1.5px solid var(--ink,#4B6731);border-radius:{{ n.shapeR }};background:{{ n.shapeBg }}"></span>{{ n.kindLabel }}</span>
+<span style="flex:1 1 300px;min-width:0;display:flex;flex-direction:column;gap:6px"><span style="font:var(--dw,500) clamp(22px,3cqi,26px)/1.2 var(--serif,'Funnel Display'),system-ui,sans-serif;letter-spacing:-0.02em">{{ n.title }}</span><span style="font:400 15px/1.55 var(--sans,'Funnel Sans'),system-ui,sans-serif;color:var(--mu,#5C6357);text-wrap:pretty">{{ n.dek }}</span></span>
+<span style="flex:none;display:flex;gap:12px;font:500 11px/1.4 var(--mono,'Geist Mono'),ui-monospace,monospace;letter-spacing:0.08em;text-transform:uppercase;color:var(--mu,#5C6357)"><span>{{ n.read }}</span><sc-if value="{{ n.medium }}" hint-placeholder-val="{{ false }}"><span style="color:var(--tx,#1D211B)">Medium ↗</span></sc-if></span>
+</a>
+</sc-if>
+<sc-if value="{{ n.isNote }}" hint-placeholder-val="{{ false }}">
+<div data-snap="1" style="display:flex;flex-wrap:wrap;align-items:baseline;gap:6px 24px;padding:18px 0;border-bottom:1px solid var(--bd,#DADED1)">
+<time style="flex:0 0 64px;font:500 11.5px/1.4 var(--mono,'Geist Mono'),ui-monospace,monospace;letter-spacing:0.06em;text-transform:uppercase;color:var(--mu,#5C6357)">{{ n.short }}</time>
+<span style="flex:0 0 84px;display:inline-flex;align-items:center;gap:7px;font:500 10.5px/1.4 var(--mono,'Geist Mono'),ui-monospace,monospace;letter-spacing:0.08em;text-transform:uppercase;color:var(--ink,#4B6731)"><span aria-hidden="true" style="width:8px;height:8px;flex:none;box-sizing:border-box;border:1.5px solid var(--ink,#4B6731);border-radius:{{ n.shapeR }};background:{{ n.shapeBg }}"></span>{{ n.kindLabel }}</span>
+<span style="flex:1 1 300px;min-width:0;display:flex;flex-direction:column;gap:4px"><span style="font:600 16.5px/1.4 var(--sans,'Funnel Sans'),system-ui,sans-serif">{{ n.title }}</span><span style="font:400 15px/1.55 var(--sans,'Funnel Sans'),system-ui,sans-serif;color:var(--mu,#5C6357);text-wrap:pretty">{{ n.dek }}</span></span>
+<sc-if value="{{ n.hasUrl }}" hint-placeholder-val="{{ false }}"><a href="{{ n.url }}" target="_blank" rel="noopener" style="flex:none;font:500 11px/1.4 var(--mono,'Geist Mono'),ui-monospace,monospace;letter-spacing:0.08em;text-transform:uppercase;color:var(--tx,#1D211B);text-decoration:none;transition:opacity 150ms ease" style-hover="opacity:0.7">Open ↗</a></sc-if>
+</div>
+</sc-if>
+</div>
+</sc-for>
+</div>
+</sc-for>
+</div>
+</section>
+</sc-if>
+
+<sc-if value="{{ v.lab }}" hint-placeholder-val="{{ false }}">
+<section style="width:100%;max-width:880px;margin:0 auto;padding:clamp(20px,4cqi,40px) clamp(18px,4cqi,40px) 48px;box-sizing:border-box;display:flex;flex-direction:column;gap:32px">
+<div style="display:flex;justify-content:flex-end"><span style="font:500 13px/1 var(--mono,'Geist Mono'),ui-monospace,monospace;padding:10px 14px;border-radius:14px 14px 4px 14px;background:var(--sf,#E8EBE1)">/lab</span></div>
+<header style="display:flex;flex-direction:column;gap:12px"><h1 style="margin:0;font:var(--dw,500) clamp(36px,5.6cqi,52px)/1.05 var(--serif,'Funnel Display'),system-ui,sans-serif;letter-spacing:-0.03em">Lab</h1><p style="margin:0;max-width:600px;font:400 17px/1.6 var(--sans,'Funnel Sans'),system-ui,sans-serif;color:var(--mu,#5C6357);text-wrap:pretty">Weekend builds, experiments and the AI tools I’m currently trying out.</p></header>
+<div style="display:flex;flex-direction:column;border-top:1px solid var(--tx,#1D211B)">
+<sc-for list="{{ lab }}" as="lb" hint-placeholder-count="2">
+<div data-snap="1" style="display:flex;flex-wrap:wrap;align-items:baseline;gap:10px 28px;padding:24px 0;border-bottom:1px solid var(--bd,#DADED1)">
+<span style="flex:0 0 72px"><span style="display:inline-block;padding:6px 10px;border-radius:999px;border:1px solid {{ lb.bc }};background:{{ lb.bg }};color:{{ lb.fg }};font:500 10.5px/1 var(--mono,'Geist Mono'),ui-monospace,monospace;letter-spacing:0.08em;text-transform:uppercase">{{ lb.status }}</span></span>
+<span style="flex:1 1 320px;min-width:0;display:flex;flex-direction:column;gap:6px"><span style="font:var(--dw,500) 28px/1.1 var(--serif,'Funnel Display'),system-ui,sans-serif;letter-spacing:-0.02em">{{ lb.name }}</span><span style="font:400 15.5px/1.55 var(--sans,'Funnel Sans'),system-ui,sans-serif;color:var(--mu,#5C6357)">{{ lb.line }}</span></span>
+<a href="{{ lb.href }}" target="_blank" rel="noopener" onClick="{{ lb.click }}" style="flex:none;font:500 11.5px/1.4 var(--mono,'Geist Mono'),ui-monospace,monospace;letter-spacing:0.04em;color:var(--tx,#1D211B);text-decoration:none;padding:1px 2px;background-image:linear-gradient(var(--hl,rgba(150,184,112,0.42)),var(--hl,rgba(150,184,112,0.42)));background-size:100% 0.42em;background-position:0 92%;background-repeat:no-repeat;transition:background-size 150ms ease" style-hover="background-size:100% 100%">{{ lb.cta }}</a>
+</div>
+</sc-for>
+</div>
+<div style="display:flex;flex-direction:column;gap:14px">
+<h2 style="margin:0;font:500 11px/1.4 var(--mono,'Geist Mono'),ui-monospace,monospace;letter-spacing:0.1em;text-transform:uppercase;color:var(--mu,#5C6357)">In rotation</h2>
+<div style="display:flex;flex-wrap:wrap;gap:8px">
+<sc-for list="{{ toolbox }}" as="tb" hint-placeholder-count="6">
+<span style="font:500 12.5px/1 var(--mono,'Geist Mono'),ui-monospace,monospace;padding:10px 13px;border-radius:10px;background:var(--sf,#E8EBE1)">{{ tb }}</span>
+</sc-for>
+</div>
+</div>
+</section>
+</sc-if>
+
+<sc-if value="{{ v.doc }}" hint-placeholder-val="{{ false }}">
+<article style="width:100%;max-width:740px;margin:0 auto;padding:clamp(16px,3cqi,28px) clamp(18px,4cqi,40px) 56px;box-sizing:border-box;display:flex;flex-direction:column">
+<div style="display:flex;justify-content:space-between;align-items:center;gap:12px;margin-bottom:clamp(28px,5cqi,48px)">
+<a href="#" onClick="{{ doc.back }}" style="font:500 11px/1 var(--mono,'Geist Mono'),ui-monospace,monospace;letter-spacing:0.08em;text-transform:uppercase;color:var(--mu,#5C6357);text-decoration:none;padding:10px 0;transition:opacity 150ms ease" style-hover="opacity:0.7">← {{ doc.backLabel }}</a>
+<sc-if value="{{ L.focusBtn }}" hint-placeholder-val="{{ false }}">
+<button type="button" onClick="{{ toggleFocus }}" aria-pressed="{{ focusOn }}" style="padding:9px 14px;border:1px solid var(--bd,#DADED1);border-radius:999px;background:transparent;color:var(--tx,#1D211B);font:500 11px/1 var(--mono,'Geist Mono'),ui-monospace,monospace;letter-spacing:0.08em;text-transform:uppercase;cursor:pointer;transition:opacity 150ms ease" style-hover="opacity:0.7">{{ focusLabel }}</button>
+</sc-if>
+</div>
+<p style="margin:0;font:500 11.5px/1.5 var(--mono,'Geist Mono'),ui-monospace,monospace;letter-spacing:0.08em;text-transform:uppercase;color:var(--ink,#4B6731)">{{ doc.meta }}</p>
+<h1 style="margin:14px 0 0;font:var(--dw,500) clamp(38px,6.2cqi,56px)/1.04 var(--serif,'Funnel Display'),system-ui,sans-serif;letter-spacing:-0.03em;text-wrap:balance">{{ doc.title }}</h1>
+<p style="margin:16px 0 0;font:var(--fi,normal) 400 clamp(19px,2.6cqi,22px)/1.45 var(--serif,'Funnel Display'),system-ui,sans-serif;color:var(--mu,#5C6357);text-wrap:pretty">{{ doc.dek }}</p>
+<sc-if value="{{ doc.hasFacts }}" hint-placeholder-val="{{ false }}">
+<dl style="margin:28px 0 0;display:grid;grid-template-columns:repeat(auto-fill,minmax(min(100%,220px),1fr));gap:16px 32px">
+<sc-for list="{{ doc.facts }}" as="fc" hint-placeholder-count="2">
+<div style="display:flex;flex-direction:column;gap:4px"><dt style="font:500 10.5px/1.4 var(--mono,'Geist Mono'),ui-monospace,monospace;letter-spacing:0.08em;text-transform:uppercase;color:var(--mu,#5C6357)">{{ fc.k }}</dt><dd style="margin:0;font:400 15px/1.5 var(--sans,'Funnel Sans'),system-ui,sans-serif">{{ fc.v }}</dd></div>
+</sc-for>
+</dl>
+</sc-if>
+<div style="height:1px;background:var(--bd,#DADED1);margin:36px 0"></div>
+<div style="display:flex;flex-direction:column;gap:24px">
+<sc-for list="{{ doc.blocks }}" as="b" hint-placeholder-count="0">
+<div style="display:flex;flex-direction:column">
+<sc-if value="{{ b.p }}" hint-placeholder-val="{{ false }}"><p style="margin:0;font:400 clamp(17px,2.2cqi,18px)/1.75 var(--sans,'Funnel Sans'),system-ui,sans-serif;text-wrap:pretty">{{ b.text }}</p></sc-if>
+<sc-if value="{{ b.h2 }}" hint-placeholder-val="{{ false }}"><h2 style="margin:20px 0 0;font:var(--dw,500) clamp(24px,3.4cqi,30px)/1.2 var(--serif,'Funnel Display'),system-ui,sans-serif;letter-spacing:-0.02em">{{ b.text }}</h2></sc-if>
+<sc-if value="{{ b.quote }}" hint-placeholder-val="{{ false }}"><blockquote style="margin:12px 0;padding:24px 0;border-top:1px solid var(--tx,#1D211B);border-bottom:1px solid var(--bd,#DADED1);font:var(--fi,normal) var(--dw,500) clamp(24px,3.6cqi,32px)/1.25 var(--serif,'Funnel Display'),system-ui,sans-serif;letter-spacing:-0.02em;text-wrap:balance">“{{ b.text }}”</blockquote></sc-if>
+<sc-if value="{{ b.steps }}" hint-placeholder-val="{{ false }}"><ol style="margin:0;padding:0;list-style:none;border-top:1px solid var(--bd,#DADED1)">
+<sc-for list="{{ b.items }}" as="st" hint-placeholder-count="3"><li style="display:flex;gap:18px;padding:16px 0;border-bottom:1px solid var(--bd,#DADED1);font:400 16.5px/1.6 var(--sans,'Funnel Sans'),system-ui,sans-serif"><span style="flex:0 0 26px;font:500 12px/1.9 var(--mono,'Geist Mono'),ui-monospace,monospace;color:var(--ink,#4B6731)">{{ st.n }}</span><span><strong style="font-weight:600">{{ st.title }}.</strong> {{ st.text }}</span></li></sc-for>
+</ol></sc-if>
+<sc-if value="{{ b.list }}" hint-placeholder-val="{{ false }}"><ul style="margin:0;padding:0;list-style:none;display:flex;flex-direction:column;gap:10px">
+<sc-for list="{{ b.items }}" as="li" hint-placeholder-count="3"><li style="display:flex;gap:14px;font:400 17px/1.65 var(--sans,'Funnel Sans'),system-ui,sans-serif"><span aria-hidden="true" style="color:var(--ink,#4B6731)">—</span><span>{{ li }}</span></li></sc-for>
+</ul></sc-if>
+<sc-if value="{{ b.code }}" hint-placeholder-val="{{ false }}"><figure style="margin:8px 0;border:1px solid var(--bd,#DADED1);border-radius:14px;overflow:hidden;background:var(--sf,#E8EBE1)"><figcaption style="display:flex;justify-content:space-between;gap:12px;padding:11px 16px;border-bottom:1px solid var(--bd,#DADED1);font:500 11px/1.4 var(--mono,'Geist Mono'),ui-monospace,monospace;color:var(--mu,#5C6357)"><span>{{ b.file }}</span><span style="letter-spacing:0.08em;text-transform:uppercase">{{ b.lang }}</span></figcaption><pre style="margin:0;padding:18px 20px;overflow-x:auto;font:400 13.5px/1.75 var(--mono,'Geist Mono'),ui-monospace,monospace;color:var(--tx,#1D211B)"><code>{{ b.text }}</code></pre></figure></sc-if>
+<sc-if value="{{ b.figure }}" hint-placeholder-val="{{ false }}"><figure style="margin:8px 0;display:flex;flex-direction:column;gap:10px"><div style="height:{{ b.h }}px;border-radius:14px;border:1px solid var(--bd,#DADED1);background:repeating-linear-gradient(135deg,var(--sf,#E8EBE1) 0 10px,var(--bg,#F4F5F0) 10px 20px);display:flex;align-items:flex-end;padding:14px;box-sizing:border-box"><span style="font:500 10.5px/1.3 var(--mono,'Geist Mono'),ui-monospace,monospace;letter-spacing:0.08em;text-transform:uppercase;padding:5px 8px;border-radius:4px;background:var(--card,#FBFCF8);color:var(--mu,#5C6357)">{{ b.label }}</span></div><figcaption style="font:500 11.5px/1.5 var(--mono,'Geist Mono'),ui-monospace,monospace;color:var(--mu,#5C6357)">{{ b.caption }}</figcaption></figure></sc-if>
+<sc-if value="{{ b.metrics }}" hint-placeholder-val="{{ false }}"><div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:1px;background:var(--bd,#DADED1);border:1px solid var(--bd,#DADED1);border-radius:14px;overflow:hidden">
+<sc-for list="{{ b.items }}" as="mt" hint-placeholder-count="4"><div style="display:flex;flex-direction:column;gap:6px;padding:18px;background:var(--card,#FBFCF8)"><span style="font:var(--dw,500) 30px/1 var(--serif,'Funnel Display'),system-ui,sans-serif;letter-spacing:-0.02em;font-variant-numeric:tabular-nums">{{ mt.n }}</span><span style="font:500 10.5px/1.4 var(--mono,'Geist Mono'),ui-monospace,monospace;letter-spacing:0.06em;text-transform:uppercase;color:var(--mu,#5C6357)">{{ mt.l }}</span></div></sc-for>
+</div></sc-if>
+</div>
+</sc-for>
+<sc-if value="{{ doc.isMedium }}" hint-placeholder-val="{{ false }}">
+<a href="{{ doc.url }}" target="_blank" rel="noopener" style="display:flex;justify-content:space-between;align-items:center;gap:16px;padding:22px 24px;border:1px solid var(--bd,#DADED1);border-radius:16px;background:var(--card,#FBFCF8);color:var(--tx,#1D211B);text-decoration:none;transition:opacity 150ms ease" style-hover="opacity:0.8"><span style="display:flex;flex-direction:column;gap:4px"><span style="font:500 11px/1.4 var(--mono,'Geist Mono'),ui-monospace,monospace;letter-spacing:0.08em;text-transform:uppercase;color:var(--mu,#5C6357)">Published on Medium</span><span style="font:var(--dw,500) 21px/1.2 var(--serif,'Funnel Display'),system-ui,sans-serif;letter-spacing:-0.01em">Continue reading</span></span><span style="font:500 18px/1 var(--sans,'Funnel Sans'),system-ui,sans-serif">↗</span></a>
+</sc-if>
+</div>
+<footer style="margin-top:56px;padding-top:20px;border-top:1px solid var(--tx,#1D211B);display:flex;flex-wrap:wrap;justify-content:space-between;align-items:center;gap:16px">
+<div style="display:flex;flex-wrap:wrap;gap:6px">
+<sc-for list="{{ doc.tags }}" as="tg" hint-placeholder-count="2"><span style="font:500 10.5px/1 var(--mono,'Geist Mono'),ui-monospace,monospace;letter-spacing:0.08em;text-transform:uppercase;padding:7px 10px;border-radius:999px;background:var(--sf,#E8EBE1)">{{ tg }}</span></sc-for>
+</div>
+<sc-if value="{{ doc.hasNext }}" hint-placeholder-val="{{ false }}"><a href="#" onClick="{{ doc.next }}" style="font:var(--dw,500) 18px/1.3 var(--serif,'Funnel Display'),system-ui,sans-serif;letter-spacing:-0.01em;color:var(--tx,#1D211B);text-decoration:none;transition:opacity 150ms ease" style-hover="opacity:0.7">{{ doc.nextLabel }} →</a></sc-if>
+</footer>
+</article>
+</sc-if>
+
+</main>
+</div>
+
+<div style="flex:none;position:relative;padding:4px clamp(10px,3cqi,24px) clamp(10px,2.4cqi,20px)">
+<div style="max-width:780px;margin:0 auto;position:relative">
+<sc-if value="{{ cm.menu }}" hint-placeholder-val="{{ false }}">
+<div role="listbox" aria-label="Commands" style="position:absolute;left:0;right:0;bottom:calc(100% + 8px);z-index:20;max-height:440px;overflow-y:auto;padding:8px;background:var(--card,#FBFCF8);border:1px solid var(--bd,#DADED1);border-radius:18px;box-shadow:0 16px 48px rgba(0,0,0,0.14);display:flex;flex-direction:column;gap:4px">
+<sc-for list="{{ cm.groups }}" as="gp" hint-placeholder-count="0">
+<div style="display:flex;flex-direction:column">
+<p style="margin:0;padding:8px 10px 6px;font:500 10.5px/1 var(--mono,'Geist Mono'),ui-monospace,monospace;letter-spacing:0.1em;text-transform:uppercase;color:var(--mu,#5C6357)">{{ gp.name }}</p>
+<sc-for list="{{ gp.items }}" as="it" hint-placeholder-count="0">
+<div role="option" aria-selected="{{ it.on }}" onMouseDown="{{ it.pick }}" style="display:flex;align-items:center;gap:14px;padding:10px;border-radius:10px;cursor:pointer;background:{{ it.bg }}"><span style="flex:0 0 112px;font:500 13px/1 var(--mono,'Geist Mono'),ui-monospace,monospace;color:var(--ink,#4B6731)">{{ it.cmd }}</span><span style="flex:1;min-width:0;font:400 14px/1.3 var(--sans,'Funnel Sans'),system-ui,sans-serif;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{ it.label }}</span><span style="font:500 10.5px/1 var(--mono,'Geist Mono'),ui-monospace,monospace;letter-spacing:0.06em;text-transform:uppercase;color:var(--mu,#5C6357);white-space:nowrap">{{ it.hint }}</span></div>
+</sc-for>
+</div>
+</sc-for>
+<p style="margin:4px 0 0;padding:10px 10px 4px;border-top:1px solid var(--bd,#DADED1);font:500 10.5px/1.4 var(--mono,'Geist Mono'),ui-monospace,monospace;letter-spacing:0.04em;color:var(--mu,#5C6357)">↑ ↓ move · Enter runs · Esc closes</p>
+</div>
+</sc-if>
+<div style="display:flex;flex-direction:column;gap:8px;padding:14px 12px 10px 18px;background:var(--card,#FBFCF8);border:1px solid {{ cm.bd }};border-radius:22px;box-shadow:0 1px 2px rgba(0,0,0,0.04),0 12px 32px rgba(0,0,0,0.07)">
+<input data-ak-input="1" ref="{{ inputRef }}" value="{{ cm.val }}" onChange="{{ cm.onChange }}" onKeyDown="{{ cm.onKeyDown }}" onFocus="{{ cm.onFocus }}" onBlur="{{ cm.onBlur }}" type="text" autocomplete="off" spellcheck="false" aria-label="Ask a question, or type / for commands" placeholder="{{ cm.ph }}" style="width:100%;box-sizing:border-box;border:0;outline:0;background:transparent;font:400 16px/1.5 var(--sans,'Funnel Sans'),system-ui,sans-serif;color:var(--tx,#1D211B);padding:2px 0 4px">
+<div style="display:flex;align-items:center;justify-content:space-between;gap:8px">
+<div style="display:flex;align-items:center;gap:8px;min-width:0">
+<button type="button" aria-label="Show commands" onMouseDown="{{ cm.showAll }}" style="height:34px;flex:none;display:inline-flex;align-items:center;gap:8px;padding:0 12px;border:1px solid var(--bd,#DADED1);border-radius:999px;background:transparent;color:var(--tx,#1D211B);font:500 11.5px/1 var(--mono,'Geist Mono'),ui-monospace,monospace;letter-spacing:0.04em;cursor:pointer"><span style="color:var(--ink,#4B6731);font-size:14px">/</span>Commands</button>
+<sc-if value="{{ cm.hasCtx }}" hint-placeholder-val="{{ false }}"><span style="min-width:0;padding:7px 11px;border-radius:999px;background:var(--sf,#E8EBE1);font:500 11px/1.2 var(--mono,'Geist Mono'),ui-monospace,monospace;color:var(--mu,#5C6357);white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{ cm.ctx }}</span></sc-if>
+</div>
+<div style="display:flex;align-items:center;gap:10px;flex:none">
+<sc-if value="{{ L.aiHint }}" hint-placeholder-val="{{ true }}"><span style="font:500 10.5px/1 var(--mono,'Geist Mono'),ui-monospace,monospace;letter-spacing:0.08em;text-transform:uppercase;color:var(--mu,#5C6357)">AI answers soon</span></sc-if>
+<button type="button" aria-label="Send" onClick="{{ cm.submit }}" style="width:36px;height:36px;border:0;border-radius:12px;background:{{ cm.sendBg }};color:{{ cm.sendFg }};font:600 16px/1 var(--sans,'Funnel Sans'),system-ui,sans-serif;cursor:pointer;transition:background-color 150ms ease">↑</button>
+</div>
+</div>
+</div>
+</div>
+</div>
+
+<sc-if value="{{ hasToast }}" hint-placeholder-val="{{ false }}">
+<div role="status" style="position:absolute;top:64px;left:50%;transform:translateX(-50%);z-index:50;max-width:calc(100% - 32px);box-sizing:border-box;padding:11px 16px;border-radius:14px;background:var(--tx,#1D211B);color:var(--bg,#F4F5F0);font:500 12px/1.45 var(--mono,'Geist Mono'),ui-monospace,monospace;text-align:center">{{ toast }}</div>
+</sc-if>
+</div>
+
+<sc-if value="{{ L.scrim }}" hint-placeholder-val="{{ false }}">
+<div onClick="{{ closeSide }}" aria-hidden="true" style="position:absolute;inset:0;z-index:35;background:rgba(0,0,0,0.38)"></div>
+</sc-if>
+
+<sc-if value="{{ dex }}" hint-placeholder-val="{{ false }}">
+<div onClick="{{ closeDex }}" style="position:absolute;inset:0;z-index:60;background:rgba(8,8,8,0.55);display:grid;place-items:center;padding:12px">
+<div role="dialog" aria-label="Pokédex entry" onClick="{{ stop }}" style="width:100%;max-width:560px;background:var(--card,#FBFCF8);color:var(--tx,#1D211B);border-radius:18px;overflow:hidden;box-shadow:0 30px 80px rgba(0,0,0,0.35)">
+<div style="display:flex;align-items:center;gap:10px;padding:14px 18px;background:#C8231C;color:#FFFFFF"><span style="width:18px;height:18px;box-sizing:border-box;border-radius:50%;background:#7FD3F7;border:2px solid #FFFFFF"></span><span style="width:8px;height:8px;border-radius:50%;background:#F7D14C"></span><span style="width:8px;height:8px;border-radius:50%;background:#7BD389"></span><span style="margin-left:auto;font:500 11px/1 var(--mono,'Geist Mono'),ui-monospace,monospace;letter-spacing:0.12em;text-transform:uppercase">Entry No. 0117</span></div>
+<div style="display:flex;flex-wrap:wrap;gap:20px;padding:22px">
+<div style="width:132px;height:132px;flex:none;box-sizing:border-box;border-radius:12px;border:1px solid var(--bd,#DADED1);background:repeating-linear-gradient(135deg,var(--sf,#E8EBE1) 0 8px,var(--bg,#F4F5F0) 8px 16px);display:flex;align-items:flex-end;padding:8px"><span style="font:500 10px/1.3 var(--mono,'Geist Mono'),ui-monospace,monospace;letter-spacing:0.08em;text-transform:uppercase;color:var(--mu,#5C6357);background:var(--card,#FBFCF8);padding:3px 5px;border-radius:3px">Avatar</span></div>
+<div style="flex:1 1 220px;display:flex;flex-direction:column;justify-content:center;gap:8px">
+<span style="font:500 11px/1 var(--mono,'Geist Mono'),ui-monospace,monospace;letter-spacing:0.08em;text-transform:uppercase;color:var(--mu,#5C6357)">No. 0117</span>
+<h3 style="margin:0;font:var(--dw,500) 38px/1 var(--serif,'Funnel Display'),system-ui,sans-serif;letter-spacing:-0.03em">Aayush</h3>
+<span style="font:400 17px/1.2 var(--sans,'Funnel Sans'),system-ui,sans-serif;color:var(--mu,#5C6357)">The Builder Pokémon</span>
+<div style="display:flex;gap:6px;margin-top:4px"><span style="font:500 11px/1 var(--mono,'Geist Mono'),ui-monospace,monospace;letter-spacing:0.08em;text-transform:uppercase;padding:6px 10px;border-radius:999px;background:var(--tx,#1D211B);color:var(--card,#FBFCF8)">Product</span><span style="font:500 11px/1 var(--mono,'Geist Mono'),ui-monospace,monospace;letter-spacing:0.08em;text-transform:uppercase;padding:6px 10px;border-radius:999px;border:1px solid var(--tx,#1D211B)">AI</span></div>
+</div>
+</div>
+<dl style="margin:0 22px;display:grid;grid-template-columns:96px minmax(0,1fr);border-top:1px solid var(--bd,#DADED1);font:400 14px/1.5 var(--sans,'Funnel Sans'),system-ui,sans-serif">
+<dt style="padding:10px 0;border-bottom:1px solid var(--bd,#DADED1);font:500 11px/1.9 var(--mono,'Geist Mono'),ui-monospace,monospace;letter-spacing:0.08em;text-transform:uppercase;color:var(--mu,#5C6357)">Ability</dt><dd style="margin:0;padding:10px 0;border-bottom:1px solid var(--bd,#DADED1)">Weekend Build — ships faster when nobody’s watching</dd>
+<dt style="padding:10px 0;border-bottom:1px solid var(--bd,#DADED1);font:500 11px/1.9 var(--mono,'Geist Mono'),ui-monospace,monospace;letter-spacing:0.08em;text-transform:uppercase;color:var(--mu,#5C6357)">Moves</dt><dd style="margin:0;padding:10px 0;border-bottom:1px solid var(--bd,#DADED1)">Spec · Prototype · Prompt · Deadlift</dd>
+<dt style="padding:10px 0;border-bottom:1px solid var(--bd,#DADED1);font:500 11px/1.9 var(--mono,'Geist Mono'),ui-monospace,monospace;letter-spacing:0.08em;text-transform:uppercase;color:var(--mu,#5C6357)">Weakness</dt><dd style="margin:0;padding:10px 0;border-bottom:1px solid var(--bd,#DADED1)">A new AI tool launching at 2 a.m.</dd>
+<dt style="padding:10px 0;border-bottom:1px solid var(--bd,#DADED1);font:500 11px/1.9 var(--mono,'Geist Mono'),ui-monospace,monospace;letter-spacing:0.08em;text-transform:uppercase;color:var(--mu,#5C6357)">Habitat</dt><dd style="margin:0;padding:10px 0;border-bottom:1px solid var(--bd,#DADED1)">Between a PRD and a terminal</dd>
+</dl>
+<p style="margin:0;padding:16px 22px 8px;font:400 14px/1.6 var(--sans,'Funnel Sans'),system-ui,sans-serif;color:var(--mu,#5C6357)">Evolves when handed a hard problem and a deadline. Has been seen rewatching a whole One Piece arc while a build runs.</p>
+<div style="display:flex;justify-content:flex-end;padding:8px 22px 20px"><button type="button" onClick="{{ closeDex }}" style="font:500 11px/1 var(--mono,'Geist Mono'),ui-monospace,monospace;letter-spacing:0.08em;text-transform:uppercase;padding:12px 14px;border:1px solid var(--bd,#DADED1);border-radius:10px;background:transparent;color:var(--tx,#1D211B);cursor:pointer">Close</button></div>
+</div>
+</div>
+</sc-if>
+
+<sc-if value="{{ intro.show }}" hint-placeholder-val="{{ false }}">
+<dc-import name="PrdIntro" variant="{{ intro.variant }}" play-key="{{ intro.key }}" delay="{{ 900 }}" on-done="{{ intro.done }}" style="position:absolute;inset:0;z-index:70" hint-size="100%,100%"></dc-import>
+</sc-if>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;palette&quot;:{&quot;editor&quot;:&quot;enum&quot;,&quot;options&quot;:[&quot;Matcha&quot;,&quot;Espresso&quot;,&quot;Midnight&quot;,&quot;Oxblood&quot;,&quot;Graphite&quot;],&quot;default&quot;:&quot;Matcha&quot;,&quot;tsType&quot;:&quot;string&quot;,&quot;section&quot;:&quot;Look&quot;},&quot;mode&quot;:{&quot;editor&quot;:&quot;enum&quot;,&quot;options&quot;:[&quot;light&quot;,&quot;dark&quot;,&quot;system&quot;],&quot;default&quot;:&quot;light&quot;,&quot;tsType&quot;:&quot;string&quot;,&quot;section&quot;:&quot;Look&quot;},&quot;sidebarTone&quot;:{&quot;editor&quot;:&quot;enum&quot;,&quot;options&quot;:[&quot;tinted&quot;,&quot;ink&quot;],&quot;default&quot;:&quot;tinted&quot;,&quot;tsType&quot;:&quot;string&quot;,&quot;section&quot;:&quot;Look&quot;},&quot;typePairing&quot;:{&quot;editor&quot;:&quot;enum&quot;,&quot;options&quot;:[&quot;Funnel&quot;,&quot;Cabinet&quot;,&quot;Host&quot;,&quot;Sentient&quot;,&quot;Arcade&quot;],&quot;default&quot;:&quot;Funnel&quot;,&quot;tsType&quot;:&quot;string&quot;,&quot;section&quot;:&quot;Look&quot;},&quot;notesName&quot;:{&quot;editor&quot;:&quot;enum&quot;,&quot;options&quot;:[&quot;Field notes&quot;,&quot;Logbook&quot;,&quot;Learn / Build / Write&quot;,&quot;Notebook&quot;],&quot;default&quot;:&quot;Field notes&quot;,&quot;tsType&quot;:&quot;string&quot;,&quot;section&quot;:&quot;Content&quot;},&quot;intro&quot;:{&quot;editor&quot;:&quot;enum&quot;,&quot;options&quot;:[&quot;rip&quot;,&quot;peel&quot;,&quot;shred&quot;,&quot;off&quot;],&quot;default&quot;:&quot;rip&quot;,&quot;tsType&quot;:&quot;string&quot;,&quot;section&quot;:&quot;Intro&quot;},&quot;startView&quot;:{&quot;editor&quot;:&quot;enum&quot;,&quot;options&quot;:[&quot;home&quot;,&quot;chat&quot;,&quot;experience&quot;,&quot;project&quot;,&quot;notes&quot;,&quot;article&quot;,&quot;lab&quot;],&quot;default&quot;:&quot;home&quot;,&quot;tsType&quot;:&quot;string&quot;,&quot;section&quot;:&quot;Preview&quot;},&quot;drawerOpen&quot;:{&quot;editor&quot;:&quot;boolean&quot;,&quot;default&quot;:false,&quot;tsType&quot;:&quot;boolean&quot;,&quot;section&quot;:&quot;Preview&quot;},&quot;embedded&quot;:{&quot;editor&quot;:null,&quot;default&quot;:false,&quot;tsType&quot;:&quot;boolean&quot;},&quot;resumeUrl&quot;:{&quot;editor&quot;:null,&quot;default&quot;:&quot;Resume.dc.html&quot;,&quot;tsType&quot;:&quot;string&quot;}}">
+class Component extends DCLogic {
+  state = { C: null, w: 1280, view: 'home', kind: null, slug: null, filter: 'All', sideOpen: true, drawer: false, focusMode: false, palette: null, mode: null, type: null, gotham: false, val: '', focus: false, sel: 0, menuAll: false, msgs: [], toast: '', dex: false, introKey: 0, introDone: false, now: Date.now() };
+  rootRef = React.createRef(); scrollRef = React.createRef(); inputRef = React.createRef(); mainRef = React.createRef();
+  K = ['bg', 'side', 'side-tx', 'side-mu', 'side-bd', 'side-hv', 'side-act', 'side-act-tx', 'sf', 'card', 'tx', 'mu', 'bd', 'ac', 'on-ac', 'ink', 'hl'];
+  // light (tinted sidebar) · ink (dark sidebar overrides for light mode) · dark
+  PAL = {
+    Matcha: {
+      light: ['#F4F5F0', '#EBEDE4', '#1D211B', '#5E6559', '#DCE0D3', '#E2E6D9', '#D6E2C4', '#1D211B', '#E8EBE1', '#FBFCF8', '#1D211B', '#5C6357', '#DADED1', '#6F8C4E', '#FFFFFF', '#4B6731', 'rgba(150,184,112,0.42)'],
+      ink: ['#1F2620', '#E9EDE4', '#9AA596', '#2E3830', '#28312A', '#B9CF9A', '#1D211B'],
+      dark: ['#1B1E1B', '#161916', '#E6EAE2', '#979F93', '#2A2F2A', '#222622', '#2E372C', '#C5D9A8', '#242824', '#202420', '#E6EAE2', '#9AA296', '#2E332E', '#A9C48A', '#1B1E1B', '#B5CD98', 'rgba(169,196,138,0.26)']
+    },
+    Espresso: {
+      light: ['#F7F3EE', '#EFE8DF', '#241B16', '#6E6158', '#E2D8CC', '#E8DFD3', '#EBD8C2', '#241B16', '#EEE7DD', '#FDFBF8', '#241B16', '#6B5E55', '#E2D8CC', '#9A5F33', '#FFFFFF', '#8A5025', 'rgba(201,139,82,0.3)'],
+      ink: ['#2A211C', '#F1EBE4', '#A89A8E', '#3A2F28', '#332821', '#D9A574', '#241B16'],
+      dark: ['#1E1A17', '#191512', '#EFE8E0', '#A3968A', '#302924', '#26211D', '#352C25', '#E2B184', '#29231F', '#24201C', '#EFE8E0', '#A79A8E', '#352E28', '#D9A574', '#1E1A17', '#E2B184', 'rgba(217,165,116,0.24)']
+    },
+    Midnight: {
+      light: ['#F3F4F7', '#E9EBF1', '#161B2B', '#5D6478', '#DADEE8', '#E0E3EC', '#DCE1F7', '#161B2B', '#E7EAF1', '#FCFCFE', '#161B2B', '#5A6175', '#D9DDE7', '#4F5FD9', '#FFFFFF', '#3E4CC4', 'rgba(111,126,240,0.22)'],
+      ink: ['#171D30', '#E7EAF3', '#9198AE', '#252C42', '#1F263A', '#A9B4FF', '#161B2B'],
+      dark: ['#181B24', '#13161E', '#E6E9F2', '#959BAE', '#272B38', '#1F232E', '#2A3050', '#B7C0FF', '#21252F', '#1D212B', '#E6E9F2', '#9AA0B3', '#2B303C', '#A3AEFF', '#181B24', '#B2BBFF', 'rgba(163,174,255,0.24)']
+    },
+    Oxblood: {
+      light: ['#F8F4F1', '#F0E9E5', '#26161A', '#6F5D61', '#E5D9D5', '#E9DFDB', '#EED6D6', '#26161A', '#EFE7E3', '#FFFCFA', '#26161A', '#6F5D61', '#E5D9D5', '#7D2433', '#FFFFFF', '#7D2433', 'rgba(170,60,80,0.16)'],
+      ink: ['#2A1519', '#F2E9EA', '#AF9A9D', '#3C2227', '#341C21', '#E6A3AE', '#26161A'],
+      dark: ['#1E1719', '#191315', '#F0E7E8', '#A8979A', '#33282B', '#261D20', '#3A262B', '#EFB0BA', '#2A2124', '#241C1F', '#F0E7E8', '#AD9C9F', '#362B2E', '#E8A0AC', '#1E1719', '#EFB0BA', 'rgba(232,160,172,0.22)']
+    },
+    Graphite: {
+      light: ['#F4F4F2', '#EAEAE7', '#1A1A19', '#5F5F5B', '#DBDBD7', '#E1E1DD', '#E3EBA0', '#1A1A19', '#E8E8E4', '#FCFCFB', '#1A1A19', '#5D5D59', '#D9D9D4', '#D3E05F', '#1A1A19', '#56620E', 'rgba(211,224,95,0.55)'],
+      ink: ['#1C1C1B', '#EDEDEA', '#9A9A95', '#2C2C2A', '#252524', '#D6E36B', '#1A1A19'],
+      dark: ['#1C1C1C', '#171717', '#EBEBE8', '#999995', '#2C2C2B', '#232323', '#2F3220', '#DDE883', '#252525', '#212121', '#EBEBE8', '#9D9D98', '#303030', '#D6E36B', '#1C1C1C', '#DDE883', 'rgba(214,227,107,0.24)']
+    }
+  };
+  GOTHAM = ['#121316', '#0D0E10', '#ECEAE3', '#8F8F89', '#22242A', '#1A1C20', '#F2C230', '#121316', '#1C1E23', '#17191D', '#ECEAE3', '#9A9A94', '#2A2C32', '#F2C230', '#121316', '#F2C230', 'rgba(242,194,48,0.3)'];
+  // display, body, mono, display weight, dek style
+  FONTS = {
+    Funnel: ["'Funnel Display'", "'Funnel Sans'", "'Geist Mono'", '500', 'normal'],
+    Cabinet: ["'Cabinet Grotesk'", "'Switzer'", "'Fragment Mono'", '700', 'normal'],
+    Host: ["'Host Grotesk'", "'Host Grotesk'", "'Reddit Mono'", '500', 'normal'],
+    Sentient: ["'Sentient'", "'Switzer'", "'Geist Mono'", '400', 'italic'],
+    Arcade: ["'Array'", "'Supreme'", "'Geist Mono'", '600', 'normal']
+  };
+  EMPTY = { profile: { name: 'Aayush Kumar', headline: '', bio: '', city: 'New Delhi', tz: 'Asia/Kolkata', links: [], building: { label: '', url: '#' } }, projects: [], notes: [], experience: [], education: {}, skills: [], lab: [], toolbox: [] };
+  MON = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+  KIND = { learned: ['Learned', '50%', 'transparent'], built: ['Built', '1px', 'var(--ink)'], wrote: ['Wrote', '50%', 'var(--ink)'] };
+  ALIAS = { '/work': '/experience', '/cases': '/experience', '/writing': '/notes', '/write': '/notes', '/learn': '/notes', '/learnings': '/notes', '/blog': '/notes', '/batman': '/gotham' };
+
+  notesName() { return this.props.notesName ?? 'Field notes'; }
+  typeName() { return this.state.type ?? this.props.typePairing ?? 'Funnel'; }
+  palName() { return this.state.palette ?? this.props.palette ?? 'Matcha'; }
+  modeNow() {
+    const m = this.state.mode ?? this.props.mode ?? 'light';
+    if (m === 'system') return window.matchMedia && matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+    return m;
+  }
+  cmds(C) {
+    return [
+      { g: 'Pages', cmd: '/home', label: 'Home', hint: '' },
+      { g: 'Pages', cmd: '/experience', label: 'Experience & case studies', hint: `${C.projects.length} cases`, alias: ['/work', '/cases'] },
+      { g: 'Pages', cmd: '/notes', label: `${this.notesName()} — learn, build, write`, hint: `${C.notes.length} entries`, alias: ['/writing', '/write', '/learn', '/learnings', '/blog'] },
+      { g: 'Pages', cmd: '/lab', label: 'Side projects & tools', hint: '' },
+      { g: 'Pages', cmd: '/resume', label: 'Résumé with PDF download', hint: 'new tab ↗' },
+      { g: 'Settings', cmd: '/theme', label: 'Switch light / dark', hint: '' },
+      { g: 'Settings', cmd: '/palette', label: 'Next colour palette', hint: this.palName() },
+      { g: 'Settings', cmd: '/type', label: 'Next font pairing', hint: this.typeName() },
+      { g: 'Settings', cmd: '/focus', label: 'Reading focus (hide sidebar)', hint: '' },
+      { g: 'Settings', cmd: '/intro', label: 'Replay the PRD intro', hint: '' },
+      { g: 'Play', cmd: '/pokedex', label: 'Open my Pokédex entry', hint: '' },
+      { g: 'Play', cmd: '/gear5', label: 'Gear 5', hint: '' },
+      { g: 'Play', cmd: '/gotham', label: 'Gotham mode', hint: '', alias: ['/batman'] },
+      { g: 'Play', cmd: '/snap', label: 'Perfectly balanced', hint: '' }
+    ];
+  }
+
+  componentDidMount() {
+    import(new URL('site.content.js', document.baseURI).href).then(m => this.setState({ C: m.default }), e => console.error('site.content.js failed to load', e));
+    const el = this.rootRef.current;
+    if (el && window.ResizeObserver) {
+      this.ro = new ResizeObserver(es => { const w = Math.round(es[0].contentRect.width); if (w && w !== this.state.w) this.setState({ w }); });
+      this.ro.observe(el);
+    }
+    this.clock = setInterval(() => this.setState({ now: Date.now() }), 30000);
+    this.initView();
+    if (!this.props.embedded) {
+      this.onKey = e => this.globalKey(e); window.addEventListener('keydown', this.onKey);
+      try { const p = JSON.parse(localStorage.getItem('ak-site-prefs') || '{}'); this.setState({ palette: p.palette || null, mode: p.mode || null, type: p.type || null }); } catch (e) {}
+    }
+    if (this.reduced()) this.setState({ introDone: true });
+    this.apply();
+  }
+  componentDidUpdate(pp, ps) {
+    const p = this.props;
+    if (pp.startView !== p.startView || pp.drawerOpen !== p.drawerOpen) this.initView();
+    if (pp.intro !== p.intro) this.setState(s => ({ introDone: false, introKey: s.introKey + 1 }));
+    if (pp.palette !== p.palette && this.state.palette) this.setState({ palette: null });
+    if (pp.mode !== p.mode && this.state.mode) this.setState({ mode: null });
+    if (pp.typePairing !== p.typePairing && this.state.type) this.setState({ type: null });
+    if (!p.embedded && (ps.palette !== this.state.palette || ps.mode !== this.state.mode || ps.type !== this.state.type)) {
+      try { localStorage.setItem('ak-site-prefs', JSON.stringify({ palette: this.state.palette, mode: this.state.mode, type: this.state.type })); } catch (e) {}
+    }
+    this.apply();
+  }
+  componentWillUnmount() { this.ro && this.ro.disconnect(); clearInterval(this.clock); clearTimeout(this.tt); this.onKey && window.removeEventListener('keydown', this.onKey); }
+
+  initView() {
+    const sv = this.props.startView ?? 'home';
+    const map = { article: ['doc', 'note', 'guardrails-are-the-product'], project: ['doc', 'project', 'transact-comply'], work: ['experience'], writing: ['notes'] };
+    const [view, kind = null, slug = null] = map[sv] || [sv];
+    const msgs = [];
+    if (sv === 'chat') {
+      const q = 'Is he open to new roles? Where’s the CV?';
+      const r = this.reply(q);
+      msgs.push({ id: 1, user: true, text: q }, { id: 2, bot: true, text: r.text, routes: r.routes });
+    }
+    this.setState({ view, kind, slug, msgs, drawer: !!this.props.drawerOpen });
+  }
+  reduced() { return window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches; }
+  apply() {
+    const el = this.rootRef.current; if (!el) return;
+    const dark = this.modeNow() === 'dark';
+    const P = this.PAL[this.palName()] || this.PAL.Matcha;
+    let pal;
+    if (this.state.gotham) pal = this.GOTHAM;
+    else if (dark) pal = P.dark;
+    else { pal = P.light.slice(); if ((this.props.sidebarTone ?? 'tinted') === 'ink') P.ink.forEach((v, i) => { pal[i + 1] = v; }); }
+    this.K.forEach((k, i) => el.style.setProperty('--' + k, pal[i]));
+    el.style.colorScheme = this.state.gotham || dark ? 'dark' : 'light';
+    const f = this.FONTS[this.typeName()] || this.FONTS.Funnel;
+    el.style.setProperty('--serif', f[0]); el.style.setProperty('--sans', f[1]); el.style.setProperty('--mono', f[2]);
+    el.style.setProperty('--dw', f[3]); el.style.setProperty('--fi', f[4]);
+  }
+
+  pv = fn => e => { if (e && e.preventDefault) e.preventDefault(); fn(); };
+  toTop() { requestAnimationFrame(() => { const s = this.scrollRef.current; if (s) s.scrollTop = 0; }); }
+  toEnd() { requestAnimationFrame(() => { const s = this.scrollRef.current; if (s) s.scrollTop = s.scrollHeight; }); }
+  go(view, extra = {}) { this.setState({ view, kind: null, slug: null, drawer: false, ...extra }); this.toTop(); }
+  openDoc(kind, slug) { this.go('doc', { kind, slug }); }
+  toast(msg) { this.setState({ toast: msg }); clearTimeout(this.tt); this.tt = setTimeout(() => this.setState({ toast: '' }), 3400); }
+  openResume() {
+    this.setState({ drawer: false });
+    window.open(new URL(this.props.resumeUrl ?? 'Resume.dc.html', document.baseURI).href, '_blank', 'noopener');
+  }
+  clearInput() { this.setState({ val: '', sel: 0, menuAll: false }); }
+  cycle(list, cur) { return list[(list.indexOf(cur) + 1) % list.length]; }
+
+  items() {
+    const C = this.state.C || this.EMPTY;
+    const v = this.state.val.trim().toLowerCase();
+    const typed = v.startsWith('/');
+    const q = typed ? v.split(' ')[0] : '';
+    return this.cmds(C).filter(c => (typed || c.g !== 'Play') && (!q || c.cmd.startsWith(q) || (c.alias || []).some(a => a.startsWith(q))));
+  }
+  menuOpen() {
+    const S = this.state, v = S.val.trim();
+    return S.focus && ((S.menuAll && !v) || v.startsWith('/')) && this.items().length > 0;
+  }
+  run(raw) {
+    let c = raw.trim().toLowerCase().split(' ')[0];
+    c = this.ALIAS[c] || c;
+    this.clearInput();
+    const pages = { '/home': 'home', '/experience': 'experience', '/notes': 'notes', '/lab': 'lab' };
+    if (pages[c]) return this.go(pages[c]);
+    switch (c) {
+      case '/resume': return this.openResume();
+      case '/theme': return this.setState({ gotham: false, mode: this.modeNow() === 'dark' ? 'light' : 'dark' });
+      case '/palette': { const next = this.cycle(Object.keys(this.PAL), this.palName()); this.setState({ palette: next, gotham: false }); return this.toast(`Palette: ${next}`); }
+      case '/type': { const next = this.cycle(Object.keys(this.FONTS), this.typeName()); this.setState({ type: next }); return this.toast(`Type: ${next}`); }
+      case '/focus': if (this.state.view !== 'doc') return this.toast('Focus mode works on essays and case studies.'); return this.setState(s => ({ focusMode: !s.focusMode }));
+      case '/intro': return this.setState(s => ({ introDone: false, introKey: s.introKey + 1 }));
+      case '/help': return this.toast('Type / to see everything this box can do.');
+      case '/gotham': this.setState({ gotham: true }); return this.toast('Gotham mode. /theme brings back daylight.');
+      case '/gear5': return this.gear5();
+      case '/snap': return this.snap();
+      case '/pokedex': return this.setState({ dex: true });
+    }
+    this.toast(`No command “${c}”. Type / to see them all.`);
+  }
+  gear5() {
+    this.toast('Gear 5. Everything’s rubber for a second.');
+    if (this.reduced()) return;
+    const m = this.mainRef.current; if (!m) return;
+    m.style.transformOrigin = '50% 20%';
+    m.animate([{ transform: 'scale(1,1)' }, { transform: 'scale(1.05,0.9)' }, { transform: 'scale(0.93,1.08)' }, { transform: 'scale(1.03,0.96)' }, { transform: 'scale(0.99,1.01)' }, { transform: 'scale(1,1)' }], { duration: 1100, easing: 'ease-in-out' });
+  }
+  snap() {
+    this.toast('Perfectly balanced. Restoring…');
+    const sc = this.scrollRef.current; if (!sc) return;
+    let nodes = [...sc.querySelectorAll('[data-snap]')];
+    if (!nodes.length) nodes = [...sc.querySelectorAll('main h1, main p, main a, main button')];
+    nodes = nodes.filter((_, i) => i % 2 === 0);
+    if (this.reduced()) { nodes.forEach(n => n.style.visibility = 'hidden'); return setTimeout(() => nodes.forEach(n => n.style.visibility = ''), 2400); }
+    const anims = nodes.map((n, i) => n.animate([{ opacity: 1, filter: 'blur(0px)', transform: 'translate(0,0)' }, { opacity: 0, filter: 'blur(10px)', transform: 'translate(36px,-18px)' }], { duration: 1300, delay: i * 110, easing: 'ease-in', fill: 'forwards' }));
+    const t = 1300 + nodes.length * 110;
+    setTimeout(() => anims.forEach(a => a.reverse()), t + 1400);
+    setTimeout(() => anims.forEach(a => a.cancel()), t * 2 + 1700);
+  }
+  reply(q) {
+    const R = [
+      [/resume|cv|hir|recruit|open to|available|role/i, ['/resume', '/experience'], 'The résumé opens in a new tab with a one-click PDF download, and /experience has the detail.'],
+      [/work|project|case|ship|built|transact|privacy|panda|profile|metric|result|experience|job|career|zigram|skill/i, ['/experience'], 'Experience lists every product; each one opens a full case study. Transact Comply is the one with the numbers.'],
+      [/writ|article|essay|blog|read|medium|post|learn|lesson|note/i, ['/notes'], `${this.notesName()} has the essays, short lessons and build logs in one feed.`],
+      [/side|weekend|lab|dpdp|tool|hobby|fun/i, ['/lab'], 'Weekend builds and the tools in rotation are under /lab.'],
+      [/contact|email|reach|talk|call|connect/i, ['/resume'], 'Email is fastest: aayushkr117@gmail.com.']
+    ];
+    const hit = R.find(([re]) => re.test(q));
+    return hit ? { text: 'AI answers are coming soon. Until then: ' + hit[2], routes: hit[1] } : { text: 'AI answers are coming soon. Until then, these are the best places to start.', routes: ['/experience', '/notes', '/lab'] };
+  }
+  ask(q) {
+    this.clearInput();
+    const id = Date.now();
+    this.setState(s => ({ view: 'chat', kind: null, slug: null, drawer: false, msgs: [...s.msgs, { id, user: true, text: q }, { id: id + 1, bot: true, text: '…', routes: [] }] }));
+    this.toEnd();
+    setTimeout(() => { const r = this.reply(q); this.setState(s => ({ msgs: s.msgs.map(m => m.id === id + 1 ? { ...m, text: r.text, routes: r.routes } : m) })); this.toEnd(); }, 600);
+  }
+  submit() {
+    const v = this.state.val.trim();
+    const its = this.items();
+    if (this.menuOpen() && (!v || v === '/')) return this.run(its[Math.min(this.state.sel, its.length - 1)].cmd);
+    if (!v) return;
+    if (v.startsWith('/')) {
+      const w = v.toLowerCase().split(' ')[0];
+      if (this.ALIAS[w] || its.some(c => c.cmd === w) || !its.length) return this.run(w);
+      return this.run(its[Math.min(this.state.sel, its.length - 1)].cmd);
+    }
+    this.ask(v);
+  }
+  keyDown(e) {
+    const open = this.menuOpen(), n = this.items().length;
+    if (e.key === 'ArrowDown' && open) { e.preventDefault(); this.setState(s => ({ sel: (s.sel + 1) % n })); }
+    else if (e.key === 'ArrowUp' && open) { e.preventDefault(); this.setState(s => ({ sel: (s.sel - 1 + n) % n })); }
+    else if (e.key === 'Enter') { e.preventDefault(); this.submit(); }
+    else if (e.key === 'Escape') { this.clearInput(); e.target.blur(); }
+  }
+  globalKey(e) {
+    const t = e.target, typing = t && (t.tagName === 'INPUT' || t.tagName === 'TEXTAREA' || t.isContentEditable);
+    if (e.key === 'Escape') { if (this.state.dex) this.setState({ dex: false }); else if (this.state.drawer) this.setState({ drawer: false }); return; }
+    if (typing) return;
+    if (e.key === '/' || ((e.metaKey || e.ctrlKey) && e.key.toLowerCase() === 'k')) {
+      e.preventDefault(); const i = this.inputRef.current; if (i) i.focus();
+      this.setState(e.key === '/' ? { val: '/', focus: true } : { menuAll: true, focus: true });
+    }
+  }
+
+  fmt(d, short) { const [y, m, dd] = d.split('-').map(Number); return short ? `${this.MON[m - 1]} ${dd}` : `${this.MON[m - 1]} ${dd}, ${y}`; }
+  blocks(bs) {
+    return (bs || []).map(b => ({ ...b, p: b.t === 'p', h2: b.t === 'h2', quote: b.t === 'quote', steps: b.t === 'steps', list: b.t === 'list', code: b.t === 'code', figure: b.t === 'figure', metrics: b.t === 'metrics', items: b.items || [], h: b.h || 240 }));
+  }
+  openNote(n) { return n.kind === 'wrote' ? this.openDoc('note', n.slug) : this.go('notes'); }
+
+  renderVals() {
+    const S = this.state, C = S.C || this.EMPTY, P = C.profile;
+    const w = S.w, desk = w >= 1024, mob = w < 640;
+    const isDoc = S.view === 'doc';
+    const focusMode = S.focusMode && isDoc;
+    const inFlow = desk && S.sideOpen && !focusMode;
+    const drawer = !desk && S.drawer;
+    const notesName = this.notesName();
+    const L = {
+      sbDisplay: inFlow || drawer ? 'flex' : 'none', sbPos: inFlow ? 'relative' : 'absolute', sbW: inFlow ? '272px' : 'min(304px, 86%)',
+      sbShadow: drawer ? '0 0 80px rgba(0,0,0,0.3)' : 'none', closeGlyph: desk ? '«' : '×', closeLabel: desk ? 'Collapse sidebar' : 'Close navigation',
+      menuBtn: !inFlow, topName: !inFlow, crumbDisplay: mob ? 'none' : 'block', spacerDisplay: mob ? 'block' : 'none',
+      resumeTop: !mob, aiHint: !mob, scrim: drawer, focusBtn: desk
+    };
+    const active = isDoc ? (S.kind === 'project' ? 'experience' : 'notes') : S.view === 'chat' ? 'home' : S.view;
+    const pad = n => n ? String(n).padStart(2, '0') : '';
+    const nav = [['home', 'Home', ''], ['experience', 'Experience', pad(C.projects.length)], ['notes', notesName, pad(C.notes.length)], ['lab', 'Lab', '']]
+      .map(([k, label, meta]) => { const on = active === k; return { label, meta, cur: on ? 'page' : undefined, bg: on ? 'var(--side-act)' : 'transparent', fg: on ? 'var(--side-act-tx)' : 'var(--side-tx)', go: this.pv(() => this.go(k)) }; });
+    const recent = C.notes.slice(0, 5).map(n => { const on = isDoc && S.slug === n.slug; const k = this.KIND[n.kind] || this.KIND.wrote; return { title: n.title, shapeR: k[1], shapeBg: k[2] === 'transparent' ? 'transparent' : 'var(--side-mu)', bg: on ? 'var(--side-hv)' : 'transparent', fg: on ? 'var(--side-tx)' : 'var(--side-mu)', go: this.pv(() => this.openNote(n)) }; });
+    const palettes = Object.keys(this.PAL).map(n => ({ name: n, sw: this.PAL[n].light[13], ring: !S.gotham && this.palName() === n ? 'var(--side-tx)' : 'var(--side-bd)', pick: () => this.setState({ palette: n, gotham: false }) }));
+    const dark = S.gotham || this.modeNow() === 'dark';
+    const segBtn = on => ({ on: on ? 'true' : 'false', bg: on ? 'var(--side-tx)' : 'transparent', fg: on ? 'var(--side)' : 'var(--side-mu)' });
+    const seg = { light: { ...segBtn(!dark), pick: () => this.setState({ mode: 'light', gotham: false }) }, dark: { ...segBtn(dark), pick: () => this.setState({ mode: 'dark', gotham: false }) } };
+
+    const d = new Date(S.now), h = d.getHours();
+    const g = h < 5 ? 'Up late' : h < 12 ? 'Good morning' : h < 17 ? 'Good afternoon' : 'Good evening';
+    let ist = '';
+    try { ist = d.toLocaleTimeString('en-GB', { timeZone: P.tz || 'Asia/Kolkata', hour: '2-digit', minute: '2-digit' }); } catch (e) {}
+    const greet = `${g} — it’s ${ist} in ${P.city || 'New Delhi'}`;
+
+    const qLabels = { '/experience': 'Experience', '/notes': notesName, '/lab': 'Lab', '/resume': 'Résumé ↗' };
+    const quick = Object.keys(qLabels).map(c => ({ cmd: c, label: qLabels[c], go: () => this.run(c) }));
+    const essays = C.notes.filter(n => n.kind === 'wrote');
+    const la = essays[0];
+    const latest = la ? { title: la.title, date: this.fmt(la.date), go: this.pv(() => this.openDoc('note', la.slug)) } : { title: '', date: '', go: this.pv(() => {}) };
+    const msgs = S.msgs.map(m => ({ ...m, user: !!m.user, bot: !!m.bot, chips: (m.routes || []).map(c => ({ cmd: c, label: qLabels[c] || '', go: () => this.run(c) })) }));
+
+    const proj = slug => C.projects.find(p => p.slug === slug);
+    const exp = C.experience.map(e => ({ ...e, items: (e.products || []).map(proj).filter(Boolean).map(p => ({ ...p, key: p.key || { n: '', l: '' }, open: this.pv(() => this.openDoc('project', p.slug)) })) }));
+    const edu = { school: '', degree: '', period: '', note: '', ...(C.education || {}) };
+
+    const kinds = ['All', 'learned', 'built', 'wrote'];
+    const filters = kinds.map(k => { const on = S.filter === k; return { label: k === 'All' ? 'All' : this.KIND[k][0], count: k === 'All' ? C.notes.length : C.notes.filter(n => n.kind === k).length, on: on ? 'true' : 'false', bg: on ? 'var(--tx)' : 'transparent', fg: on ? 'var(--bg)' : 'var(--tx)', bd: on ? 'var(--tx)' : 'var(--bd)', pick: () => this.setState({ filter: k }) }; });
+    const shown = C.notes.filter(n => S.filter === 'All' || n.kind === S.filter);
+    const years = [...new Set(shown.map(n => n.date.slice(0, 4)))];
+    const groups = years.map(y => {
+      const items = shown.filter(n => n.date.startsWith(y));
+      return { year: y, count: `${items.length} ${items.length === 1 ? 'entry' : 'entries'}`, items: items.map(n => { const k = this.KIND[n.kind] || this.KIND.wrote; return { ...n, short: this.fmt(n.date, true), kindLabel: k[0], shapeR: k[1], shapeBg: k[2], isLink: n.kind === 'wrote', isNote: n.kind !== 'wrote', hasUrl: !!n.url && n.kind !== 'wrote', url: n.url || '#', read: n.read ? `${n.read} min` : '', medium: n.source === 'medium', open: this.pv(() => this.openDoc('note', n.slug)) }; }) };
+    });
+
+    const ST = { Live: ['var(--ac)', 'var(--ac)', 'var(--on-ac)'], WIP: ['var(--bd)', 'transparent', 'var(--tx)'] };
+    const lab = C.lab.map(l => { const s = ST[l.status] || ST.WIP; return { ...l, bc: s[0], bg: s[1], fg: s[2], href: l.url || '#', click: l.url ? undefined : this.pv(() => { const i = this.inputRef.current; if (i) i.focus(); this.setState({ val: '/', focus: true }); }) }; });
+
+    let doc = { title: '', dek: '', meta: '', blocks: [], tags: [], facts: [], hasFacts: false, backLabel: 'Back', back: this.pv(() => this.go('home')), hasNext: false, nextLabel: '', next: this.pv(() => {}), isMedium: false, url: '#' };
+    if (isDoc && S.kind === 'project') {
+      const i = C.projects.findIndex(p => p.slug === S.slug), p = C.projects[i];
+      if (p) { const nx = C.projects[(i + 1) % C.projects.length]; doc = { ...doc, title: p.title, dek: p.dek, meta: `Case study · ${p.sector} · ${p.year}`, facts: [{ k: 'Role', v: p.role }, { k: 'Tools', v: p.tools }], hasFacts: true, blocks: this.blocks(p.blocks), tags: p.tags, backLabel: 'Experience', back: this.pv(() => this.go('experience')), hasNext: C.projects.length > 1, nextLabel: `Next case: ${nx.title}`, next: this.pv(() => this.openDoc('project', nx.slug)) }; }
+    } else if (isDoc) {
+      const i = essays.findIndex(a => a.slug === S.slug), a = essays[i];
+      if (a) { const nx = essays[i + 1]; doc = { ...doc, title: a.title, dek: a.dek, meta: `Wrote · ${this.fmt(a.date)} · ${a.read} min read`, blocks: this.blocks(a.blocks), tags: a.tags, backLabel: notesName, back: this.pv(() => this.go('notes')), hasNext: !!nx, nextLabel: nx ? `Older: ${nx.title}` : '', next: nx ? this.pv(() => this.openDoc('note', nx.slug)) : doc.next, isMedium: a.source === 'medium', url: a.url || '#' }; }
+    }
+
+    const crumbs = { home: '~/', chat: '~/conversation', experience: '~/experience', notes: '~/notes', lab: '~/lab' };
+    const crumb = isDoc ? `~/${S.kind === 'project' ? 'experience' : 'notes'}/${S.slug}` : crumbs[S.view] || '~/';
+
+    const its = this.items(), menu = this.menuOpen(), sel = Math.min(S.sel, Math.max(0, its.length - 1));
+    const indexed = its.map((c, i) => ({ ...c, i }));
+    const cm = {
+      val: S.val, menu,
+      groups: ['Pages', 'Settings', 'Play'].map(name => ({ name, items: indexed.filter(c => c.g === name).map(c => ({ cmd: c.cmd, label: c.label, hint: c.hint, on: c.i === sel ? 'true' : 'false', bg: c.i === sel ? 'var(--sf)' : 'transparent', pick: e => { e.preventDefault(); this.run(c.cmd); } })) })).filter(g => g.items.length),
+      ph: isDoc ? (mob ? 'Ask about this, or type /' : S.kind === 'project' ? 'Ask about this case study, or type / to jump' : 'Ask about this essay, or type / to jump') : mob ? 'Ask anything, or type /' : 'Ask me anything, or type / for every page',
+      hasCtx: isDoc && !mob && !!doc.title, ctx: `↳ ${doc.title}`,
+      bd: S.focus ? 'var(--tx)' : 'var(--bd)',
+      sendBg: S.val.trim() ? 'var(--ac)' : 'var(--sf)', sendFg: S.val.trim() ? 'var(--on-ac)' : 'var(--mu)',
+      onChange: e => this.setState({ val: e.target.value, sel: 0 }),
+      onKeyDown: e => this.keyDown(e),
+      onFocus: () => this.setState({ focus: true }),
+      onBlur: () => this.setState({ focus: false, menuAll: false }),
+      showAll: e => { e.preventDefault(); const i = this.inputRef.current; if (i) i.focus(); this.setState(s => ({ focus: true, menuAll: !s.menuAll, val: '' })); },
+      submit: () => this.submit()
+    };
+
+    const introProp = this.props.intro ?? 'rip';
+    const intro = { show: !S.introDone && (introProp !== 'off' || S.introKey > 0), variant: introProp === 'off' ? 'rip' : introProp, key: S.introKey, done: () => this.setState({ introDone: true }) };
+
+    return {
+      rootRef: this.rootRef, scrollRef: this.scrollRef, inputRef: this.inputRef, mainRef: this.mainRef,
+      rootH: this.props.embedded ? '100%' : '100dvh',
+      L, P, nav, recent, palettes, seg, greet, quick, latest, msgs, exp, edu, skills: C.skills, filters, groups, lab, toolbox: C.toolbox, doc, crumb, cm, intro, notesName,
+      typeName: this.typeName(), cycleType: () => this.run('/type'),
+      building: P.building || { label: '', url: '#' },
+      v: { home: S.view === 'home', chat: S.view === 'chat', experience: S.view === 'experience', notes: S.view === 'notes', lab: S.view === 'lab', doc: isDoc },
+      focusOn: focusMode ? 'true' : 'false', focusLabel: focusMode ? 'Exit focus' : 'Focus',
+      toggleFocus: () => this.setState(s => ({ focusMode: !s.focusMode })),
+      goHome: this.pv(() => this.go('home')),
+      newChat: () => { this.setState({ msgs: [] }); this.go('home'); const i = this.inputRef.current; if (i) i.focus(); },
+      openSide: () => desk ? this.setState({ sideOpen: true, focusMode: false }) : this.setState({ drawer: true }),
+      closeSide: () => desk ? this.setState({ sideOpen: false }) : this.setState({ drawer: false }),
+      openResume: this.pv(() => this.openResume()),
+      toggleTheme: () => this.setState({ gotham: false, mode: dark ? 'light' : 'dark' }),
+      hasToast: !!S.toast, toast: S.toast,
+      dex: S.dex, closeDex: () => this.setState({ dex: false }), stop: e => e.stopPropagation()
+    };
+  }
+}
+</script>
+</body>
+</html>

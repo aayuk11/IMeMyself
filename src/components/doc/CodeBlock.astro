@@ -1,0 +1,28 @@
+---
+// Wraps a fenced code block with a file header. In MDX, leave blank lines around the fence:
+//   <CodeBlock file="rules/example.yaml" lang="YAML">
+//
+//   ```yaml
+//   rule: example
+//   ```
+//
+//   </CodeBlock>
+interface Props {
+  file?: string;
+  lang?: string;
+}
+
+const { file, lang } = Astro.props;
+---
+
+<figure class="not-prose my-2 overflow-hidden rounded-[14px] border border-border bg-surface">
+  {
+    (file || lang) && (
+      <figcaption class="flex justify-between gap-3 border-b border-border px-4 py-[11px] font-mono text-[11px] leading-[1.4] font-medium text-muted">
+        <span class="truncate">{file}</span>
+        {lang && <span class="tracking-[0.08em] uppercase">{lang}</span>}
+      </figcaption>
+    )
+  }
+  <div class="code-body"><slot /></div>
+</figure>

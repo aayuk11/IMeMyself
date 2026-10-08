@@ -1,0 +1,68 @@
+---
+title: Transact Comply
+order: 1
+what: AI transaction monitoring
+sector: RegTech · AML
+year: 2025 — now
+line: A GenAI workflow that turns regulatory scenarios into tested production rules.
+key: { n: '1 → 20+', l: 'clients in 2 months' }
+dek: Every new client waited a month for hand-written detection rules before their first alert.
+role: Product manager and builder
+tools: Claude Code, YAML DSL, Python
+tags: [Generative AI, Guardrails, Rules engine]
+---
+
+import Figure from '../../components/doc/Figure.astro';
+import FlowDiagram from '../../components/doc/FlowDiagram.astro';
+import Metrics from '../../components/doc/Metrics.astro';
+
+{/* Narrative from the design handoff (site.content.js). Review it, and rewrite "What I'd do differently" in your own words, before publishing. */}
+
+<Figure caption="SFTP ingestion → identity resolution → rules engine → alerts.">
+  <FlowDiagram
+    size="hero"
+    title="System overview"
+    rows={[
+      [{ label: 'SFTP ingestion', note: '40+ file formats' }],
+      [{ label: 'Identity resolution', note: 'one customer, many accounts' }],
+      [{ label: 'Rules engine', note: '500+ guarded rules' }],
+      [{ label: 'Alerts', note: 'to compliance teams', tone: 'strong' }],
+    ]}
+  />
+</Figure>
+
+## A month of configuration before the first alert
+
+Transaction monitoring is only as good as its rules. For every new client — a bank, an NBFC, a crypto exchange — our implementation team translated regulatory typologies into detection logic by hand, then wrote test data to prove each rule fired when it should and stayed quiet when it shouldn’t.
+
+That took about a month per client. Sales could close faster than we could configure, so the ceiling on growth wasn’t demand. It was how many rules a small team could write and verify.
+
+## A workflow that writes rules, and a system that doesn’t trust it
+
+I designed and built a generative AI workflow in Claude Code that takes a regulatory scenario in plain language and produces a production rule in our YAML DSL, positive, negative and edge-case test data, and a deployment package. A Source of Truth layer runs a similarity search first, so we extend coverage instead of duplicating it.
+
+1. **Retrieve.** Similarity search over the existing library. A match means reuse, not regenerate.
+2. **Generate.** The LLM drafts the rule and its test data.
+3. **Validate.** Schema, golden regression, generated tests. Fail any one and it goes back to 02.
+4. **Deploy.** Production, with an audit trail.
+
+> “The model was never the risky part. The risk was a plausible-looking rule that silently missed a typology.”
+
+## From one client to twenty in two months
+
+<Metrics
+  items={[
+    { n: '1→20+', l: 'clients in 2 mo' },
+    { n: '<48h', l: 'config, was 1 mo' },
+    { n: '500+', l: 'prod rules' },
+    { n: '−50%', l: 'inference cost' },
+    { n: '+10%', l: 'detection coverage' },
+    { n: '40+', l: 'file formats' },
+  ]}
+/>
+
+Pre-sales could promise coverage and implementation could keep the promise, across banking, NBFC, insurance, housing finance, crypto and payments in India, the UK and Nepal. Sales now uses the Source of Truth in live demos.
+
+## What I’d do differently
+
+I built the golden regression suite after the first hundred rules, not before. Next time the evaluation harness ships first, and the generator earns its way in against it.

@@ -1,0 +1,16 @@
+---
+import Base from '../layouts/Base.astro';
+---
+
+<Base title="Not found" description="This page isn’t in the PRD." crumb="~/404">
+  <section class="mx-auto box-border flex w-full max-w-[780px] flex-1 flex-col justify-center gap-6 px-[clamp(20px,4cqi,40px)] py-12">
+    <p class="eyebrow m-0 text-ink">404 · Not found</p>
+    <h1 class="display m-0 text-[clamp(40px,7cqi,64px)] leading-[1.04] tracking-[-0.03em] text-balance">
+      This page isn’t in the PRD.
+    </h1>
+    <p class="m-0 max-w-[560px] text-[17px] leading-[1.65] text-pretty text-muted">
+      It may have moved, or it was never scoped. Type <kbd class="rounded bg-surface px-1.5 py-0.5 font-mono text-[0.9em]">/</kbd> in the box below to
+      jump somewhere useful, or head back <a href="/" class="hl-link">home</a>.
+    </p>
+  </section>
+</Base>

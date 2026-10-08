@@ -1,0 +1,126 @@
+---
+// Docked composer: slash commands (Pages / Settings / Play), and free-text questions that open
+// the conversation view. Behaviour lives in src/scripts/composer.ts; this file is markup only.
+import { site } from '../../../site.config';
+import { buildCommands, GROUPS } from '../../lib/commands';
+
+interface Props {
+  counts: { projects: number; notes: number };
+  placeholder: string;
+  placeholderShort: string;
+  /** Title of the essay or case study being read. */
+  context?: string | undefined;
+}
+
+const { counts, placeholder, placeholderShort, context } = Astro.props;
+const commands = buildCommands({ ...counts, notesName: site.notesName });
+---
+
+<div
+  data-composer
+  data-ask={String(site.ask.enabled)}
+  data-email={site.email}
+  data-notes-name={site.notesName}
+  data-placeholder={placeholder}
+  data-placeholder-short={placeholderShort}
+  class="composer-wrap no-print px-2.5 pt-1 pb-2.5 sm:px-6 sm:pb-5"
+>
+  <div class="relative mx-auto max-w-[780px]">
+    <div
+      id="cmd-menu"
+      data-cmd-menu
+      role="listbox"
+      aria-label="Commands"
+      hidden
+      class="absolute inset-x-0 bottom-[calc(100%+8px)] z-20 flex max-h-[min(440px,62dvh)] flex-col gap-1 overflow-y-auto rounded-[18px] border border-border bg-card p-2 shadow-menu"
+    >
+      {
+        GROUPS.map((group) => (
+          <div data-cmd-group={group} role="group" aria-label={group} class="flex flex-col">
+            <p class="m-0 px-2.5 pt-2 pb-1.5 font-mono text-[10.5px] leading-none font-medium tracking-[0.1em] text-muted uppercase">
+              {group}
+            </p>
+            {commands
+              .filter((c) => c.group === group)
+              .map((c) => (
+                <div
+                  id={`cmd-${c.cmd.slice(1)}`}
+                  role="option"
+                  aria-selected="false"
+                  data-cmd={c.cmd}
+                  data-group={c.group}
+                  data-aliases={(c.aliases ?? []).join(' ')}
+                  class="flex cursor-pointer items-center gap-3.5 rounded-[10px] p-2.5 aria-selected:bg-surface"
+                >
+                  <span class="w-28 flex-none font-mono text-[13px] leading-none font-medium text-ink">{c.cmd}</span>
+                  <span class="min-w-0 flex-1 truncate text-[14px] leading-[1.3]">{c.label}</span>
+                  <span data-hint class="font-mono text-[10.5px] leading-none font-medium tracking-[0.06em] whitespace-nowrap text-muted uppercase max-sm:hidden">
+                    {c.hint}
+                  </span>
+                </div>
+              ))}
+          </div>
+        ))
+      }
+      <p class="m-0 mt-1 border-t border-border px-2.5 pt-2.5 pb-1 font-mono text-[10.5px] leading-[1.4] font-medium tracking-[0.04em] text-muted max-sm:hidden">
+        ↑ ↓ move · Enter runs · Esc closes
+      </p>
+    </div>
+
+    <form
+      data-composer-form
+      role="search"
+      class="flex flex-col gap-2 rounded-[22px] border border-border bg-card pt-3.5 pr-3 pb-2.5 pl-[18px] shadow-composer focus-within:border-text"
+    >
+      <input
+        data-composer-input
+        type="text"
+        role="combobox"
+        aria-expanded="false"
+        aria-controls="cmd-menu"
+        aria-autocomplete="list"
+        aria-label="Ask a question, or type / for commands"
+        autocomplete="off"
+        autocapitalize="off"
+        spellcheck="false"
+        enterkeyhint="send"
+        maxlength="300"
+        placeholder={placeholder}
+        class="w-full border-0 bg-transparent pt-0.5 pb-1 text-[16px] leading-normal text-text outline-none placeholder:text-muted placeholder:opacity-100 focus-visible:outline-none"
+      />
+      <div class="flex items-center justify-between gap-2">
+        <div class="flex min-w-0 items-center gap-2">
+          <button
+            type="button"
+            data-show-commands
+            class="inline-flex h-[34px] flex-none items-center gap-2 rounded-full border border-border bg-transparent px-3 font-mono text-[11.5px] leading-none font-medium tracking-[0.04em] text-text"
+          >
+            <span aria-hidden="true" class="text-[14px] text-ink">/</span>Commands
+          </button>
+          {
+            context && (
+              <span class="min-w-0 truncate rounded-full bg-surface px-[11px] py-[7px] font-mono text-[11px] leading-[1.2] font-medium whitespace-nowrap text-muted max-sm:hidden">
+                ↳ {context}
+              </span>
+            )
+          }
+        </div>
+        <div class="flex flex-none items-center gap-2.5">
+          {
+            !site.ask.enabled && (
+              <span class="font-mono text-[10.5px] leading-none font-medium tracking-[0.08em] text-muted uppercase max-sm:hidden">AI answers soon</span>
+            )
+          }
+          <button
+            type="submit"
+            data-send
+            aria-label="Send"
+            class="size-9 rounded-xl border-0 bg-surface text-[16px] leading-none font-semibold text-muted transition-colors duration-fast data-ready:bg-accent data-ready:text-on-accent"
+          >
+            ↑
+          </button>
+        </div>
+      </div>
+    </form>
+  </div>
+</div>
