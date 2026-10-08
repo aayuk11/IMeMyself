@@ -18,13 +18,13 @@ command composer on every page. User-facing docs are in README.md. Design source
 - `Base.astro` renders: Sidebar (sticky ≥1024px, drawer below), Topbar (breadcrumb `~/…`), `<main data-page class="page">`,
   ChatPanel (hidden; replaces main in place on a question, history entry `#conversation`, sessionStorage `ak-chat`), Composer (sticky bottom).
 - `<html>` attributes drive everything: `data-palette`, `data-mode` (light | dark), `data-type`, `data-sidebar="ink"`,
-  `data-gotham` (session only), `data-side="collapsed"`, `data-drawer="open"`, `data-focus` (reader focus), `data-intro`,
-  `data-boot="loading"` (first page per session, sessionStorage `ak-booted`).
+  `data-gotham` (session only), `data-side="collapsed"`, `data-drawer="open"`, `data-focus` (reader focus), `data-intro`.
   The inline head script applies stored prefs (`localStorage['ak-site-prefs']`) before first paint. Sidebar pressed states are CSS-driven from these attributes.
 - `.page` and the FlowDiagram root are size containers; fluid sizes use `clamp(…cqi…)` like the design. Don't put containment on `.column`
   (it would capture fixed-position children like the toast).
 - Brand bits (spec `_design/handoff_brand_bits/README.md`): palette favicon (`FAVICON` in `src/lib/look.ts`, swapped in `prefs.ts` `sync()`),
-  Sisyphus `Loader.astro` + `scripts/loader.ts` (boot overlay, then the PRD intro via `bootDone`; compact variant in chat), and the guardrail
+  Sisyphus `Loader.astro` + `scripts/loader.ts` (compact: the chat's "thinking" state; full: over the page area when a
+  page change takes >400ms, `pageLoading()` before any `location.assign`; no first-load overlay; `prefetch` is on for all links), and the guardrail
   crash `Crash.astro` + `scripts/crash.ts` (canvas, `--crash-*` tokens, `.shell` made inert; Refresh clears session state and reloads Home).
 
 ## Design rules

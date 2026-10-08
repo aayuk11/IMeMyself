@@ -4,7 +4,7 @@ import { ALIASES, PAGE_ROUTES } from '../lib/commands';
 import { track } from './analytics';
 import { crash, isCrashActive } from './crash';
 import { playIntro } from './intro';
-import { animateLoader } from './loader';
+import { animateLoader, pageLoading } from './loader';
 import { nextPalette, nextType, paletteLabel, setGotham, toggleMode, typeLabel } from './prefs';
 import { closeDrawer, drawerOpen, toggleFocus } from './shell';
 
@@ -286,6 +286,7 @@ export function initComposer(): void {
       } catch {
         // Fine: the composer just won't be focused on arrival.
       }
+      pageLoading();
       location.assign('/');
     }
   }
@@ -371,6 +372,7 @@ export function initComposer(): void {
         closeChat();
         window.scrollTo({ top: 0, behavior: reducedMotion() ? 'auto' : 'smooth' });
       } else {
+        pageLoading();
         location.assign(route);
       }
       return;
@@ -380,7 +382,10 @@ export function initComposer(): void {
       case '/resume': {
         input.blur();
         const tab = window.open('/resume/', '_blank', 'noopener');
-        if (!tab) location.assign('/resume/');
+        if (!tab) {
+          pageLoading();
+          location.assign('/resume/');
+        }
         return;
       }
       case '/theme':

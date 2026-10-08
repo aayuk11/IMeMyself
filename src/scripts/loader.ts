@@ -1,5 +1,6 @@
 // Sisyphus loader: one requestAnimationFrame loop that sets SVG attributes (ported from
-// _design/handoff_brand_bits/reference/Loader.dc.html), plus the first-load boot overlay.
+// _design/handoff_brand_bits/reference/Loader.dc.html). Compact: the chat's "thinking" state.
+// Full: covers the page area when a page change is slow.
 const MESSAGES = [
   'Rolling the boulder uphill…',
   'Rewriting the PRD. Again…',
@@ -8,9 +9,7 @@ const MESSAGES = [
   'Shipping. Almost…',
 ];
 const FIRST_ATTEMPT = 2417;
-const BOOT_MIN_MS = 1900;
-const BOOT_MAX_MS = 5000;
-export const BOOTED_KEY = 'ak-booted';
+const NAV_DELAY_MS = 400;
 
 const reducedMotion = (): boolean => matchMedia('(prefers-reduced-motion: reduce)').matches;
 
@@ -62,38 +61,46 @@ export function animateLoader(el: Element): () => void {
   };
 }
 
-let resolveBoot: () => void = () => {};
-/** Resolves once the first-load loader is gone (immediately when it isn't showing). */
-export const bootDone: Promise<void> = new Promise((resolve) => (resolveBoot = resolve));
+let navTimer = 0;
+let stopNav: (() => void) | null = null;
+const navLoader = (): HTMLElement | null => document.querySelector('[data-nav-loader]');
 
-/** First load of a visit: the head script set <html data-boot="loading">, so the full loader is already on screen.
-    Keep it until the page and fonts are ready, for at least 1.9s, and never more than 5s. */
-export function initBootLoader(): void {
-  const root = document.documentElement;
-  const overlay = document.querySelector('[data-boot-loader]');
-  if (!overlay || root.dataset.boot !== 'loading') {
-    resolveBoot();
-    return;
-  }
-  try {
-    sessionStorage.setItem(BOOTED_KEY, '1');
-  } catch {
-    // Storage blocked: the loader shows on every load, which is harmless.
-  }
+/** A page change is starting. If the next page hasn't replaced this one within 400ms, show the loader. */
+export function pageLoading(): void {
+  window.clearTimeout(navTimer);
+  navTimer = window.setTimeout(() => {
+    const overlay = navLoader();
+    if (!overlay?.hidden) return;
+    overlay.hidden = false;
+    stopNav = animateLoader(overlay);
+  }, NAV_DELAY_MS);
+}
 
-  const shell = document.querySelector<HTMLElement>('.shell');
-  if (shell) shell.inert = true;
-  const stop = animateLoader(overlay);
+function pageLoaded(): void {
+  window.clearTimeout(navTimer);
+  stopNav?.();
+  stopNav = null;
+  const overlay = navLoader();
+  if (overlay) overlay.hidden = true;
+}
 
-  // performance.now() counts from navigation start, when the loader first painted.
-  const after = (ms: number): Promise<void> => new Promise((r) => setTimeout(r, Math.max(0, ms - performance.now())));
-  const loaded = document.readyState === 'complete' ? Promise.resolve() : new Promise<void>((r) => addEventListener('load', () => r(), { once: true }));
-  const ready = Promise.all([loaded, document.fonts.ready, after(BOOT_MIN_MS)]);
-
-  void Promise.race([ready, after(BOOT_MAX_MS)]).then(() => {
-    stop();
-    delete root.dataset.boot;
-    if (shell) shell.inert = false;
-    resolveBoot();
+export function initNavLoader(): void {
+  // On window, so any handler that cancels the click has already run.
+  window.addEventListener('click', (event) => {
+    if (event.defaultPrevented || event.button !== 0 || event.metaKey || event.ctrlKey || event.shiftKey || event.altKey) return;
+    const link = event.target instanceof Element ? event.target.closest('a') : null;
+    if (!link?.href || (link.target && link.target !== '_self') || link.hasAttribute('download')) return;
+    const url = new URL(link.href);
+    // Other sites, mailto:, and links within this page aren't a page change here.
+    if (url.origin !== location.origin || (url.pathname === location.pathname && url.search === location.search)) return;
+    pageLoading();
+  });
+  // Back/forward cache restores the page as it was left, loader included.
+  window.addEventListener('pageshow', (event) => {
+    if (event.persisted) pageLoaded();
+  });
+  // A stopped page change leaves this page in place.
+  window.addEventListener('keydown', (event) => {
+    if (event.key === 'Escape') pageLoaded();
   });
 }

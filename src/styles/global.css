@@ -147,18 +147,11 @@ html { --side-now: 0px; }
   background: var(--bg);
 }
 
-/* First-load loader: on screen from first paint (head script sets data-boot), above the PRD intro. */
-.boot-loader { display: none; }
-html[data-boot='loading'] .boot-loader {
-  display: block;
+/* Slow page change: the loader covers the page area; the sidebar, top bar and composer stay on top. */
+.nav-loader {
   position: fixed;
-  inset: 0;
-  z-index: 110;
-  /* Failsafe: if the script never runs, get out of the way. */
-  animation: boot-failsafe 0s linear 7s forwards;
-}
-@keyframes boot-failsafe {
-  to { visibility: hidden; }
+  inset: var(--header-h) 0 0 var(--side-now);
+  z-index: 15;
 }
 
 /* Toasts centre over the main column, not the whole viewport. */

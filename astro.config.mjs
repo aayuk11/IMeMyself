@@ -14,6 +14,8 @@ export default defineConfig({
     mdx(),
     sitemap({ filter: (page) => !page.endsWith('/404/') }),
   ],
+  // Fetch a page when its link is hovered or focused; on slow connections, at touch/mouse-down.
+  prefetch: { prefetchAll: true },
   markdown: {
     // Monochrome code blocks: token colours map to theme variables in global.css.
     shikiConfig: { theme: 'css-variables' },

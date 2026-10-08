@@ -144,7 +144,6 @@ const lookConfig = JSON.stringify({
           document.head.appendChild(l);
         }
         try { if (sessionStorage.getItem('ak-side') === 'collapsed') d.dataset.side = 'collapsed'; } catch (e) {}
-        try { if (!sessionStorage.getItem('ak-booted')) d.dataset.boot = 'loading'; } catch (e) {}
       })();
     </script>
     {
@@ -188,12 +187,12 @@ const lookConfig = JSON.stringify({
       class="toast box-border max-w-[calc(100%-32px)] rounded-[14px] bg-text px-4 py-[11px] text-center font-mono text-[12px] leading-[1.45] font-medium text-bg"
     >
     </div>
-    <Pokedex />
-    <PrdIntro variant={introVariant} />
-    <!-- First load of a visit: shown at first paint by the head script, hidden by src/scripts/loader.ts. -->
-    <div class="boot-loader no-print" data-boot-loader>
+    <!-- Slow page change: shown over the page area after 400ms by src/scripts/loader.ts. The browser announces the navigation. -->
+    <div data-nav-loader hidden aria-hidden="true" class="nav-loader no-print">
       <Loader variant="full" />
     </div>
+    <Pokedex />
+    <PrdIntro variant={introVariant} />
     <Crash />
     <script>
       import '../scripts/site.ts';

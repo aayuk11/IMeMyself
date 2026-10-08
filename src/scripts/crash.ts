@@ -1,7 +1,6 @@
 // Guardrail crash: a 4.6s canvas sequence (warning, sky dragon, charge, beam, boom), then the
 // "SYSTEM CRASHED" screen. Ported from the logic class in _design/handoff_brand_bits/reference/Crash.dc.html.
 // The dragon is an original sprite inspired by Rayquaza; keep it original.
-import { BOOTED_KEY } from './loader';
 
 const CHAT_KEY = 'ak-chat';
 const INTRO_KEY = 'introSeen';
@@ -61,12 +60,11 @@ function restoreHost(): void {
   }
 }
 
-/** Reset what the crash changed, clear the chat, and reboot at Home: loader, then the PRD intro. */
+/** Reset what the crash changed, clear the chat, and reboot at Home, where the PRD intro plays again. */
 function restart(): void {
   restoreHost();
   try {
     sessionStorage.removeItem(CHAT_KEY);
-    sessionStorage.removeItem(BOOTED_KEY);
     sessionStorage.removeItem(INTRO_KEY);
   } catch {
     // Storage blocked: a plain reload still brings the site back.

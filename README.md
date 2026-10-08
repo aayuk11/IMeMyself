@@ -80,7 +80,7 @@ The function is rate-limited (10 requests per IP per minute), caches answers on 
 
 Defaults are in `site.config.ts` → `look` (palette `matcha`, type `funnel`, sidebar `tinted`; `ink` gives a dark sidebar in light mode). A visitor's own palette, light/dark and type choice is remembered in their browser. The Funnel pairing is self-hosted; Cabinet, Sentient and Arcade load from Fontshare only when a visitor picks them.
 
-The favicon follows the palette (and Gotham); `public/favicon.svg` is the Matcha default. The Sisyphus loader shows on a visitor's first page of each session (at least 1.9s, at most 5s, before the Home intro) and as the "thinking" state in the chat. Specs: `_design/handoff_brand_bits/README.md`.
+The favicon follows the palette (and Gotham); `public/favicon.svg` is the Matcha default. The Sisyphus loader is the "thinking" state in the chat, and covers the page when moving to another page takes longer than 400ms (slow connections; pages are prefetched on hover, so it's rare). Specs: `_design/handoff_brand_bits/README.md`.
 
 ## Deploy to Netlify
 
