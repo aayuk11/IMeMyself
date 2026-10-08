@@ -63,7 +63,7 @@ _design/                       Design export and original brief. Reference only;
 
 - **Pages**: `/home` `/experience` `/notes` `/lab` `/resume`. Aliases: `/work`, `/writing`, `/blog`…
 - **Settings**: `/theme` `/palette` `/type` `/focus` (essays and case studies) `/intro`
-- **Play** (only listed after typing `/`): `/pokedex` `/gear5` `/gotham` (`/batman`) `/snap`
+- **Play** (only listed after typing `/`): `/pokedex` `/gear5` `/gotham` (`/batman`) `/snap` `/crash`
 - `/` or Cmd/Ctrl+K from anywhere opens it. Free text opens a conversation.
 
 **AI answers are off by default**, matching the design ("AI answers soon"): questions get a reply that routes to the right page. To switch them on:
@@ -74,9 +74,13 @@ _design/                       Design export and original brief. Reference only;
 
 The function is rate-limited (10 requests per IP per minute), caches answers on Netlify's CDN for a week (each deploy clears them), caps questions at 300 characters, and answers only from the facts in `ask.system`. Update those facts when the résumé changes.
 
+**Blocked questions** (prompt injection, "system prompt", "api key"…) play the guardrail crash: a pixel sky dragon blasts the page and a SYSTEM CRASHED screen offers Refresh, which clears the chat and reloads Home. The rule is a placeholder regex, `BLOCKED` in `src/lib/chat.ts`. `/crash` plays it on demand.
+
 ## Look
 
 Defaults are in `site.config.ts` → `look` (palette `matcha`, type `funnel`, sidebar `tinted`; `ink` gives a dark sidebar in light mode). A visitor's own palette, light/dark and type choice is remembered in their browser. The Funnel pairing is self-hosted; Cabinet, Sentient and Arcade load from Fontshare only when a visitor picks them.
+
+The favicon follows the palette (and Gotham); `public/favicon.svg` is the Matcha default. The Sisyphus loader shows on a visitor's first page of each session (at least 1.9s, at most 5s, before the Home intro) and as the "thinking" state in the chat. Specs: `_design/handoff_brand_bits/README.md`.
 
 ## Deploy to Netlify
 
@@ -93,6 +97,7 @@ Defaults are in `site.config.ts` → `look` (palette `matcha`, type `funnel`, si
 - [ ] Check `handle` in `site.config.ts` (`aayush.site` is the design's placeholder; it appears in chat replies and on the résumé page).
 - [ ] The résumé page shows your phone number (as the PDF does). Remove `phone` from `site.config.ts` if you'd rather not.
 - [ ] Optional: a Pokédex avatar in `public/` and `pokedex.avatar` in `site.config.ts`.
+- [ ] When AI answers go on, swap the placeholder `BLOCKED` regex in `src/lib/chat.ts` for the model's or a moderation verdict.
 
 ## Design
 

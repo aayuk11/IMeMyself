@@ -2,6 +2,7 @@
 // Conversation view. Hidden until a free-text question is asked; it then replaces the page
 // content in place (history entry #conversation) and lives in sessionStorage for the visit.
 import { site } from '../../../site.config';
+import Loader from '../Loader.astro';
 ---
 
 <section data-chat hidden aria-label="Conversation" class="page">
@@ -24,6 +25,11 @@ import { site } from '../../../site.config';
     <span class="flex items-center gap-2 font-mono text-[11px] leading-none font-medium tracking-[0.08em] text-muted uppercase">
       <span aria-hidden="true" class="size-2 rounded-[2px] bg-accent"></span>{site.handle}
     </span>
+    <!-- While the reply is pending: the compact loader (its cycling status is hidden from the live region). -->
+    <div data-pending hidden>
+      <span class="sr-only">Thinking…</span>
+      <div aria-hidden="true"><Loader variant="compact" /></div>
+    </div>
     <p data-text class="m-0 text-[16.5px] leading-[1.65] text-pretty"></p>
     <div data-chips class="flex flex-wrap gap-2"></div>
     <span data-footnote hidden class="font-mono text-[10.5px] leading-[1.4] font-medium tracking-[0.08em] text-muted uppercase">

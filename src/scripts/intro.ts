@@ -1,5 +1,7 @@
 // PRD-tear intro timeline: hold → tension → tear → done.
-// Auto-plays once per session on Home; /intro replays it anywhere.
+// Auto-plays once per session on Home, after the first-load loader is gone; /intro replays it anywhere.
+import { bootDone } from './loader';
+
 const HOLD_MS = 700;
 const TENSION_MS = 230;
 const TEAR_MS = 1500;
@@ -61,7 +63,8 @@ export function playIntro(): boolean {
   return true;
 }
 
-/** First visit this session on Home: the head script already set data-intro="play". */
+/** First visit this session on Home: the head script already set data-intro="play".
+    The sheet sits under the loader until it hides, then the timeline starts. */
 export function initIntro(): void {
   const overlay = document.querySelector<HTMLElement>('.prd-intro');
   if (!overlay || root.dataset.intro !== 'play') return;
@@ -70,5 +73,5 @@ export function initIntro(): void {
   } catch {
     // Storage blocked: the intro may replay next visit, which is harmless.
   }
-  run(overlay, false);
+  void bootDone.then(() => run(overlay, false));
 }

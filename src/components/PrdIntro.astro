@@ -83,7 +83,7 @@ const strips = ORDER.map((o, i) => ({
   :global(html[data-intro='play']) .prd-intro {
     display: block;
     /* Failsafe: if the script never runs, get out of the way. */
-    animation: prd-failsafe 0s linear 6s forwards;
+    animation: prd-failsafe 0s linear 10s forwards; /* after the boot loader (≤5s) and the tear (2.4s) */
   }
   .prd-intro[data-phase='done'] {
     visibility: hidden;

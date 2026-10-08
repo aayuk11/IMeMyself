@@ -18,18 +18,22 @@ command composer on every page. User-facing docs are in README.md. Design source
 - `Base.astro` renders: Sidebar (sticky ≥1024px, drawer below), Topbar (breadcrumb `~/…`), `<main data-page class="page">`,
   ChatPanel (hidden; replaces main in place on a question, history entry `#conversation`, sessionStorage `ak-chat`), Composer (sticky bottom).
 - `<html>` attributes drive everything: `data-palette`, `data-mode` (light | dark), `data-type`, `data-sidebar="ink"`,
-  `data-gotham` (session only), `data-side="collapsed"`, `data-drawer="open"`, `data-focus` (reader focus), `data-intro`.
+  `data-gotham` (session only), `data-side="collapsed"`, `data-drawer="open"`, `data-focus` (reader focus), `data-intro`,
+  `data-boot="loading"` (first page per session, sessionStorage `ak-booted`).
   The inline head script applies stored prefs (`localStorage['ak-site-prefs']`) before first paint. Sidebar pressed states are CSS-driven from these attributes.
 - `.page` and the FlowDiagram root are size containers; fluid sizes use `clamp(…cqi…)` like the design. Don't put containment on `.column`
   (it would capture fixed-position children like the toast).
+- Brand bits (spec `_design/handoff_brand_bits/README.md`): palette favicon (`FAVICON` in `src/lib/look.ts`, swapped in `prefs.ts` `sync()`),
+  Sisyphus `Loader.astro` + `scripts/loader.ts` (boot overlay, then the PRD intro via `bootDone`; compact variant in chat), and the guardrail
+  crash `Crash.astro` + `scripts/crash.ts` (canvas, `--crash-*` tokens, `.shell` made inert; Refresh clears session state and reloads Home).
 
 ## Design rules
 
 - Colours only via tokens (`bg-surface`, `text-muted`, `border-border`, `text-ink`, `bg-accent`…) or `var(--…)`. Palettes in `tokens.css`
-  are generated from the design file's `PAL`; don't hand-edit them. Fixed literals (PRD sheet, Pokédex) are named tokens.
+  are generated from the design file's `PAL`; don't hand-edit them. Fixed literals (PRD sheet, Pokédex, crash screen) are named tokens.
 - Type: `display` class / `font-display` for headings (weight `var(--display-weight)`), `font-sans` body, `font-mono` labels. `.eyebrow` = mono 11 uppercase.
 - Reader typography is `.doc-body`, scoped with `:where()`; add `not-prose` to component roots inside it.
-- Motion: opacity/background on hover only. No entrance animations. Respect `prefers-reduced-motion` (intro, `/gear5`, `/snap` do).
+- Motion: opacity/background on hover only. No entrance animations. Respect `prefers-reduced-motion` (intro, loader, crash, `/gear5`, `/snap` do).
 - Breakpoints: `sm` 640, `md` 1024 (sidebar in flow), `lg` 1280.
 - `_design/` is reference only: never import from it, never ship it (Tailwind is told not to scan it).
 

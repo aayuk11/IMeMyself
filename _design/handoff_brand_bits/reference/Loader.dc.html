@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet data-dc-atomics>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Funnel+Display:wght@500;700&amp;family=Geist+Mono:wght@400;500&amp;display=swap">
+<style>html,body{margin:0;height:100%}</style>
+</helmet>
+<div style="width:100%;height:100%;box-sizing:border-box;display:flex;flex-direction:{{ dir }};align-items:center;justify-content:{{ jc }};gap:{{ gap }};background:{{ bgc }};color:var(--tx,#1D211B);padding:{{ pad }}">
+<svg viewBox="0 0 240 150" aria-hidden="true" style="flex:none;overflow:hidden;color:var(--tx,#1D211B);width:{{ sw }}px;height:{{ sh }}px">
+<g transform="rotate(-14 120 110)">
+<line x1="-20" y1="118" x2="260" y2="118" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round"></line>
+<line ref="{{ groundRef }}" x1="-20" y1="125" x2="260" y2="125" stroke="currentColor" strokeOpacity="0.35" strokeWidth="2" strokeDasharray="2 14" strokeLinecap="round"></line>
+<g ref="{{ boulderRef }}">
+<circle cx="152" cy="84" r="33" style="fill:var(--ac,#6F8C4E)" stroke="currentColor" strokeWidth="2.5"></circle>
+<path d="M131 68 q5 -5 11 -2 M164 109 q6 0 9 -6 M171 64 l5 5" fill="none" stroke="currentColor" strokeOpacity="0.45" strokeWidth="2" strokeLinecap="round"></path>
+<text x="152" y="93" textAnchor="middle" style="fill:var(--on-ac,#FFFFFF);font:700 27px var(--serif,'Funnel Display'),system-ui,sans-serif;letter-spacing:-0.02em">AI</text>
+</g>
+<g ref="{{ figRef }}" stroke="currentColor" strokeWidth="4.5" strokeLinecap="round" fill="none">
+<circle cx="104" cy="52" r="7.5" fill="currentColor" stroke="none"></circle>
+<line x1="100" y1="61" x2="83" y2="90"></line>
+<line x1="98" y1="65" x2="120" y2="76"></line>
+<line x1="96" y1="69" x2="120" y2="89"></line>
+<line ref="{{ legA }}" x1="83" y1="90" x2="71" y2="117"></line>
+<line ref="{{ legB }}" x1="83" y1="90" x2="93" y2="117"></line>
+</g>
+<path ref="{{ sweatRef }}" d="M115 39 q2.5 4.5 0 7 q-2.5 -2.5 0 -7z" style="fill:var(--ac,#6F8C4E)"></path>
+</g>
+</svg>
+<div style="display:flex;flex-direction:column;align-items:{{ ai }};gap:8px;min-width:0">
+<span role="status" style="font:500 {{ fs }}/1.35 var(--mono,'Geist Mono'),ui-monospace,monospace;letter-spacing:0.02em;color:var(--tx,#1D211B);white-space:nowrap">{{ msg }}</span>
+<sc-if value="{{ full }}" hint-placeholder-val="{{ true }}">
+<span style="font:500 10.5px/1.4 var(--mono,'Geist Mono'),ui-monospace,monospace;letter-spacing:0.1em;text-transform:uppercase;color:var(--mu,#5C6357)">Attempt {{ attempt }} · one must imagine the PM happy</span>
+</sc-if>
+</div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;$preview&quot;:{&quot;width&quot;:720,&quot;height&quot;:450},&quot;compact&quot;:{&quot;editor&quot;:&quot;boolean&quot;,&quot;default&quot;:false,&quot;tsType&quot;:&quot;boolean&quot;}}">
+class Component extends DCLogic {
+  MSG = ['Rolling the boulder uphill…', 'Rewriting the PRD. Again…', 'Running one more eval…', 'Waiting on the model…', 'Shipping. Almost…'];
+  state = { mi: 0, attempt: 2417 };
+  groundRef = React.createRef(); boulderRef = React.createRef(); figRef = React.createRef(); legA = React.createRef(); legB = React.createRef(); sweatRef = React.createRef();
+  componentDidMount() {
+    this.iv = setInterval(() => this.setState(s => ({ mi: (s.mi + 1) % this.MSG.length, attempt: s.attempt + 1 })), 2000);
+    if (window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+    const t0 = performance.now(), v = 30, r = 33;
+    const loop = now => {
+      const t = (now - t0) / 1000, ph = Math.sin(t * Math.PI * 2 / 0.9);
+      const set = (ref, k, val) => ref.current && ref.current.setAttribute(k, val);
+      set(this.groundRef, 'stroke-dashoffset', (v * t).toFixed(2));
+      set(this.boulderRef, 'transform', `rotate(${((v * t / r) * 57.2958).toFixed(2)} 152 84)`);
+      set(this.legA, 'transform', `rotate(${(ph * 15).toFixed(2)} 83 90)`);
+      set(this.legB, 'transform', `rotate(${(-ph * 15).toFixed(2)} 83 90)`);
+      set(this.figRef, 'transform', `translate(0 ${(-Math.abs(ph) * 1.6).toFixed(2)})`);
+      const sp = (t % 1.6) / 1.6;
+      set(this.sweatRef, 'transform', `translate(${(-7 * sp).toFixed(2)} ${(9 * sp * sp).toFixed(2)})`);
+      set(this.sweatRef, 'opacity', sp < 0.15 ? (sp / 0.15).toFixed(2) : (1 - sp).toFixed(2));
+      this.raf = requestAnimationFrame(loop);
+    };
+    this.raf = requestAnimationFrame(loop);
+  }
+  componentWillUnmount() { cancelAnimationFrame(this.raf); clearInterval(this.iv); }
+  renderVals() {
+    const c = !!this.props.compact;
+    return {
+      groundRef: this.groundRef, boulderRef: this.boulderRef, figRef: this.figRef, legA: this.legA, legB: this.legB, sweatRef: this.sweatRef,
+      full: !c, msg: this.MSG[this.state.mi], attempt: this.state.attempt.toLocaleString('en-US'),
+      dir: c ? 'row' : 'column', jc: c ? 'flex-start' : 'center', gap: c ? '12px' : '20px', ai: c ? 'flex-start' : 'center',
+      bgc: c ? 'transparent' : 'var(--bg,#F4F5F0)', pad: c ? '0' : '24px',
+      sw: c ? 64 : 260, sh: c ? 40 : 162, fs: c ? '13px' : '14px'
+    };
+  }
+}
+</script>
+</body>
+</html>

@@ -14,6 +14,8 @@ import sansFont from '@fontsource-variable/funnel-sans/files/funnel-sans-latin-w
 import monoFont from '@fontsource-variable/geist-mono/files/geist-mono-latin-wght-normal.woff2?url';
 
 import { site } from '../../site.config';
+import Crash from '../components/Crash.astro';
+import Loader from '../components/Loader.astro';
 import Pokedex from '../components/Pokedex.astro';
 import PrdIntro from '../components/PrdIntro.astro';
 import ChatPanel from '../components/shell/ChatPanel.astro';
@@ -98,8 +100,9 @@ const lookConfig = JSON.stringify({
     <meta name="author" content={site.name} />
     <meta name="theme-color" content="#F4F5F0" />
 
-    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
     <link rel="icon" href="/favicon-32.png" sizes="32x32" type="image/png" />
+    <!-- Swapped to a generated data: URL when the palette changes (src/scripts/prefs.ts). -->
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml" data-favicon />
     <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
     <link rel="sitemap" href="/sitemap-index.xml" />
     <link rel="alternate" type="application/rss+xml" title={`${site.name} — ${site.notesName}`} href="/rss.xml" />
@@ -141,6 +144,7 @@ const lookConfig = JSON.stringify({
           document.head.appendChild(l);
         }
         try { if (sessionStorage.getItem('ak-side') === 'collapsed') d.dataset.side = 'collapsed'; } catch (e) {}
+        try { if (!sessionStorage.getItem('ak-booted')) d.dataset.boot = 'loading'; } catch (e) {}
       })();
     </script>
     {
@@ -186,6 +190,11 @@ const lookConfig = JSON.stringify({
     </div>
     <Pokedex />
     <PrdIntro variant={introVariant} />
+    <!-- First load of a visit: shown at first paint by the head script, hidden by src/scripts/loader.ts. -->
+    <div class="boot-loader no-print" data-boot-loader>
+      <Loader variant="full" />
+    </div>
+    <Crash />
     <script>
       import '../scripts/site.ts';
     </script>

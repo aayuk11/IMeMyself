@@ -1,0 +1,82 @@
+---
+// Sisyphus and the AI boulder. Markup from _design/handoff_brand_bits/reference/Loader.dc.html.
+// Colours are tokens only: figure/slope/outline --text, boulder and sweat --accent, "AI" --on-accent.
+// Animated by src/scripts/loader.ts (animateLoader).
+interface Props {
+  /** full: centred scene with status and attempt lines. compact: 64×40 scene and status line (chat "thinking"). */
+  variant?: 'full' | 'compact';
+}
+
+const { variant = 'full' } = Astro.props;
+const compact = variant === 'compact';
+---
+
+<div
+  data-loader={variant}
+  class:list={[
+    'box-border flex text-text',
+    compact ? 'flex-row items-center justify-start gap-3' : 'h-full w-full flex-col items-center justify-center gap-5 bg-bg p-6',
+  ]}
+>
+  <svg
+    viewBox="0 0 240 150"
+    width={compact ? 64 : 260}
+    height={compact ? 40 : 162}
+    aria-hidden="true"
+    class="flex-none overflow-hidden text-text"
+  >
+    <g transform="rotate(-14 120 110)">
+      <line x1="-20" y1="118" x2="260" y2="118" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"></line>
+      <line
+        data-l="ground"
+        x1="-20"
+        y1="125"
+        x2="260"
+        y2="125"
+        stroke="currentColor"
+        stroke-opacity="0.35"
+        stroke-width="2"
+        stroke-dasharray="2 14"
+        stroke-linecap="round"></line>
+      <g data-l="boulder">
+        <circle cx="152" cy="84" r="33" class="fill-accent" stroke="currentColor" stroke-width="2.5"></circle>
+        <path
+          d="M131 68 q5 -5 11 -2 M164 109 q6 0 9 -6 M171 64 l5 5"
+          fill="none"
+          stroke="currentColor"
+          stroke-opacity="0.45"
+          stroke-width="2"
+          stroke-linecap="round"></path>
+        <text x="152" y="93" text-anchor="middle" class="fill-on-accent" style="font: 700 27px var(--font-display); letter-spacing: -0.02em">AI</text>
+      </g>
+      <g data-l="fig" stroke="currentColor" stroke-width="4.5" stroke-linecap="round" fill="none">
+        <circle cx="104" cy="52" r="7.5" fill="currentColor" stroke="none"></circle>
+        <line x1="100" y1="61" x2="83" y2="90"></line>
+        <line x1="98" y1="65" x2="120" y2="76"></line>
+        <line x1="96" y1="69" x2="120" y2="89"></line>
+        <line data-l="legA" x1="83" y1="90" x2="71" y2="117"></line>
+        <line data-l="legB" x1="83" y1="90" x2="93" y2="117"></line>
+      </g>
+      <path data-l="sweat" d="M115 39 q2.5 4.5 0 7 q-2.5 -2.5 0 -7z" class="fill-accent"></path>
+    </g>
+  </svg>
+  <div class:list={['flex min-w-0 flex-col gap-2', compact ? 'items-start' : 'items-center']}>
+    <span
+      data-l="msg"
+      role={compact ? undefined : 'status'}
+      class:list={[
+        'font-mono leading-[1.35] font-medium tracking-[0.02em] whitespace-nowrap text-text',
+        compact ? 'text-[13px]' : 'text-[14px]',
+      ]}
+    >
+      Rolling the boulder uphill…
+    </span>
+    {
+      !compact && (
+        <span class="font-mono text-[10.5px] leading-[1.4] font-medium tracking-[0.1em] text-muted uppercase">
+          Attempt <span data-l="attempt">2,417</span> · one must imagine the PM happy
+        </span>
+      )
+    }
+  </div>
+</div>

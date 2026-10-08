@@ -29,12 +29,12 @@ const metaMono = 'font-mono text-[11px] leading-[1.4] font-medium tracking-[0.08
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>{site.name} — Résumé</title>
+    <title>Résumé — {site.name}</title>
     <meta name="description" content={`Résumé of ${site.name}: ${r.headline}.`} />
     <link rel="canonical" href={canonical} />
-    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
     <link rel="icon" href="/favicon-32.png" sizes="32x32" type="image/png" />
-    <meta property="og:title" content={`${site.name} — Résumé`} />
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml" data-favicon />
+    <meta property="og:title" content={`Résumé — ${site.name}`} />
     <meta property="og:image" content={new URL('/og.png', Astro.site)} />
     <script is:inline data-look={lookConfig}>
       (function () {
@@ -174,9 +174,12 @@ const metaMono = 'font-mono text-[11px] leading-[1.4] font-medium tracking-[0.08
     </main>
 
     <script>
+      import type { PaletteId } from '../../site.config';
       import { initTracking } from '../scripts/analytics';
+      import { setFavicon } from '../scripts/favicon';
 
       document.querySelector('[data-print]')?.addEventListener('click', () => window.print());
+      setFavicon((document.documentElement.dataset.palette as PaletteId) || 'matcha');
       initTracking();
     </script>
   </body>

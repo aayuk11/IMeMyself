@@ -73,6 +73,21 @@
   --prd-stamp: #C2412D;
   --prd-shadow: rgba(20, 18, 12, 0.22);
 
+  /* Crash screen: an arcade "game over", the same in every theme. */
+  --font-pixel: 'Press Start 2P', ui-monospace, monospace;
+  --crash-bg: #0B0C0E;
+  --crash-text: #ECEAE3;
+  --crash-body: #B5B5AE;
+  --crash-muted: #8F8F89;
+  --crash-faint: #77776F;
+  --crash-line: #3A3C42;
+  --crash-red: #E8392F;
+  --crash-yellow: #F2C230;
+  --crash-yellow-shadow: #6B5410;
+  --crash-ink: #111111;
+  --crash-banner: rgba(10, 10, 12, 0.9);
+  --crash-scanline: rgba(255, 255, 255, 0.035);
+
   /* Pokédex: the device keeps its colours in every theme. */
   --dex-red: #C8231C;
   --dex-white: #FFFFFF;

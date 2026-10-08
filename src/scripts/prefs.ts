@@ -2,6 +2,7 @@
 // The inline script in Base.astro applies the stored choice before first paint; this module handles changes.
 import type { PaletteId, TypeId } from '../../site.config';
 import { fontshareHref, PALETTES, PREFS_KEY, TYPES } from '../lib/look';
+import { setFavicon } from './favicon';
 
 type Mode = 'light' | 'dark';
 interface Prefs {
@@ -48,6 +49,7 @@ function loadFonts(type: TypeId): void {
 
 /** Reflect the current look in controls and browser chrome. */
 function sync(): void {
+  setFavicon(isGotham() ? 'gotham' : currentPalette());
   const dark = isGotham() || currentMode() === 'dark';
   document.querySelectorAll<HTMLButtonElement>('[data-palette-pick]').forEach((b) => {
     b.setAttribute('aria-pressed', String(!isGotham() && b.dataset.palettePick === currentPalette()));

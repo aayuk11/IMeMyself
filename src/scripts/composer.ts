@@ -1,8 +1,10 @@
 // Composer: slash commands, the conversation view, and the hidden easter eggs.
-import { routeReply } from '../lib/chat';
+import { isBlocked, routeReply } from '../lib/chat';
 import { ALIASES, PAGE_ROUTES } from '../lib/commands';
 import { track } from './analytics';
+import { crash, isCrashActive } from './crash';
 import { playIntro } from './intro';
+import { animateLoader } from './loader';
 import { nextPalette, nextType, paletteLabel, setGotham, toggleMode, typeLabel } from './prefs';
 import { closeDrawer, drawerOpen, toggleFocus } from './shell';
 
@@ -146,17 +148,29 @@ export function initComposer(): void {
   const ROUTE_LABELS: Record<string, string> = { '/experience': 'Experience', '/notes': notesName, '/lab': 'Lab', '/resume': 'Résumé ↗' };
   const ROUTE_HREFS: Record<string, string> = { '/experience': '/experience/', '/notes': '/notes/', '/lab': '/lab/', '/resume': '/resume/' };
 
+  let stopLoaders: (() => void)[] = [];
+
   function renderLog(): void {
     if (!log) return;
     const userTpl = document.getElementById('tpl-chat-user') as HTMLTemplateElement | null;
     const botTpl = document.getElementById('tpl-chat-bot') as HTMLTemplateElement | null;
     const chipTpl = document.getElementById('tpl-chat-chip') as HTMLTemplateElement | null;
     if (!userTpl || !botTpl || !chipTpl) return;
+    stopLoaders.forEach((stop) => stop());
+    stopLoaders = [];
     log.replaceChildren();
     for (const m of messages) {
       const node = (m.role === 'user' ? userTpl : botTpl).content.cloneNode(true) as DocumentFragment;
       const text = node.querySelector<HTMLElement>('[data-text]');
       if (text) text.textContent = m.text;
+      // A reply still on its way shows the compact Sisyphus loader instead of text.
+      const pendingBox = node.querySelector<HTMLElement>('[data-pending]');
+      if (pendingBox && m.pending) {
+        pendingBox.hidden = false;
+        if (text) text.hidden = true;
+        const loader = pendingBox.querySelector('[data-loader]');
+        if (loader) stopLoaders.push(animateLoader(loader));
+      }
       const chips = node.querySelector<HTMLElement>('[data-chips]');
       for (const r of m.routes ?? []) {
         const chip = chipTpl.content.cloneNode(true) as DocumentFragment;
@@ -235,6 +249,13 @@ export function initComposer(): void {
     if (!question) return;
     clearInput();
     closeDrawer(false);
+    // A blocked question never reaches the chat: it trips the guardrails and plays the crash.
+    if (isBlocked(raw)) {
+      input.blur();
+      track('question_blocked');
+      crash(raw.trim());
+      return;
+    }
     openChat(true);
     const routes = routeReply(question, notesName, email).routes;
     const pending: Message = { role: 'bot', text: '…', routes: [], pending: true };
@@ -250,6 +271,8 @@ export function initComposer(): void {
   }
 
   function newConversation(): void {
+    // Phone: get the drawer out of the way so the page and composer are visible.
+    closeDrawer(false);
     messages = [];
     saveMessages();
     renderLog();
@@ -385,6 +408,9 @@ export function initComposer(): void {
       case '/pokedex':
         input.blur();
         return openPokedex();
+      case '/crash':
+        input.blur();
+        return crash('/crash');
       default:
         toast(`No command “${cmd}”. Type / to see them all.`);
     }
@@ -472,6 +498,7 @@ export function initComposer(): void {
   );
 
   document.addEventListener('keydown', (event) => {
+    if (isCrashActive()) return; // the crash owns the keyboard until Refresh
     if (event.key === 'Escape' && drawerOpen()) {
       closeDrawer();
       return;

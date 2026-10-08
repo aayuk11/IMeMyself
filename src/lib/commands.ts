@@ -47,6 +47,7 @@ export function buildCommands(meta: { projects: number; notes: number; notesName
     { group: 'Play', cmd: '/gear5', label: 'Gear 5', hint: '' },
     { group: 'Play', cmd: '/gotham', label: 'Gotham mode', hint: '', aliases: ['/batman'] },
     { group: 'Play', cmd: '/snap', label: 'Perfectly balanced', hint: '' },
+    { group: 'Play', cmd: '/crash', label: 'Trip the guardrails', hint: '' },
   ];
 }
 

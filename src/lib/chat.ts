@@ -8,6 +8,13 @@ export interface RouteReply {
   matched: boolean;
 }
 
+/** Questions that trip the guardrails and play the crash sequence.
+    Placeholder rule: once AI answers are on, replace it with the model's or a moderation verdict. */
+const BLOCKED =
+  /ignore (all|any|the|previous|prior|your)|system prompt|jailbreak|developer mode|\bDAN\b|pretend (you|to be)|api key|password|bypass|disregard|reveal your/i;
+
+export const isBlocked = (question: string): boolean => BLOCKED.test(question);
+
 export function routeReply(question: string, notesName: string, email: string): RouteReply {
   const rules: [RegExp, string[], string][] = [
     [/resume|cv|hir|recruit|open to|available|role/i, ['/resume', '/experience'], 'The résumé opens in a new tab with a one-click PDF download, and /experience has the detail.'],

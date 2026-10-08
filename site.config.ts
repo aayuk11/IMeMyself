@@ -92,7 +92,7 @@ export const site: SiteConfig = {
   tagline: 'PM who builds',
   handle: 'aayush.site',
   url: 'https://aayushkumar.netlify.app',
-  title: 'Aayush Kumar — Product, AI, and whatever I’m building this weekend',
+  title: 'Aayush Kumar — PM who builds',
   description:
     'Aayush Kumar is a product manager who builds: three B2B RegTech platforms at ZIGRAM, and the AI systems behind them.',
   headline: 'Product, AI, and whatever I’m building this weekend.',

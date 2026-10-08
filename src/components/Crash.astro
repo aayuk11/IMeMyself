@@ -1,0 +1,77 @@
+---
+// Guardrail crash: canvas sequence (sky dragon), WARNING banner and the "SYSTEM CRASHED" screen.
+// Markup from _design/handoff_brand_bits/reference/Crash.dc.html; sequence in src/scripts/crash.ts.
+// Hidden until a blocked question or /crash. The dragon is an original sprite.
+import '@fontsource/press-start-2p/latin-400.css';
+---
+
+<div data-crash hidden role="alert" class="crash fixed inset-0 z-[120] overflow-hidden">
+  <canvas data-crash-canvas aria-hidden="true" class="pointer-events-none absolute top-0 left-0 [image-rendering:pixelated]"></canvas>
+
+  <div data-crash-warn hidden aria-hidden="true" class="pointer-events-none absolute inset-x-0 top-[30%] flex flex-col">
+    <div class="hazard h-[18px]"></div>
+    <div class="flex flex-col items-center gap-3.5 bg-(--crash-banner) px-4 py-5 text-center">
+      <span data-blink class="pixel text-[clamp(26px,6cqi,56px)] leading-none text-(--crash-red)">WARNING</span>
+      <span class="pixel text-[clamp(9px,1.4cqi,12px)] leading-[1.6] text-(--crash-yellow)">GUARDRAIL BREACH DETECTED</span>
+    </div>
+    <div class="hazard h-[18px]"></div>
+  </div>
+
+  <div data-crash-screen hidden class="absolute inset-0 flex flex-col overflow-auto bg-(--crash-bg) text-(--crash-text)">
+    <div aria-hidden="true" class="scanlines pointer-events-none absolute inset-0"></div>
+
+    <div class="pixel relative flex flex-wrap items-center justify-between gap-x-5 gap-y-3 px-[clamp(16px,4cqi,40px)] py-5 text-[clamp(8px,1.3cqi,11px)] leading-[1.6] text-(--crash-muted)">
+      <span>AAYUSH.EXE</span>
+      <span class="flex items-center gap-2.5">
+        HP<span aria-hidden="true" class="relative box-border inline-block h-3 w-[110px] border-2 border-(--crash-text)"><span class="absolute inset-y-0 left-0 w-1 bg-(--crash-red)"></span></span>0/100
+      </span>
+      <span>SCORE 000384</span>
+    </div>
+
+    <div class="relative flex flex-1 flex-col items-center justify-center gap-[clamp(18px,3cqi,28px)] px-[clamp(16px,4cqi,40px)] pt-6 pb-8 text-center">
+      <span class="pixel text-[clamp(8px,1.3cqi,11px)] leading-[1.6] text-(--crash-yellow)">ERROR 0x0180 · GUARDRAIL_BREACH</span>
+      <h1 class="pixel m-0 text-[clamp(28px,7cqi,64px)] leading-[1.3] text-(--crash-text) [text-shadow:5px_5px_0_var(--crash-red)]">
+        SYSTEM<br />CRASHED
+      </h1>
+      <p class="m-0 max-w-[520px] font-mono text-[15px] leading-[1.7] text-pretty text-(--crash-body)">
+        That question tripped the guardrails. A sky dragon took care of the rest.
+      </p>
+      <div
+        data-crash-question
+        hidden
+        class="box-border max-w-[min(560px,100%)] truncate border-2 border-dashed border-(--crash-line) px-4 py-3 text-left font-mono text-[13px] leading-normal text-(--crash-muted)"
+      >
+      </div>
+      <button type="button" data-crash-refresh class="refresh pixel mt-2 border-0 px-[22px] py-4 text-[clamp(11px,1.6cqi,14px)] leading-none">
+        ▶ REFRESH
+      </button>
+      <span data-blink class="pixel text-[clamp(8px,1.3cqi,11px)] leading-[1.6] text-(--crash-muted)">PRESS ENTER TO CONTINUE</span>
+    </div>
+
+    <p class="relative m-0 px-6 pb-6 text-center font-mono text-[12px] leading-[1.6] text-(--crash-faint)">
+      Ask about work, building or AI. Those are fair game.
+    </p>
+  </div>
+</div>
+
+<style>
+  .crash { container-type: inline-size; }
+  .pixel { font-family: var(--font-pixel); font-weight: 400; }
+  .hazard { background: repeating-linear-gradient(-45deg, var(--crash-yellow) 0 14px, var(--crash-ink) 14px 28px); }
+  .scanlines { background: repeating-linear-gradient(0deg, var(--crash-scanline) 0 1px, transparent 1px 3px); }
+  .refresh {
+    background: var(--crash-yellow);
+    color: var(--crash-ink);
+    box-shadow: 5px 5px 0 var(--crash-yellow-shadow);
+    cursor: pointer;
+    transition: transform 150ms ease;
+  }
+  .refresh:hover { transform: translate(-2px, -2px); }
+  .refresh:active { transform: translate(3px, 3px); }
+  .refresh:focus-visible,
+  .refresh:focus {
+    outline: 3px solid var(--crash-text);
+    outline-offset: 4px;
+    border-radius: 0;
+  }
+</style>

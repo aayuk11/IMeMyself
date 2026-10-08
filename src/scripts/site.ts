@@ -2,14 +2,18 @@
 import { initTracking } from './analytics';
 import { initClock } from './clock';
 import { initComposer } from './composer';
+import { initCrash } from './crash';
 import { initIntro } from './intro';
+import { initBootLoader } from './loader';
 import { initNotesFilter } from './notes-filter';
 import { initPrefs } from './prefs';
 import { initShell } from './shell';
 
+initBootLoader();
 initPrefs();
 initShell();
 initComposer();
+initCrash();
 initIntro();
 initClock();
 initNotesFilter();
