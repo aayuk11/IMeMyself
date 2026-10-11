@@ -94,6 +94,10 @@
   --dex-lens: #7FD3F7;
   --dex-amber: #F7D14C;
   --dex-green: #7BD389;
+  --dex-bezel: #DEDEDE;
+  --dex-ink: #3A3A3A;
+  --dex-glare: rgba(255, 255, 255, 0.22);
+  --dex-scanline: rgba(0, 0, 0, 0.045);
 }
 
 @media (prefers-reduced-motion: reduce) {

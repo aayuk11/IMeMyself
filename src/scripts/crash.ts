@@ -1,4 +1,4 @@
-// Guardrail crash: a 4.6s canvas sequence (warning, sky dragon, charge, beam, boom), then the
+// Guardrail crash: a 4.6s canvas sequence (warning, Rayquaza, charge, beam, boom), then the
 // "SYSTEM CRASHED" screen. Ported from the logic class in _design/handoff_brand_bits/reference/Crash.dc.html.
 // The dragon is an original sprite inspired by Rayquaza; keep it original.
 
@@ -314,22 +314,29 @@ export function crash(question: string): void {
   }
 
   warn.hidden = false;
-  const W = root.clientWidth || 1280;
-  const H = root.clientHeight || 800;
-  const P = Math.max(3, Math.round(Math.min(W, H) / 110));
-  const GW = Math.ceil(W / P);
-  const GH = Math.ceil(H / P);
-  canvas.width = GW;
-  canvas.height = GH;
-  canvas.style.width = `${GW * P}px`;
-  canvas.style.height = `${GH * P}px`;
   const ctx = canvas.getContext('2d');
   if (!ctx) {
     showScreen();
     return;
   }
-  ctx.imageSmoothingEnabled = false;
-  g = { ctx, GW, GH, t0: performance.now(), debris: null, ix: 0, iy: 0 };
+  g = { ctx, GW: 0, GH: 0, t0: performance.now(), debris: null, ix: 0, iy: 0 };
+  const fit = (): void => {
+    if (!g) return;
+    const W = root.clientWidth || 1280;
+    const H = root.clientHeight || 800;
+    // Tall phone screens get slightly bigger pixels so the sprite still reads.
+    const P = Math.max(3, Math.round(Math.min(H > W ? W * 1.3 : W, H) / 110));
+    g.GW = Math.ceil(W / P);
+    g.GH = Math.ceil(H / P);
+    canvas.width = g.GW;
+    canvas.height = g.GH;
+    canvas.style.width = `${g.GW * P}px`;
+    canvas.style.height = `${g.GH * P}px`;
+    ctx.imageSmoothingEnabled = false;
+  };
+  fit();
+  // On phones the crash starts as the keyboard closes, so the viewport grows after the first fit.
+  window.addEventListener('resize', fit);
   const palette = debrisColours();
 
   const loop = (now: number): void => {

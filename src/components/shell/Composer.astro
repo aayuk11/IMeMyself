@@ -10,9 +10,11 @@ interface Props {
   placeholderShort: string;
   /** Title of the essay or case study being read. */
   context?: string | undefined;
+  /** "project:transact-comply" / "essay:slug": the page being read, sent with questions. */
+  docKey?: string | undefined;
 }
 
-const { counts, placeholder, placeholderShort, context } = Astro.props;
+const { counts, placeholder, placeholderShort, context, docKey } = Astro.props;
 const commands = buildCommands({ ...counts, notesName: site.notesName });
 ---
 
@@ -20,6 +22,8 @@ const commands = buildCommands({ ...counts, notesName: site.notesName });
   data-composer
   data-ask={String(site.ask.enabled)}
   data-email={site.email}
+  data-lines={JSON.stringify(site.ask.lines)}
+  data-doc={docKey}
   data-notes-name={site.notesName}
   data-placeholder={placeholder}
   data-placeholder-short={placeholderShort}

@@ -2,67 +2,91 @@
 title: Transact Comply
 order: 1
 what: AI transaction monitoring
-sector: RegTech · AML
-year: 2025 — now
-line: A GenAI workflow that turns regulatory scenarios into tested production rules.
-key: { n: '1 → 20+', l: 'clients in 2 months' }
-dek: Every new client waited a month for hand-written detection rules before their first alert.
-role: Product manager and builder
-tools: Claude Code, YAML DSL, Python
-tags: [Generative AI, Guardrails, Rules engine]
+sector: RegTech · Anti-money laundering
+year: Feb 2026 — Oct 2026
+line: An AI workflow I built that turns compliance scenarios into tested monitoring rules in under 48 hours, not a month.
+metrics:
+  - { value: '1 → 20+', label: 'Clients onboarded' }
+  - { value: '<48 hrs', label: 'Rule setup, was 1 month' }
+  - { value: '500+', label: 'Rules live' }
+  - { value: '−50%', label: 'AI cost' }
+dek: Every new client waited about a month for their monitoring rules. I built an AI workflow that does it in under 48 hours, with automatic checks so a wrong rule never goes live.
+role: Product manager
+owned: Discovery, PRDs and FRDs, sprint grooming, stakeholder management, testing, and the AI rule workflow, which I built myself
+tools: Claude Code, Python, JIRA, Confluence, Excel
+tags: [AI workflow, Anti-money laundering, Rules engine, '0 → 1']
 ---
 
 import Figure from '../../components/doc/Figure.astro';
 import FlowDiagram from '../../components/doc/FlowDiagram.astro';
 import Metrics from '../../components/doc/Metrics.astro';
 
-{/* Narrative from the design handoff (site.content.js). Review it, and rewrite "What I'd do differently" in your own words, before publishing. */}
+## The problem
 
-<Figure caption="SFTP ingestion → identity resolution → rules engine → alerts.">
+Transact Comply watches bank and fintech transactions for signs of money laundering. To do that, it needs rules: flag this pattern, ignore that one.
+
+Every new client needed their own set. Writing those rules by hand, then building test data to prove they worked, took about a month per client. So we could only onboard one client at a time.
+
+<Figure caption="Before: every step by hand, one after another.">
   <FlowDiagram
     size="hero"
-    title="System overview"
+    title="Before · about a month"
     rows={[
-      [{ label: 'SFTP ingestion', note: '40+ file formats' }],
-      [{ label: 'Identity resolution', note: 'one customer, many accounts' }],
-      [{ label: 'Rules engine', note: '500+ guarded rules' }],
-      [{ label: 'Alerts', note: 'to compliance teams', tone: 'strong' }],
+      [{ label: 'Write rules', note: 'by hand' }],
+      [{ label: 'Client call', note: 'learn what they need' }],
+      [{ label: 'Rewrite', note: 'plus test data, by hand' }],
+      [{ label: 'First rule set', note: '~1 month', tone: 'muted' }],
     ]}
   />
 </Figure>
 
-## A month of configuration before the first alert
+## What I did
 
-Transaction monitoring is only as good as its rules. For every new client — a bank, an NBFC, a crypto exchange — our implementation team translated regulatory typologies into detection logic by hand, then wrote test data to prove each rule fired when it should and stayed quiet when it shouldn’t.
+1. **Listened to clients first.** I sat in demos and onboarding calls across capital markets, banking, NBFC, insurance, housing finance, crypto and payments, and used them to learn what clients actually needed.
+2. **Made client data predictable.** I defined one standard format for 20+ types of client files, so every rule reads the same fields the same way.
+3. **Built an AI workflow for rules.** In Claude Code, on top of our existing rules engine. Describe a scenario in plain English and it writes the rule, its test data and the setup to deploy it.
+4. **Automated file intake.** Client files arrive over SFTP and are checked and processed automatically. Clients get an email when files are received, processed and flagged.
+5. **Built a rule search.** Describe a scenario and it shows the rules that already cover it. Sales, implementation and product all use it.
 
-That took about a month per client. Sales could close faster than we could configure, so the ceiling on growth wasn’t demand. It was how many rules a small team could write and verify.
+<Figure caption="After: a plain-English scenario becomes a live, tested rule.">
+  <FlowDiagram
+    size="hero"
+    title="After · under 48 hours"
+    rows={[
+      [{ label: 'Scenario', note: 'plain English' }],
+      [{ label: 'Search', note: 'reuse if covered' }],
+      [{ label: 'Generate', note: 'rule + test data' }],
+      [{ label: 'Check', note: '3 automatic checks' }],
+      [{ label: 'Live', note: 'after a quick review', tone: 'strong' }],
+    ]}
+  />
+</Figure>
 
-## A workflow that writes rules, and a system that doesn’t trust it
+## Four checks before a rule goes live
 
-I designed and built a generative AI workflow in Claude Code that takes a regulatory scenario in plain language and produces a production rule in our YAML DSL, positive, negative and edge-case test data, and a deployment package. A Source of Truth layer runs a similarity search first, so we extend coverage instead of duplicating it.
+The AI writes the first draft. Nothing goes live on its word alone.
 
-1. **Retrieve.** Similarity search over the existing library. A match means reuse, not regenerate.
-2. **Generate.** The LLM drafts the rule and its test data.
-3. **Validate.** Schema, golden regression, generated tests. Fail any one and it goes back to 02.
-4. **Deploy.** Production, with an audit trail.
+1. **Format check.** A rule that uses a field that doesn't exist is rejected instantly.
+2. **Regression test.** A set of expert-approved rules is re-tested on every change. If results shift, the change is blocked.
+3. **Its own tests.** Every rule comes with data that should trigger it, data that shouldn't, and borderline cases. Fail one and it's rejected.
+4. **A domain expert.** Still signs off, but in minutes instead of days, because the test results are already attached.
 
-> “The model was never the risky part. The risk was a plausible-looking rule that silently missed a typology.”
+QA gained the most. Test data now comes with every rule, so every rule gets tested, not just a sample.
 
-## From one client to twenty in two months
+## Results
+
+Rule setup for a new client dropped from about a month to under 48 hours. We grew from 1 client to 20+, and demos now run on rules built for each client's own scenarios instead of a generic set.
 
 <Metrics
   items={[
-    { n: '1→20+', l: 'clients in 2 mo' },
-    { n: '<48h', l: 'config, was 1 mo' },
-    { n: '500+', l: 'prod rules' },
-    { n: '−50%', l: 'inference cost' },
+    { n: '6', l: 'sectors' },
+    { n: '3', l: 'countries' },
     { n: '+10%', l: 'detection coverage' },
-    { n: '40+', l: 'file formats' },
   ]}
 />
 
-Pre-sales could promise coverage and implementation could keep the promise, across banking, NBFC, insurance, housing finance, crypto and payments in India, the UK and Nepal. Sales now uses the Source of Truth in live demos.
+AI cost fell 50% and detection coverage rose 10% after I changed how we check people with several accounts: once per person, instead of once per account.
 
-## What I’d do differently
+## What I'd do differently
 
-I built the golden regression suite after the first hundred rules, not before. Next time the evaluation harness ships first, and the generator earns its way in against it.
+In early demos I led with how many rules we had: 220+. Clients didn't care. They picked three or four scenarios and asked how well we covered them. Asking that sooner would have got us to the rule search much earlier.

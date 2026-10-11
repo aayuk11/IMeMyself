@@ -1,6 +1,7 @@
 ---
 // Reader for case studies and essays.
 import type { PageId } from '../components/shell/Sidebar.astro';
+import Metrics from '../components/doc/Metrics.astro';
 import Base from './Base.astro';
 
 interface Props {
@@ -11,6 +12,8 @@ interface Props {
   /** "Case study · RegTech · AML · 2025 — now" */
   meta: string;
   facts?: { k: string; v: string; href?: string | undefined }[];
+  /** Case studies: outcome numbers under the facts. */
+  metrics?: { n: string; l: string }[];
   tags: string[];
   back: { href: string; label: string };
   next?: { href: string; label: string } | undefined;
@@ -22,7 +25,7 @@ interface Props {
   jsonLd?: Record<string, unknown> | undefined;
 }
 
-const { kind, slug, title, dek, meta, facts = [], tags, back, next, medium, current, crumb, publishedTime, jsonLd } = Astro.props;
+const { kind, slug, title, dek, meta, facts = [], metrics = [], tags, back, next, medium, current, crumb, publishedTime, jsonLd } = Astro.props;
 ---
 
 <Base
@@ -65,6 +68,14 @@ const { kind, slug, title, dek, meta, facts = [], tags, back, next, medium, curr
             </div>
           ))}
         </dl>
+      )
+    }
+
+    {
+      metrics.length > 0 && (
+        <div class="mt-8">
+          <Metrics items={metrics} />
+        </div>
       )
     }
 

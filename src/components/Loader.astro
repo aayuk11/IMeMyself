@@ -3,27 +3,32 @@
 // Colours are tokens only: figure/slope/outline --text, boulder and sweat --accent, "AI" --on-accent.
 // Animated by src/scripts/loader.ts (animateLoader).
 interface Props {
-  /** full: centred scene with status and attempt lines. compact: 64×40 scene and status line (chat "thinking"). */
-  variant?: 'full' | 'compact';
+  /** full: overlay scene with status and attempt lines. stage: the same, larger, inline in the chat (/sisyphus).
+      compact: 64×40 scene and status line (chat "thinking"). */
+  variant?: 'full' | 'stage' | 'compact';
 }
 
 const { variant = 'full' } = Astro.props;
 const compact = variant === 'compact';
+const stage = variant === 'stage';
+const size = compact ? { w: 64, h: 40 } : stage ? { w: 360, h: 225 } : { w: 260, h: 162 };
 ---
 
 <div
   data-loader={variant}
   class:list={[
     'box-border flex text-text',
-    compact ? 'flex-row items-center justify-start gap-3' : 'h-full w-full flex-col items-center justify-center gap-5 bg-bg p-6',
+    compact && 'flex-row items-center justify-start gap-3',
+    stage && 'w-full flex-col items-center gap-5',
+    variant === 'full' && 'h-full w-full flex-col items-center justify-center gap-5 bg-bg p-6',
   ]}
 >
   <svg
     viewBox="0 0 240 150"
-    width={compact ? 64 : 260}
-    height={compact ? 40 : 162}
+    width={size.w}
+    height={size.h}
     aria-hidden="true"
-    class="flex-none overflow-hidden text-text"
+    class:list={['flex-none overflow-hidden text-text', stage && 'h-auto w-full max-w-[360px]']}
   >
     <g transform="rotate(-14 120 110)">
       <line x1="-20" y1="118" x2="260" y2="118" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"></line>
@@ -63,17 +68,17 @@ const compact = variant === 'compact';
   <div class:list={['flex min-w-0 flex-col gap-2', compact ? 'items-start' : 'items-center']}>
     <span
       data-l="msg"
-      role={compact ? undefined : 'status'}
+      role={variant === 'full' ? 'status' : undefined}
       class:list={[
         'font-mono leading-[1.35] font-medium tracking-[0.02em] whitespace-nowrap text-text',
-        compact ? 'text-[13px]' : 'text-[14px]',
+        compact ? 'text-[13px]' : stage ? 'text-[15px]' : 'text-[14px]',
       ]}
     >
       Rolling the boulder uphill…
     </span>
     {
       !compact && (
-        <span class="font-mono text-[10.5px] leading-[1.4] font-medium tracking-[0.1em] text-muted uppercase">
+        <span class="text-center font-mono text-[10.5px] leading-[1.4] font-medium tracking-[0.1em] text-balance text-muted uppercase">
           Attempt <span data-l="attempt">2,417</span> · one must imagine the PM happy
         </span>
       )

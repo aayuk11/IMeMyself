@@ -1,6 +1,10 @@
 // Composer: slash commands, the conversation view, and the hidden easter eggs.
-import { isBlocked, routeReply } from '../lib/chat';
-import { ALIASES, PAGE_ROUTES } from '../lib/commands';
+// Questions: guardrails and easter-egg shortcuts are answered here (no network), the rest go to
+// /api/ask (netlify/functions/ask). A conversation lasts for the visit: page hops keep it,
+// a refresh or a fresh arrival clears it, and nothing is stored anywhere else.
+import { routeReply } from '../lib/chat';
+import { ALIASES, buildCommands, PAGE_ROUTES } from '../lib/commands';
+import { classify, intent, pickLine } from '../lib/guard';
 import { track } from './analytics';
 import { crash, isCrashActive } from './crash';
 import { playIntro } from './intro';
@@ -9,17 +13,45 @@ import { nextPalette, nextType, paletteLabel, setGotham, toggleMode, typeLabel }
 import { closeDrawer, drawerOpen, toggleFocus } from './shell';
 
 const TOAST_MS = 3400;
-const ASK_TIMEOUT_MS = 25_000;
+const ASK_TIMEOUT_MS = 20_000;
 const MAX_QUESTION = 300;
 const CHAT_KEY = 'ak-chat';
+const COUNT_KEY = 'ak-ask-count';
 const FOCUS_KEY = 'ak-focus-composer';
+const CHAT_TTL_MS = 30 * 60 * 1000;
+const SESSION_CAP = 25;
+const COOLDOWN_MS = 3000;
+
+interface Link {
+  href: string;
+  /** Mono tag on the chip: "/experience". */
+  tag: string;
+  label: string;
+}
 
 interface Message {
   role: 'user' | 'bot';
   text: string;
-  routes?: string[];
+  links?: Link[];
+  commands?: string[];
   ai?: boolean;
   pending?: boolean;
+}
+
+interface Lines {
+  offtopic: string[];
+  private: string[];
+  command: Record<string, string>;
+  unavailable: string;
+  limit: string;
+}
+
+interface Answer {
+  verdict: string;
+  text: string;
+  links: Link[];
+  commands: string[];
+  ai: boolean;
 }
 
 const reducedMotion = (): boolean => matchMedia('(prefers-reduced-motion: reduce)').matches;
@@ -63,6 +95,18 @@ export function initComposer(): void {
   const askEnabled = wrap.dataset.ask === 'true';
   const email = wrap.dataset.email ?? '';
   const notesName = wrap.dataset.notesName ?? 'Notes';
+  const docKey = wrap.dataset.doc ?? '';
+  const lines: Lines = (() => {
+    try {
+      return JSON.parse(wrap.dataset.lines ?? '') as Lines;
+    } catch {
+      return { offtopic: ['Low priority. Ask me something else.'], private: ['That stays off the site.'], command: {}, unavailable: 'These are the best places to start.', limit: 'That’s plenty for one visit.' };
+    }
+  })();
+  const fill = (line: string, cmd = ''): string => line.replaceAll('{email}', email).replaceAll('{cmd}', cmd);
+  const triggers = buildCommands({ projects: 0, notes: 0, notesName }).filter((c) => c.triggers);
+  const status = document.querySelector<HTMLElement>('[data-chat-status]');
+  const stage = document.querySelector<HTMLElement>('[data-chat-stage]');
 
   let focused = false;
   let menuAll = false;
@@ -129,9 +173,27 @@ export function initComposer(): void {
   const pageCrumb = crumb?.dataset.crumbPage ?? '';
   const chatOpen = (): boolean => Boolean(chat && !chat.hidden);
 
+  /** A refresh, or arriving from another site or a typed URL, starts a fresh conversation. Page hops keep it. */
+  function freshVisit(): boolean {
+    const nav = performance.getEntriesByType('navigation')[0] as PerformanceNavigationTiming | undefined;
+    if (nav?.type === 'reload') return true;
+    if (nav?.type !== 'navigate') return false;
+    try {
+      return !document.referrer || new URL(document.referrer).origin !== location.origin;
+    } catch {
+      return true;
+    }
+  }
+
   function loadMessages(): Message[] {
     try {
-      return (JSON.parse(sessionStorage.getItem(CHAT_KEY) ?? '[]') as Message[]).filter((m) => !m.pending);
+      if (freshVisit()) {
+        sessionStorage.removeItem(CHAT_KEY);
+        return [];
+      }
+      const saved = JSON.parse(sessionStorage.getItem(CHAT_KEY) ?? 'null') as { v?: number; at?: number; messages?: Message[] } | null;
+      if (saved?.v !== 2 || !Array.isArray(saved.messages) || Date.now() - (saved.at ?? 0) > CHAT_TTL_MS) return [];
+      return saved.messages.filter((m) => !m.pending);
     } catch {
       return [];
     }
@@ -139,14 +201,27 @@ export function initComposer(): void {
   let messages = loadMessages();
   function saveMessages(): void {
     try {
-      sessionStorage.setItem(CHAT_KEY, JSON.stringify(messages.filter((m) => !m.pending)));
+      sessionStorage.setItem(CHAT_KEY, JSON.stringify({ v: 2, at: Date.now(), messages: messages.filter((m) => !m.pending) }));
     } catch {
       // Storage blocked: the conversation lasts for this page only.
     }
   }
 
-  const ROUTE_LABELS: Record<string, string> = { '/experience': 'Experience', '/notes': notesName, '/lab': 'Lab', '/resume': 'Résumé ↗' };
+  const ROUTE_LABELS: Record<string, string> = { '/experience': 'Experience', '/notes': notesName, '/lab': 'Lab', '/resume': 'Résumé' };
   const ROUTE_HREFS: Record<string, string> = { '/experience': '/experience/', '/notes': '/notes/', '/lab': '/lab/', '/resume': '/resume/' };
+  const routeLinks = (routes: readonly string[]): Link[] =>
+    routes.flatMap((r) => (ROUTE_HREFS[r] ? [{ href: ROUTE_HREFS[r], tag: r, label: ROUTE_LABELS[r] ?? '' }] : []));
+
+  /** A command's menu label ("Trip the guardrails"), or '' when it isn't a real command. */
+  const commandLabel = (cmd: string): string => document.getElementById(`cmd-${cmd.slice(1)}`)?.children[1]?.textContent?.trim() ?? '';
+  const commandText = (cmd: string): string => fill(lines.command[cmd] ?? lines.command.default ?? 'That’s {cmd}.', cmd);
+
+  /** Screen readers hear each new reply once (the log itself isn't a live region). */
+  function announce(text: string): void {
+    if (!status) return;
+    status.textContent = '';
+    requestAnimationFrame(() => (status.textContent = text));
+  }
 
   let stopLoaders: (() => void)[] = [];
 
@@ -155,7 +230,8 @@ export function initComposer(): void {
     const userTpl = document.getElementById('tpl-chat-user') as HTMLTemplateElement | null;
     const botTpl = document.getElementById('tpl-chat-bot') as HTMLTemplateElement | null;
     const chipTpl = document.getElementById('tpl-chat-chip') as HTMLTemplateElement | null;
-    if (!userTpl || !botTpl || !chipTpl) return;
+    const cmdTpl = document.getElementById('tpl-chat-cmd') as HTMLTemplateElement | null;
+    if (!userTpl || !botTpl || !chipTpl || !cmdTpl) return;
     stopLoaders.forEach((stop) => stop());
     stopLoaders = [];
     log.replaceChildren();
@@ -172,18 +248,33 @@ export function initComposer(): void {
         if (loader) stopLoaders.push(animateLoader(loader));
       }
       const chips = node.querySelector<HTMLElement>('[data-chips]');
-      for (const r of m.routes ?? []) {
+      for (const l of m.links ?? []) {
+        if (l.href === location.pathname) continue; // no link to the page you're on
         const chip = chipTpl.content.cloneNode(true) as DocumentFragment;
         const a = chip.querySelector('a');
-        const [cmd, label] = [...(a?.querySelectorAll('span') ?? [])];
-        if (!a || !cmd || !label) continue;
-        a.href = ROUTE_HREFS[r] ?? '/';
-        if (r === '/resume') {
+        const [tag, label] = [...(a?.querySelectorAll('span') ?? [])];
+        if (!a || !tag || !label) continue;
+        const external = /^https?:/.test(l.href) || l.href === '/resume/';
+        a.href = l.href;
+        if (external) {
           a.target = '_blank';
           a.rel = 'noopener';
         }
-        cmd.textContent = r;
-        label.textContent = ROUTE_LABELS[r] ?? '';
+        tag.textContent = l.tag;
+        label.textContent = external ? `${l.label} ↗` : l.label;
+        chips?.append(chip);
+      }
+      // Suggested commands run only when clicked (delegated handler below).
+      for (const c of m.commands ?? []) {
+        const label = commandLabel(c);
+        if (!label) continue;
+        const chip = cmdTpl.content.cloneNode(true) as DocumentFragment;
+        const button = chip.querySelector<HTMLButtonElement>('[data-run]');
+        const [tag, text] = [...(button?.querySelectorAll('span') ?? [])];
+        if (!button || !tag || !text) continue;
+        button.dataset.run = c;
+        tag.textContent = c;
+        text.textContent = label;
         chips?.append(chip);
       }
       const foot = node.querySelector<HTMLElement>('[data-footnote]');
@@ -218,61 +309,170 @@ export function initComposer(): void {
     requestAnimationFrame(() => window.scrollTo({ top: document.documentElement.scrollHeight, behavior: 'auto' }));
   };
 
-  async function answer(question: string): Promise<{ text: string; ai: boolean }> {
-    const reply = routeReply(question, notesName, email);
-    if (!askEnabled) {
-      await new Promise((r) => setTimeout(r, 600));
-      return {
-        text: reply.matched
-          ? `AI answers are coming soon. Until then: ${reply.text}`
-          : 'AI answers are coming soon. Until then, these are the best places to start.',
-        ai: false,
-      };
+  // ---------- /sisyphus: the loader, larger, until anything else is sent ----------
+
+  let stopStage: (() => void) | null = null;
+  const stageOpen = (): boolean => Boolean(stage && !stage.hidden);
+
+  function showStage(): void {
+    if (!stage) return;
+    openChat(true);
+    if (!stageOpen()) {
+      stage.hidden = false;
+      const loader = stage.querySelector('[data-loader]');
+      if (loader) stopStage = animateLoader(loader);
     }
-    const key = question.toLowerCase().replace(/\s+/g, ' ').trim();
+    input.blur(); // phones: close the keyboard so the stage is visible
+    requestAnimationFrame(() => stage.scrollIntoView({ block: 'center', behavior: 'auto' }));
+  }
+
+  /** keepChat: something else is about to use the conversation view, so don't close it. */
+  function hideStage(keepChat = false): void {
+    if (!stage || !stageOpen()) return;
+    stopStage?.();
+    stopStage = null;
+    stage.hidden = true;
+    if (!keepChat && !messages.length) closeChat();
+  }
+
+  // ---------- questions ----------
+
+  let inFlight = false;
+  let lastAsk = 0;
+  const askCount = (): number => {
     try {
-      const res = await fetch(`/api/ask?q=${encodeURIComponent(key)}`, {
-        headers: { accept: 'application/json' },
-        signal: AbortSignal.timeout(ASK_TIMEOUT_MS),
-      });
-      if (res.status === 429) return { text: `That’s a lot of questions at once. Try again in a minute, or email ${email}.`, ai: false };
-      const data = (await res.json().catch(() => null)) as { answer?: string; error?: string } | null;
-      if (res.ok && data?.answer) return { text: data.answer, ai: true };
-      return { text: data?.error ?? `Couldn’t reach the model just now. Email ${email} instead.`, ai: false };
+      return Number(sessionStorage.getItem(COUNT_KEY) ?? 0);
     } catch {
-      return { text: `Couldn’t reach the model just now. Email ${email} instead.`, ai: false };
+      return 0;
     }
+  };
+
+  const fallback = (question: string, text = lines.unavailable): Answer => ({
+    verdict: 'unavailable',
+    text: fill(text),
+    links: routeLinks(routeReply(question, notesName, email).routes),
+    commands: [],
+    ai: false,
+  });
+
+  const safeLinks = (value: unknown): Link[] =>
+    Array.isArray(value)
+      ? value
+          .filter((l): l is Link => typeof l?.href === 'string' && /^(\/|https:\/\/)/.test(l.href) && typeof l.label === 'string' && typeof l.tag === 'string')
+          .slice(0, 3)
+      : [];
+
+  async function fetchAnswer(question: string, history: { role: 'user' | 'bot'; text: string }[]): Promise<Answer> {
+    const signal = AbortSignal.timeout(ASK_TIMEOUT_MS);
+    try {
+      // The first question goes as a GET, so repeat questions come from Netlify's cache.
+      const key = question.toLowerCase().replace(/\s+/g, ' ').trim();
+      const res = history.length
+        ? await fetch('/api/ask', {
+            method: 'POST',
+            headers: { 'content-type': 'application/json', accept: 'application/json' },
+            body: JSON.stringify({ q: question, p: docKey, history }),
+            signal,
+          })
+        : await fetch(`/api/ask?q=${encodeURIComponent(key)}${docKey ? `&p=${encodeURIComponent(docKey)}` : ''}`, {
+            headers: { accept: 'application/json' },
+            signal,
+          });
+      if (res.status === 429) return fallback(question, `That’s a lot of questions at once. Try again in a minute, or email ${email}.`);
+      const data = (await res.json().catch(() => null)) as Partial<Answer> | null;
+      if (!data || typeof data.verdict !== 'string' || data.verdict === 'unavailable' || typeof data.text !== 'string') return fallback(question);
+      return {
+        verdict: data.verdict,
+        text: data.text,
+        links: safeLinks(data.links),
+        commands: Array.isArray(data.commands) ? data.commands.filter((c): c is string => typeof c === 'string') : [],
+        ai: Boolean(data.ai),
+      };
+    } catch {
+      return fallback(question);
+    }
+  }
+
+  /** Add a finished bot reply and show it. */
+  function reply(message: Omit<Message, 'role'>, verdict: string): void {
+    messages.push({ role: 'bot', ...message });
+    saveMessages();
+    renderLog();
+    toEnd();
+    announce(message.text);
+    track('question_asked', { verdict, ai: Boolean(message.ai) });
   }
 
   async function ask(raw: string): Promise<void> {
     const question = raw.trim().slice(0, MAX_QUESTION);
     if (!question) return;
+    const tier = classify(question).tier;
+    const shortcut = tier ? null : intent(question, triggers);
+    const needsModel = !tier && !shortcut && askEnabled && askCount() < SESSION_CAP;
+    if (needsModel && inFlight) return toast('Still on the last one.');
+    if (needsModel && Date.now() - lastAsk < COOLDOWN_MS) return toast('One second, then ask again.');
+
     clearInput();
     closeDrawer(false);
-    // A blocked question never reaches the chat: it trips the guardrails and plays the crash.
-    if (isBlocked(raw)) {
+    hideStage(true);
+    // A breach never reaches the chat: it trips the guardrails and plays the crash.
+    if (tier === 'breach') {
       input.blur();
-      track('question_blocked');
-      crash(raw.trim());
+      track('question_blocked', { by: 'rule' });
+      crash(question);
       return;
     }
     openChat(true);
-    const routes = routeReply(question, notesName, email).routes;
-    const pending: Message = { role: 'bot', text: '…', routes: [], pending: true };
-    messages.push({ role: 'user', text: question }, pending);
+    messages.push({ role: 'user', text: question });
+
+    if (tier === 'offtopic' || tier === 'private') return reply({ text: fill(pickLine(lines[tier], question)) }, tier);
+    if (shortcut) return reply({ text: commandText(shortcut), commands: [shortcut] }, 'command');
+    if (!askEnabled) {
+      const r = routeReply(question, notesName, email);
+      return reply(
+        { text: r.matched ? `AI answers are coming soon. Until then: ${r.text}` : 'AI answers are coming soon. Until then, these are the best places to start.', links: routeLinks(r.routes) },
+        'routed',
+      );
+    }
+    if (!needsModel) return reply(fallback(question, lines.limit), 'limit');
+
+    // Up to two earlier exchanges, so follow-ups make sense. The server treats them as untrusted.
+    const history = messages
+      .slice(0, -1)
+      .slice(-4)
+      .map((m) => ({ role: m.role, text: m.text.slice(0, m.role === 'user' ? MAX_QUESTION : 400) }));
+    const pending: Message = { role: 'bot', text: '…', pending: true };
+    messages.push(pending);
     renderLog();
     toEnd();
-    track('question_asked', { ai: askEnabled });
-    const { text, ai } = await answer(question);
-    Object.assign(pending, { text, routes, ai, pending: false });
-    saveMessages();
-    renderLog();
-    toEnd();
+    announce('Thinking…');
+    inFlight = true;
+    lastAsk = Date.now();
+    try {
+      sessionStorage.setItem(COUNT_KEY, String(askCount() + 1));
+    } catch {
+      // The per-visit cap just won't count.
+    }
+    const answer = await fetchAnswer(question, history);
+    inFlight = false;
+
+    if (answer.verdict === 'breach') {
+      messages = messages.filter((m) => m !== pending && m.text !== question);
+      saveMessages();
+      renderLog();
+      input.blur();
+      track('question_blocked', { by: 'server' });
+      crash(question);
+      return;
+    }
+    messages = messages.filter((m) => m !== pending);
+    reply({ text: answer.text, links: answer.links, commands: answer.commands, ai: answer.ai }, answer.verdict);
   }
 
   function newConversation(): void {
     // Phone: get the drawer out of the way so the page and composer are visible.
     closeDrawer(false);
+    hideStage(true);
     messages = [];
     saveMessages();
     renderLog();
@@ -364,6 +564,8 @@ export function initComposer(): void {
     cmd = ALIASES[cmd] ?? cmd;
     clearInput();
     track('command_run', { command: cmd });
+    // Anything else typed skips Sisyphus.
+    if (cmd !== '/sisyphus') hideStage();
 
     const route = PAGE_ROUTES[cmd];
     if (route) {
@@ -416,6 +618,8 @@ export function initComposer(): void {
       case '/crash':
         input.blur();
         return crash('/crash');
+      case '/sisyphus':
+        return showStage();
       default:
         toast(`No command “${cmd}”. Type / to see them all.`);
     }
@@ -510,6 +714,10 @@ export function initComposer(): void {
     }
     const target = event.target;
     const typing = target instanceof HTMLElement && Boolean(target.closest('input, textarea, select, [contenteditable]'));
+    if (event.key === 'Escape' && !typing && stageOpen()) {
+      hideStage();
+      return;
+    }
     if (typing || event.defaultPrevented || document.querySelector('dialog[open]')) return;
     if (event.key === '/' && !event.metaKey && !event.ctrlKey && !event.altKey) {
       event.preventDefault();
@@ -527,8 +735,26 @@ export function initComposer(): void {
 
   window.addEventListener('popstate', (event) => {
     const state = event.state as { chat?: boolean } | null;
-    if (state?.chat) setChatView(true);
-    else setChatView(false);
+    if (!state?.chat) {
+      hideStage(true);
+      setChatView(false);
+    } else if (messages.length || stageOpen()) {
+      setChatView(true);
+    } else {
+      // Forward into an empty conversation (e.g. a skipped /sisyphus): stay on the page.
+      history.replaceState(null, '', location.pathname + location.search);
+      setChatView(false);
+    }
+  });
+
+  stage?.querySelector('[data-stage-skip]')?.addEventListener('click', () => {
+    hideStage();
+    input.focus();
+  });
+  // Command chips in replies.
+  log?.addEventListener('click', (event) => {
+    const button = event.target instanceof Element ? event.target.closest<HTMLElement>('[data-run]') : null;
+    if (button?.dataset.run) run(button.dataset.run);
   });
 
   // Pokédex: close on backdrop click (the dialog box itself fills its content).
@@ -544,6 +770,8 @@ export function initComposer(): void {
   if (location.hash === '#conversation' && messages.length) {
     history.replaceState({ chat: true }, '');
     setChatView(true);
+  } else if (location.hash === '#conversation') {
+    history.replaceState(null, '', location.pathname + location.search);
   }
   try {
     if (sessionStorage.getItem(FOCUS_KEY)) {

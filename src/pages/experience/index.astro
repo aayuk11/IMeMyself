@@ -48,10 +48,12 @@ const period = 'eyebrow leading-normal whitespace-nowrap text-ink';
                     </span>
                     <span class="text-[15px] leading-normal text-pretty text-muted">{p.data.line}</span>
                   </span>
-                  <span class="flex flex-[0_0_170px] flex-col gap-0.5">
-                    <strong class="display text-[22px] leading-[1.1] tabular-nums">{p.data.key.n}</strong>
-                    <span class="font-mono text-[10.5px] leading-[1.4] font-medium tracking-[0.06em] text-muted uppercase">{p.data.key.l}</span>
-                  </span>
+                  {p.data.metrics[0] && (
+                    <span class="flex flex-[0_0_170px] flex-col gap-0.5">
+                      <strong class="display text-[22px] leading-[1.1] tabular-nums">{p.data.metrics[0].value}</strong>
+                      <span class="font-mono text-[10.5px] leading-[1.4] font-medium tracking-[0.06em] text-muted uppercase">{p.data.metrics[0].label}</span>
+                    </span>
+                  )}
                   <span class="eyebrow flex-none leading-none whitespace-nowrap">
                     Case study →<span class="sr-only">: {p.data.title}</span>
                   </span>

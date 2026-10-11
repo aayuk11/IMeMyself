@@ -11,7 +11,9 @@ command composer on every page. User-facing docs are in README.md. Design source
 - Tailwind CSS 4 via `@tailwindcss/vite`; theme in `tailwind.config.mjs`, loaded with `@config` in `src/styles/global.css`.
 - MDX for case studies and essays; collections in `src/content.config.ts` (`projects`, `essays` via glob, `notes` via file loader on `notes.yaml`).
 - TypeScript strict, no `any`. Client JS is plain TS modules in `src/scripts/`, loaded once from `Base.astro`. No framework islands.
-- Netlify. Optional function `netlify/functions/ask.mts` (`GET /api/ask`, `@anthropic-ai/sdk`), used only when `site.ask.enabled`.
+- Netlify. Function `netlify/functions/ask/` (`/api/ask`: `ask.mts` handler, `providers.ts`, `retrieve.ts`, `prompt.ts`, `budget.ts`). Config only via `AI_*` env vars
+  (never `ANTHROPIC_*`/`GEMINI_*`: Netlify's AI Gateway injects those and bills credits). `src/lib/guard.ts`, `src/lib/knowledge.ts` and `src/lib/commands.ts`
+  are bundled by the function: keep them free of Astro imports. Test with `node scripts/ask-eval.mjs` against `npx netlify-cli dev` (`AI_PROVIDER=mock`).
 
 ## Shell and state
 
@@ -23,7 +25,7 @@ command composer on every page. User-facing docs are in README.md. Design source
 - `.page` and the FlowDiagram root are size containers; fluid sizes use `clamp(…cqi…)` like the design. Don't put containment on `.column`
   (it would capture fixed-position children like the toast).
 - Brand bits (spec `_design/handoff_brand_bits/README.md`): palette favicon (`FAVICON` in `src/lib/look.ts`, swapped in `prefs.ts` `sync()`),
-  Sisyphus `Loader.astro` + `scripts/loader.ts` (compact: the chat's "thinking" state; full: over the page area when a
+  Sisyphus `Loader.astro` + `scripts/loader.ts` (compact: the chat's "thinking" state; stage: `/sisyphus` in the chat, skipped by any next input; full: over the page area when a
   page change takes >400ms, `pageLoading()` before any `location.assign`; no first-load overlay; `prefetch` is on for all links), and the guardrail
   crash `Crash.astro` + `scripts/crash.ts` (canvas, `--crash-*` tokens, `.shell` made inert; Refresh clears session state and reloads Home).
 
@@ -40,6 +42,7 @@ command composer on every page. User-facing docs are in README.md. Design source
 ## Content
 
 - `site.config.ts`: all personal data and the AI facts (`ask.system`). Keep it free of Astro imports (the function bundles it).
+- Case studies: `metrics` (the first is the /experience headline) and `owned` sit in the header; `_template.mdx` documents every field. Quote YAML values that contain a colon.
 - Drafts (`draft: true`) render in dev only. All notes/essays from the design are drafts with placeholder dates — never flip them on the user's behalf.
 - Confidentiality: ZIGRAM (caps) is the employer. No client names, real transaction data or production screenshots; diagrams stay conceptual.
 

@@ -205,6 +205,7 @@ html { --side-now: 0px; }
     transition: opacity var(--t-fast);
   }
   .cmd-chip:hover { opacity: 0.7; }
+  button.cmd-chip { cursor: pointer; }
   .cmd-chip > :first-child { font: 500 12.5px/1 var(--font-mono); color: var(--ink); }
   .cmd-chip > :last-child { font: 400 13.5px/1 var(--font-sans); color: var(--muted); }
 
@@ -393,6 +394,27 @@ html { --side-now: 0px; }
     overflow-x: auto;
   }
   .doc-body :where(pre code) { font: inherit; }
+
+  /* Tables: hairline rows, mono column labels. */
+  .doc-body :where(table):not(:where(.not-prose, .not-prose *)) {
+    width: 100%;
+    border-collapse: collapse;
+    border-top: 1px solid var(--text);
+    font: 400 15.5px/1.5 var(--font-sans);
+  }
+  .doc-body :where(th, td):not(:where(.not-prose, .not-prose *)) {
+    padding: 10px 16px 10px 0;
+    border-bottom: 1px solid var(--border);
+    text-align: left;
+    vertical-align: top;
+  }
+  .doc-body :where(th):not(:where(.not-prose, .not-prose *)) {
+    font: 500 10.5px/1.4 var(--font-mono);
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--muted);
+  }
+  .doc-body :where(td:first-child):not(:where(.not-prose, .not-prose *)) { color: var(--muted); }
 
   .doc-body :where(img):not(:where(.not-prose, .not-prose *)) {
     max-width: 100%;

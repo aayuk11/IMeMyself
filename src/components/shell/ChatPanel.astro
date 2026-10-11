@@ -1,16 +1,36 @@
 ---
 // Conversation view. Hidden until a free-text question is asked; it then replaces the page
-// content in place (history entry #conversation) and lives in sessionStorage for the visit.
+// content in place (history entry #conversation) and lasts for the visit (cleared on refresh).
+// The log is re-rendered as a whole, so it isn't a live region: [data-chat-status] announces each new reply.
 import { site } from '../../../site.config';
 import Loader from '../Loader.astro';
 ---
 
 <section data-chat hidden aria-label="Conversation" class="page">
+  {
+    site.ask.enabled && (
+      <p class="mx-auto mt-[clamp(18px,4cqi,32px)] mb-0 box-border w-full max-w-[760px] px-[clamp(18px,4cqi,40px)] font-mono text-[10.5px] leading-[1.5] font-medium tracking-[0.08em] text-muted uppercase">
+        {site.ask.notice}
+      </p>
+    )
+  }
   <div
     data-chat-log
-    aria-live="polite"
-    class="mx-auto box-border flex w-full max-w-[760px] flex-col gap-7 px-[clamp(18px,4cqi,40px)] pt-[clamp(24px,5cqi,48px)] pb-8"
+    class="mx-auto box-border flex w-full max-w-[760px] flex-col gap-7 px-[clamp(18px,4cqi,40px)] pt-[clamp(16px,3cqi,28px)] pb-8"
   >
+  </div>
+  <p data-chat-status role="status" class="sr-only"></p>
+
+  <!-- /sisyphus: the loader, larger, until anything else is sent. Not part of the saved conversation. -->
+  <div data-chat-stage hidden class="mx-auto box-border flex w-full max-w-[760px] flex-col px-[clamp(18px,4cqi,40px)] pb-10">
+    <div class="flex flex-col items-center gap-5 rounded-[18px] border border-border bg-surface px-5 pt-8 pb-6">
+      <p class="sr-only">Sisyphus pushes the AI boulder uphill. Send anything to skip.</p>
+      <div aria-hidden="true" class="flex w-full justify-center"><Loader variant="stage" /></div>
+      <div class="flex flex-wrap items-center justify-center gap-x-4 gap-y-2">
+        <span aria-hidden="true" class="font-mono text-[10.5px] leading-none font-medium tracking-[0.08em] text-muted uppercase">Send anything to skip</span>
+        <button type="button" data-stage-skip class="eyebrow rounded-[10px] border border-border bg-transparent px-3.5 py-2.5 leading-none text-text">Skip</button>
+      </div>
+    </div>
   </div>
 </section>
 
@@ -40,4 +60,9 @@ import Loader from '../Loader.astro';
 
 <template id="tpl-chat-chip">
   <a class="cmd-chip px-[13px] py-[9px]"><span></span><span></span></a>
+</template>
+
+<!-- A slash command suggested in a reply. Runs only when clicked. -->
+<template id="tpl-chat-cmd">
+  <button type="button" data-run class="cmd-chip px-[13px] py-[9px]"><span></span><span></span></button>
 </template>

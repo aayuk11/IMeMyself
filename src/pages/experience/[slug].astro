@@ -23,6 +23,7 @@ const { Content } = await render(project);
 
 const facts = [
   { k: 'Role', v: data.role },
+  ...(data.owned ? [{ k: 'What I owned', v: data.owned }] : []),
   { k: 'Tools', v: data.tools },
   ...(data.link ? [{ k: data.link.label, v: data.link.href.replace(/^https?:\/\//, ''), href: data.link.href }] : []),
 ];
@@ -35,6 +36,7 @@ const facts = [
   dek={data.dek}
   meta={`Case study · ${data.sector} · ${data.year}`}
   facts={facts}
+  metrics={data.metrics.map((m) => ({ n: m.value, l: m.label }))}
   tags={data.tags}
   back={{ href: '/experience/', label: 'Experience' }}
   next={next ? { href: `/experience/${next.id}/`, label: `Next case: ${next.data.title}` } : undefined}

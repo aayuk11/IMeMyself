@@ -14,15 +14,17 @@ const projects = defineCollection({
     what: z.string(),
     /** Case study meta line, e.g. "RegTech · AML". */
     sector: z.string(),
-    /** e.g. "2025 — now". */
+    /** e.g. "Feb 2026 — Oct 2026". */
     year: z.string(),
     /** One line on /experience. */
     line: z.string(),
-    /** The headline number on /experience. */
-    key: z.object({ n: z.string(), l: z.string() }),
+    /** Outcome numbers in the case study header. The first is the headline number on /experience. */
+    metrics: z.array(z.object({ value: z.string(), label: z.string() })).min(1),
     /** Subtitle under the case study title. */
     dek: z.string(),
     role: z.string(),
+    /** "What I owned" in the case study header. */
+    owned: z.string().optional(),
     tools: z.string(),
     tags: z.array(z.string()).default([]),
     link: z.object({ label: z.string(), href: z.url() }).optional(),

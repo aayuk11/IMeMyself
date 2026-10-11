@@ -43,7 +43,9 @@ src/components/doc/            Reader blocks: Figure, FlowDiagram, Metrics, Code
 src/layouts/                   Base (app shell), Doc (reader)
 src/scripts/                   Client JS: prefs (look), shell, composer, intro, clock, notes filter
 src/styles/tokens.css          Palettes × light/dark, type pairings, Gotham (palettes generated from the design file)
-netlify/functions/ask.mts      /api/ask: AI answers via the Claude API (only used when switched on)
+netlify/functions/ask/        /api/ask: AI answers (providers, retrieval, prompt, daily budget)
+src/lib/guard.ts              Guardrail tiers: what crashes, what's declined, easter-egg shortcuts
+src/pages/api/knowledge.json.ts  The site's content as chunks the AI can search (built on deploy)
 _design/                       Design export and original brief. Reference only; never imported or deployed.
 ```
 
@@ -57,24 +59,63 @@ _design/                       Design export and original brief. Reference only;
 
 **Drafts**: `draft: true` shows in `npm run dev` only. Set it to `false` (or delete the line) to publish.
 
-**Case studies**: one MDX file per product in `src/content/projects/`. Frontmatter drives the Experience list (`what`, `line`, `key` metric, `order`) and the reader header (`dek`, `sector`, `year`, `role`, `tools`, `tags`). Diagrams are conceptual `FlowDiagram`s; swap in an Excalidraw export with `![alt](./diagram.png)` whenever you have one. No client names, no real transaction data, no production screenshots.
+**Case studies**: one MDX file per product in `src/content/projects/`; copy `_template.mdx` to start one. Frontmatter drives the Experience list (`what`, `line`, `order`, and the first of `metrics`) and the reader header (`dek`, `sector`, `year`, `role`, `owned`, `tools`, every number in `metrics`, `tags`). Link to an article with a normal Markdown link, e.g. `[Title](/notes/slug/)`. Diagrams are conceptual `FlowDiagram`s; swap in an Excalidraw export with `![alt](./diagram.png)` whenever you have one. No client names, no real transaction data, no production screenshots.
 
 ## The composer
 
 - **Pages**: `/home` `/experience` `/notes` `/lab` `/resume`. Aliases: `/work`, `/writing`, `/blog`…
 - **Settings**: `/theme` `/palette` `/type` `/focus` (essays and case studies) `/intro`
-- **Play** (only listed after typing `/`): `/pokedex` `/gear5` `/gotham` (`/batman`) `/snap` `/crash`
+- **Play** (only listed after typing `/`): `/pokedex` `/gear5` `/gotham` (`/batman`) `/snap` `/crash` `/sisyphus` (`/boulder`; sending anything skips it)
 - `/` or Cmd/Ctrl+K from anywhere opens it. Free text opens a conversation.
 
-**AI answers are off by default**, matching the design ("AI answers soon"): questions get a reply that routes to the right page. To switch them on:
+## AI answers
 
-1. Set `ask.enabled: true` in `site.config.ts`.
-2. Add `ANTHROPIC_API_KEY` in Netlify (Site configuration → Environment variables). `ANTHROPIC_MODEL` is optional (default `claude-opus-5-5`).
-3. Set a monthly spend limit in the Anthropic Console.
+Visitors can ask about my work, ZIGRAM, the case studies, skills, tools, education, Field notes and the site's commands. Answers come only from what's published on the site: `/api/knowledge.json` is rebuilt from the content on every deploy, so a new case study or article is covered automatically. Profile, résumé and commands come from `site.config.ts`. The phone number and drafts are never included.
 
-The function is rate-limited (10 requests per IP per minute), caches answers on Netlify's CDN for a week (each deploy clears them), caps questions at 300 characters, and answers only from the facts in `ask.system`. Update those facts when the résumé changes.
+**Set up (Groq free tier):**
 
-**Blocked questions** (prompt injection, "system prompt", "api key"…) play the guardrail crash: a pixel sky dragon blasts the page and a SYSTEM CRASHED screen offers Refresh, which clears the chat and reloads Home. The rule is a placeholder regex, `BLOCKED` in `src/lib/chat.ts`. `/crash` plays it on demand.
+1. Create a key at [console.groq.com](https://console.groq.com) and turn on Zero Data Retention in its data controls.
+2. In Netlify (Site configuration → Environment variables, for Production and Deploy Previews): `AI_PROVIDER=groq`, `AI_API_KEY=<key>`, `AI_DAILY_CAP=80`, `AI_GATEWAY_INJECTION=false`. `AI_MODEL` is optional (default `openai/gpt-oss-120b`).
+3. Redeploy. Without a key, questions get "The model's resting" and links to the right pages.
+
+`AI_GATEWAY_INJECTION=false` matters: on credit-based plans Netlify otherwise injects its own AI keys and bills calls to your Netlify credits. `AI_PROVIDER` can also be `openai` (any OpenAI-compatible API, with `AI_BASE_URL` and `AI_MODEL`), `anthropic` (Claude, paid) or `mock` (canned answers for testing; refused in production).
+
+**Guardrails**, in order (`src/lib/guard.ts`, run in the browser and again on the server):
+
+| Tier | Examples | Reply |
+|---|---|---|
+| Breach | "ignore your instructions", "what's your system prompt", jailbreaks, abuse | The Rayquaza crash. Refresh resets the visit. |
+| Private | salary, phone, address, client names, politics, colleagues | A firm line pointing to email. |
+| Off-topic | write me a poem, weather, trivia | "Low priority. Ask me something else." |
+| Easter egg | "show me the dragon", "open your Pokédex" | "That's /crash…" with a clickable command chip, no AI call. |
+| Everything else | questions about me and my work | The AI answers in two to four sentences, with links to the pages it used. |
+
+The model also classifies every question, so subtler off-topic, private or breach questions are caught too. A breach from the model only crashes the page when it names a reason (injection, secrets, abuse, harmful, sexual). Ordinary words like "bypass" or "password" never crash anything. The fixed replies live in `site.config.ts` → `ask.lines`; the AI's voice in `ask.system`.
+
+**Limits:**
+
+- 8 questions per IP per minute (Netlify rate limit).
+- A daily cap on model calls (`AI_DAILY_CAP`, kept in Netlify Blobs).
+- A shared cooldown when Groq says slow down.
+- In the browser: 25 AI questions per visit, one at a time, 3 seconds apart.
+- Questions are capped at 300 characters.
+- Repeat first questions are served from Netlify's CDN for a week; each deploy clears them.
+
+**Privacy:**
+
+- Question text is never logged or stored.
+- Emails and phone numbers are stripped before a question leaves for the model.
+- A conversation lasts for the visit: page hops keep it, a refresh clears it.
+- The chat says "Questions go to an AI to answer. Nothing is saved."
+
+**Test locally:**
+
+1. `cp .env.example .env` (it starts on `AI_PROVIDER=mock`).
+2. Run `npx netlify-cli dev` and open :8888.
+3. In another terminal, run `node scripts/ask-eval.mjs`, which checks every tier, the false-positive traps and each failure path.
+4. With a real key in `.env`, run `node scripts/ask-eval.mjs --real` (about 15 model calls).
+
+The daily cap and shared cooldown need Netlify Blobs, so check them on a deploy preview with `--deployed`.
 
 ## Look
 
@@ -86,7 +127,7 @@ The favicon follows the palette (and Gotham); `public/favicon.svg` is the Matcha
 
 1. Push this repo to GitHub.
 2. In Netlify: **Add new project → Import an existing project →** pick the repo. Build settings come from `netlify.toml` (`npm run build`, publish `dist`, Node 22, functions in `netlify/functions`).
-3. Optional environment variables: `ANTHROPIC_API_KEY` / `ANTHROPIC_MODEL` (AI answers, see above), `PUBLIC_POSTHOG_KEY` / `PUBLIC_POSTHOG_HOST` (analytics; nothing loads when unset; no cookies).
+3. Environment variables: the `AI_*` set for AI answers (see above), and optionally `PUBLIC_POSTHOG_KEY` / `PUBLIC_POSTHOG_HOST` (analytics; nothing loads when unset; no cookies).
 4. Deploy. Canonical URLs, the sitemap and RSS use Netlify's `URL` automatically. With a custom domain, also update `url` and `handle` in `site.config.ts`.
 
 ## Before going live
@@ -96,8 +137,7 @@ The favicon follows the palette (and Gotham); `public/favicon.svg` is the Matcha
 - [ ] Replace `https://medium.com/` in the three Medium essay stubs with real post URLs, or delete them.
 - [ ] Check `handle` in `site.config.ts` (`aayush.site` is the design's placeholder; it appears in chat replies and on the résumé page).
 - [ ] The résumé page shows your phone number (as the PDF does). Remove `phone` from `site.config.ts` if you'd rather not.
-- [ ] Optional: a Pokédex avatar in `public/` and `pokedex.avatar` in `site.config.ts`.
-- [ ] When AI answers go on, swap the placeholder `BLOCKED` regex in `src/lib/chat.ts` for the model's or a moderation verdict.
+- [ ] Add the Groq key and the other `AI_*` variables in Netlify (see AI answers), then run `node scripts/ask-eval.mjs <preview-url> --real --deployed` against a deploy preview.
 
 ## Design
 

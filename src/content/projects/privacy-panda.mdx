@@ -2,38 +2,70 @@
 title: Privacy Panda
 order: 3
 what: DPDP compliance, 0 → 1
-sector: Privacy · DPDP
-year: '2025'
-line: A dual-portal compliance product, prototyped solo and approved as the build baseline.
-key: { n: '58', l: 'endpoint API spec' }
-dek: Compliance is two opposing workflows. So we built two portals on one backbone.
-role: Product owner, solo prototyper
-tools: Claude Code, GPT, Antigravity, PostHog
-tags: ['0 → 1', Prototyping, Privacy]
-link: { label: 'Public prototype', href: 'https://dpdpshield.netlify.app' }
+sector: Privacy · DPDP Act 2023
+year: Jan 2026 — Oct 2026
+line: A new privacy law and no engineers. I worked out the product and built a working prototype myself.
+metrics:
+  - { value: '0 → 1', label: 'Built solo' }
+  - { value: '2', label: 'Portals, one system' }
+  - { value: '58', label: 'API endpoints specified' }
+dek: India's new privacy law needed a product that didn't exist yet, and no engineers were free to build it. I worked out what it should be and built a working prototype myself. It's now the base for the engineering build.
+role: Product manager, sole contributor
+owned: 'Everything: research, PRD, API spec and the prototype'
+tools: Claude Code, Antigravity, GPT, PostHog
+tags: ['0 → 1', Data privacy, DPDP Act, Prototyping]
+# Public prototype link: hidden while DPDP Shield isn't cleared to feature (same as Home). Uncomment to show it.
+# link: { label: 'Prototype', href: 'https://dpdpshield.netlify.app' }
 ---
 
 import Figure from '../../components/doc/Figure.astro';
 import FlowDiagram from '../../components/doc/FlowDiagram.astro';
 
-Data Principals need frictionless consent control. Data Fiduciaries need auditable evidence. I framed DPDP compliance as those two opposing workflows and designed a dual-portal product on a shared backbone.
+## The problem
 
-With no dedicated engineering capacity, I built the working prototype myself using Claude Code, GPT and Antigravity. The executive team approved it as the build baseline.
+India's Digital Personal Data Protection (DPDP) Act 2023 requires every company that holds personal data to collect consent properly, let people see, correct or delete their data, and prove all of it to a regulator. Almost no tools existed for this, and no engineers were allocated to build one.
 
-<Figure caption="Each statutory obligation maps to one product capability.">
+## Finding the solution
+
+A compliance product has two very different users, and they want opposite things:
+
+- **Individuals** want to see, fix or delete their data and withdraw consent, quickly. If it's hard, they give up, and an abandoned request is itself a compliance failure.
+- **Companies** want control, approvals and proof of every action, so they can show a regulator they complied.
+
+One screen for both would be too heavy for individuals and too loose for companies. So I designed two portals, each built for its user, on one shared system underneath.
+
+<Figure caption="The solution: two portals built for opposite needs, one shared system.">
   <FlowDiagram
-    title="Dual portal on a shared backbone"
+    title="How Privacy Panda works"
     rows={[
       [
-        { label: 'Principal portal', note: 'consent and rights' },
-        { label: 'Fiduciary portal', note: 'evidence and audit' },
+        { label: 'Individual portal', note: 'see, fix, delete, withdraw consent' },
+        { label: 'Company portal', note: 'approve, track, prove' },
       ],
-      [{ label: 'Shared backbone', note: 'one consent record' }],
-      [{ label: 'Multi-tenant API', note: '58 endpoints', tone: 'strong' }],
+      [{ label: 'One shared system', note: 'consent records, requests and an audit log', tone: 'strong' }],
     ]}
   />
 </Figure>
 
-- Product vision, personas, user stories and flows
-- Compliance architecture and a 58-endpoint multi-tenant API spec
-- PostHog event taxonomy set before build: consent funnel, data-rights drop-off, task success
+## Building the prototype
+
+With no engineers, I built it myself.
+
+1. **Started small.** A basic working version first, to learn which features mattered and which were assumptions.
+2. **Mapped the law to features.** Every requirement in the Act became a product feature, so nothing rested on guesswork.
+3. **Wrote the specs.** User flows for both portals, personas, the PRD, and a 58-endpoint API that keeps each client company's data separate from day one.
+4. **Built it in stages.** Against my own specs, with Claude Code and Antigravity, so leadership could click through a real product instead of reading a deck.
+5. **Got it approved.** The executive team approved the prototype as the base for the engineering build.
+
+I also set up PostHog tracking from day one, so the build can be planned around where people actually drop off.
+
+## Results
+
+- A working two-portal product covering the core DPDP requirements.
+- Approved by the executive team as the base for the engineering build.
+- Specs complete enough for engineers to build from.
+- Several decisions in the final spec came from what the prototype showed didn't work.
+
+## What I'd do differently
+
+My first version put consent and data requests in one flow, because the Act groups them. In use they're very different: consent is given once, while a request has a deadline and a status people want to check. I split them, but later than I should have.

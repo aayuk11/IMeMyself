@@ -1,0 +1,54 @@
+---
+# Copy this file to a new name (no leading underscore) to add a case study.
+# The filename becomes the URL: my-product.mdx → /experience/my-product/
+title: Product name
+order: 4                                   # position on /experience
+# org: ZIGRAM                              # which site.config experience entry; defaults to the current one
+what: Short category                       # small caps after the title on /experience
+sector: Industry · Domain                  # header meta line
+year: Jan 2026 — Oct 2026
+line: One line for the /experience list.
+metrics:                                   # header numbers; the first is the headline on /experience
+  - { value: '1 → 20+', label: 'What the number means' }
+  - { value: '<48 hrs', label: 'Another outcome' }
+dek: One or two sentences under the title. Lead with the problem and what you did about it.
+role: Product manager
+owned: What you personally owned, end to end
+tools: JIRA, Confluence, Excel
+tags: [Tag, Tag]
+# link: { label: 'Live product', href: 'https://example.com' }
+draft: true                                # drafts show in `npm run dev` only
+---
+
+import Figure from '../../components/doc/Figure.astro';
+import FlowDiagram from '../../components/doc/FlowDiagram.astro';
+import Metrics from '../../components/doc/Metrics.astro';
+
+## The problem
+
+Plain Markdown. Keep paragraphs short. Link to an article in Field notes like this: [Guardrails are the product](/notes/guardrails-are-the-product/).
+
+<Figure caption="What the diagram shows.">
+  <FlowDiagram
+    size="hero"
+    title="Diagram title"
+    rows={[
+      [{ label: 'Step', note: 'detail' }],
+      [{ label: 'Two things', note: 'side by side' }, { label: 'At once', tone: 'muted' }],
+      [{ label: 'Outcome', tone: 'strong' }],
+    ]}
+  />
+</Figure>
+
+## What I did
+
+1. **Numbered steps.** A bold lead-in, then a sentence.
+2. **Keep each one short.**
+
+## Outcome
+
+<Metrics items={[{ n: '500+', l: 'rules in production' }, { n: '−50%', l: 'inference cost' }]} />
+
+## What I got wrong
+
+{/* Images: put the file next to this one and use ![Alt text](./image.png). Diagrams stay conceptual: no client names, real data or production screenshots. */}

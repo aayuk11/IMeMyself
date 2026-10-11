@@ -1,38 +1,65 @@
 ---
 title: Profile Builder
 order: 2
-what: Risk intelligence
-sector: Risk intelligence
-year: '2025'
-line: A full tech-stack revamp and AI extraction across a 35M+ entity database.
-key: { n: '35M+', l: 'entities searchable' }
-dek: Replacing spreadsheet-driven analyst work with structured, auditable workflows.
+what: PEP data platform
+sector: Risk intelligence · PEP data
+year: Jul 2025 — Feb 2026
+line: Rebuilt the tool our analysts use to create and update 35M+ PEP profiles, with a modern stack, a simpler UI and faster search.
+metrics:
+  - { value: '35M+', label: 'Profiles, mostly PEP' }
+  - { value: '<2s', label: 'Filtered search results' }
+  - { value: '5', label: 'User roles, one workflow' }
+dek: Our analysts create and update 35M+ PEP profiles in Profile Builder, and it ran on old .NET and JavaScript pages. I led the rebuild on React and the latest .NET, with a redesigned UI, fewer pages and better search.
 role: Product manager
-tools: JIRA, SQL, Postman
-tags: [Search, Entity resolution, Agile]
+owned: User research, PRDs and FRDs, sprint grooming, stakeholder management, releases, testing and UAT
+tools: JIRA, Confluence, Excel, SQL, Postman
+tags: [PEP data, Platform rebuild, UI/UX, Agile delivery]
 ---
 
 import Figure from '../../components/doc/Figure.astro';
 import FlowDiagram from '../../components/doc/FlowDiagram.astro';
 
-Led end-to-end Agile delivery of a full tech-stack revamp: backlog, sprint planning, stories and release management.
+## The problem
 
-- Listing module for entity resolution and classification
-- Advanced Global Search with filtered queries across 35M+ entities
-- AI extraction pipeline with source attribution and confidence thresholds that route low-certainty output to human review
-- User interviews, PRDs, journeys and wireframes; owned UAT through to release
+Profile Builder is where our analysts create and update profiles of politically exposed persons (PEPs) and their relatives and close associates: more than 35 million records that clients rely on for compliance checks.
 
-<Figure caption="The model proposes; a confidence threshold decides whether a person looks first.">
+The data was strong. The tool wasn't. It ran on old .NET and JavaScript pages, work was spread across many screens, analysts exported to Excel for bulk edits, and it was hard to tell whether an incoming profile was new or a duplicate.
+
+## What I did
+
+I led the rebuild end to end: analyst interviews, PRDs and FRDs, sprint grooming, stakeholder management, releases, testing and UAT.
+
+| Area | Before | After |
+| --- | --- | --- |
+| Tech | Old .NET and JavaScript pages | React and the latest .NET |
+| Screens | Many separate pages | Fewer pages, redesigned UI |
+| Search | Basic | Global search, filtered results in under 2 seconds |
+| Tables | Exported to Excel for bulk edits | Edit, filter and bulk-update in place |
+| Data | Tied to the old pages | Served through APIs |
+| Duplicates | Hard to spot | Checked before a profile is added |
+
+Every profile now moves through one tracked workflow, with an owner at each step.
+
+<Figure caption="Five roles, each with its own permissions. Every change has an owner.">
   <FlowDiagram
-    title="Extraction pipeline"
+    size="hero"
+    title="Profile workflow"
     rows={[
-      [{ label: 'Sources', note: 'documents and records' }],
-      [{ label: 'AI extraction', note: 'with source attribution' }],
-      [{ label: 'Confidence gate', note: 'thresholds decide the route' }],
-      [
-        { label: 'Record', note: 'high confidence', tone: 'strong' },
-        { label: 'Human review', note: 'low confidence', tone: 'muted' },
-      ],
+      [{ label: 'Create', note: 'or update, with a duplicate check' }],
+      [{ label: 'Review' }],
+      [{ label: 'Validate' }],
+      [{ label: 'Approve' }],
+      [{ label: 'Deliver', note: 'to clients', tone: 'strong' }],
     ]}
   />
 </Figure>
+
+I also wrote the requirements for an AI pipeline that fills in profile details from public sources. Every value keeps its source, and anything the AI isn't sure about goes to an analyst for review.
+
+## Results
+
+Analysts now create and update profiles in one modern tool, with fewer pages, faster search and bulk edits built in. Every change is tracked from creation to delivery.
+
+## What I'd do differently
+
+I specced the new tables before I understood why analysts were exporting to Excel. I assumed it was habit. It wasn't: they needed bulk edits the old tables couldn't do. Now I ask what people do in their workaround before deciding what to build.

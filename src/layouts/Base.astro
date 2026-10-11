@@ -176,7 +176,7 @@ const lookConfig = JSON.stringify({
           <slot />
         </main>
         <ChatPanel />
-        <Composer counts={counts} placeholder={placeholder} placeholderShort={placeholderShort} context={doc?.title} />
+        <Composer counts={counts} placeholder={placeholder} placeholderShort={placeholderShort} context={doc?.title} docKey={doc ? `${doc.kind}:${doc.slug}` : undefined} />
       </div>
     </div>
     <div

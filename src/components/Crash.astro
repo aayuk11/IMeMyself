@@ -1,5 +1,5 @@
 ---
-// Guardrail crash: canvas sequence (sky dragon), WARNING banner and the "SYSTEM CRASHED" screen.
+// Guardrail crash: canvas sequence (Rayquaza), WARNING banner and the "SYSTEM CRASHED" screen.
 // Markup from _design/handoff_brand_bits/reference/Crash.dc.html; sequence in src/scripts/crash.ts.
 // Hidden until a blocked question or /crash. The dragon is an original sprite.
 import '@fontsource/press-start-2p/latin-400.css';
@@ -34,7 +34,7 @@ import '@fontsource/press-start-2p/latin-400.css';
         SYSTEM<br />CRASHED
       </h1>
       <p class="m-0 max-w-[520px] font-mono text-[15px] leading-[1.7] text-pretty text-(--crash-body)">
-        That question tripped the guardrails. A sky dragon took care of the rest.
+        That question tripped the guardrails. Rayquaza took care of the rest.
       </p>
       <div
         data-crash-question
@@ -45,7 +45,9 @@ import '@fontsource/press-start-2p/latin-400.css';
       <button type="button" data-crash-refresh class="refresh pixel mt-2 border-0 px-[22px] py-4 text-[clamp(11px,1.6cqi,14px)] leading-none">
         ▶ REFRESH
       </button>
-      <span data-blink class="pixel text-[clamp(8px,1.3cqi,11px)] leading-[1.6] text-(--crash-muted)">PRESS ENTER TO CONTINUE</span>
+      <span data-blink class="pixel text-[clamp(8px,1.3cqi,11px)] leading-[1.6] text-(--crash-muted)">
+        <span class="touch-hide">PRESS ENTER TO CONTINUE</span><span class="touch-show">TAP REFRESH TO CONTINUE</span>
+      </span>
     </div>
 
     <p class="relative m-0 px-6 pb-6 text-center font-mono text-[12px] leading-[1.6] text-(--crash-faint)">
@@ -56,6 +58,12 @@ import '@fontsource/press-start-2p/latin-400.css';
 
 <style>
   .crash { container-type: inline-size; }
+  /* Phones and tablets have no Enter key to press. */
+  .touch-show { display: none; }
+  @media (hover: none) and (pointer: coarse) {
+    .touch-hide { display: none; }
+    .touch-show { display: inline; }
+  }
   .pixel { font-family: var(--font-pixel); font-weight: 400; }
   .hazard { background: repeating-linear-gradient(-45deg, var(--crash-yellow) 0 14px, var(--crash-ink) 14px 28px); }
   .scanlines { background: repeating-linear-gradient(0deg, var(--crash-scanline) 0 1px, transparent 1px 3px); }

@@ -1,0 +1,112 @@
+---
+title: The sprint sheet that builds itself
+dek: Eight teams were retyping Jira into Excel every sprint. I built a tool that does it unattended and posts the result to each team's channel at 9 PM.
+date: 2026-10-10
+tags: [Automation, Internal tools, Python]
+draft: false
+---
+
+import FlowDiagram from '../../components/doc/FlowDiagram.astro';
+import Figure from '../../components/doc/Figure.astro';
+import Metrics from '../../components/doc/Metrics.astro';
+
+A Jira sprint goes in. A formatted Excel sheet, a PDF and a summary image come out, and land in the team's chat channel at 9 PM on weekdays. Nobody opens a spreadsheet.
+
+<Metrics
+  items={[
+    { n: '8', l: 'product teams' },
+    { n: '3', l: 'APIs integrated' },
+    { n: '3', l: 'files per run' },
+    { n: '9 PM', l: 'posted Mon–Fri' },
+  ]}
+/>
+
+## The same sprint, maintained twice
+
+Work happens in Jira. Tickets get created, moved and closed there. But management wanted one view of progress across every product, as a sheet: columns they recognised, statuses in their own words, all products side by side.
+
+So every team kept both. Someone rebuilt the sheet by hand each sprint: open the board, read the statuses, count what moved, type it into the right columns, format it, send it on.
+
+> “Two sources of truth for the same work, and a person in the middle keeping them in sync.”
+
+Multiply that by eight teams, every sprint. Real effort that produced nothing new. The information already existed. It was just in the wrong shape.
+
+- **Always stale.** The sheet was only as current as the last person who remembered to update it.
+- **Lost in translation.** Every team had its own Jira workflow names, mapped to management's by hand, every time.
+- **Impossible to compare.** Every team formatted theirs differently, so reading the numbers meant first decoding the layout.
+- **First thing dropped.** It only happened when someone had time. Busy sprint, no sheet.
+
+<Figure caption="The work existed twice, and a person was the integration. × 8 teams × every sprint.">
+  <FlowDiagram
+    size="hero"
+    title="Before"
+    rows={[
+      [{ label: 'Jira', note: 'tickets, statuses, dates' }],
+      [{ label: 'A person', note: 'reads, counts, retypes, formats', tone: 'muted' }],
+      [{ label: 'Excel sheet', note: 'rebuilt every sprint' }],
+    ]}
+  />
+</Figure>
+
+## Let the sheet build itself
+
+The sheet was never the problem. Keeping it by hand was. Jira already had everything the sheet needed, so the job was to read it, reshape it into the format management expected, and deliver it with nobody involved.
+
+I kept the tool to three steps, because that's how people already thought about it.
+
+1. **Sprint details.** Sprint number, dates, releases, scrum master. Saved per project: filled in once, edited after that.
+2. **Get Jira data.** Pull the sprint with the project's saved query. No API access? A Jira CSV export works too.
+3. **Report.** Review the KPIs, then download the files or post them straight to the team's channel.
+
+<Figure caption="One path, start to finish. The only human step left is deciding a sprint's dates.">
+  <FlowDiagram
+    size="hero"
+    title="After"
+    rows={[
+      [{ label: 'Jira', note: 'saved query' }, { label: 'Zoho Sheet', note: 'settings' }],
+      [{ label: 'Generator', note: 'maps statuses, counts KPIs, builds files' }],
+      [{ label: '.xlsx' }, { label: '.pdf' }, { label: '.png' }],
+      [{ label: 'Cliq channel', note: '9 PM, Mon–Fri', tone: 'strong' }],
+    ]}
+  />
+</Figure>
+
+Even the report header is generated, not typed:
+
+| Field | Sprint 37 |
+| --- | --- |
+| Project | Rules Engine |
+| Sprint start | 07 Sep 2026 |
+| Dev release | 21 Sep 2026 |
+| QA release | 24 Sep 2026 |
+| Production release | 27 Sep 2026 |
+| Sprint end | 27 Sep 2026 |
+| Total days | 21 |
+
+## Three services, three jobs
+
+Each integration does exactly one thing, which made failures easy to place.
+
+- **Jira reads.** Each project stores its own JQL query. The tool pulls the sprint, reads statuses and dates, and works out the counts. If Jira is unreachable, a CSV export of the same board works instead.
+- **Zoho Sheet remembers.** Status mappings, column order, KPI cards, the saved query, the channel to post to, and who may sign in. It's the tool's memory.
+- **Zoho Cliq delivers.** The summary message and all three files, posted under a dedicated account rather than a person's name.
+
+## The decisions that made it work
+
+1. **A spreadsheet, not a database.** There's no volume to justify one and no migrations to run. Anyone can open the sheet and see what the tool thinks, which has saved me more debugging time than a proper schema would have.
+2. **Each team keeps its own statuses.** Teams map their Jira workflow to the columns management reads. The manual work was mostly translation; one hard-coded format would have forced eight teams to change how they work.
+3. **It runs itself.** A scheduled job posts every weekday evening, no browser open. A tool someone has to remember to run is still manual work.
+4. **It warns instead of failing quietly.** If a saved query points at one fixed sprint, the tool says so on the page and in the posted message, so a stale report never passes as a fresh one.
+
+## What changed
+
+The sheet isn't something anyone builds anymore. It arrives. Jira stays the one place work is tracked, and the format management asked for is produced from it instead of maintained next to it.
+
+The part I didn't expect: once reports arrived on their own, the arguments about them stopped being about formatting and started being about the numbers. That's a better conversation to be having.
+
+## What I'd do next
+
+- **Clean up the config store.** It only ever adds rows, so it needs a clean-up step before it slows reads down.
+- **Per-team schedules.** One posting time for everyone is a compromise. Teams run their ceremonies at different hours.
+
+Built with Python and Flask, server-rendered, with no JavaScript build step. It runs in a container with no database and no persistent volume.

@@ -21,6 +21,12 @@
   to = "/notes/:splat"
   status = 301
 
+# The AI's content index: public anyway, but keep it out of search results.
+[[headers]]
+  for = "/api/knowledge.json"
+  [headers.values]
+    X-Robots-Tag = "noindex"
+
 # Hashed build assets never change.
 [[headers]]
   for = "/_astro/*"

@@ -19,13 +19,29 @@ const firstName = name.split(' ')[0];
   </div>
 
   <div class="flex flex-wrap gap-5 p-[22px]">
-    {
-      pokedex.avatar ? (
-        <img src={pokedex.avatar} alt="" width="132" height="132" class="size-[132px] flex-none rounded-xl border border-border object-cover" />
-      ) : (
-        <div aria-hidden="true" class="hatch size-[132px] flex-none rounded-xl border border-border" />
-      )
-    }
+    <!-- The photo sits in the Pokédex's own screen: bezel, two lights, a button and a speaker. -->
+    <div class="dex-screen relative box-border flex-none bg-(--dex-bezel) px-3 pt-4 pb-8">
+      <span aria-hidden="true" class="absolute top-1.5 left-1/2 flex -translate-x-1/2 gap-2">
+        <span class="size-1.5 rounded-full bg-(--dex-red)"></span>
+        <span class="size-1.5 rounded-full bg-(--dex-red)"></span>
+      </span>
+      <div class="relative size-[132px] overflow-hidden rounded-[4px] border-2 border-(--dex-ink)">
+        {
+          pokedex.avatar ? (
+            <img src={pokedex.avatar} alt={`Portrait of ${name}`} width="132" height="132" loading="lazy" decoding="async" class="block size-full object-cover" />
+          ) : (
+            <div aria-hidden="true" class="hatch size-full" />
+          )
+        }
+        <span aria-hidden="true" class="dex-glass pointer-events-none absolute inset-0"></span>
+      </div>
+      <span aria-hidden="true" class="absolute bottom-2 left-5 size-3.5 rounded-full border-2 border-(--dex-ink) bg-(--dex-red)"></span>
+      <span aria-hidden="true" class="absolute right-3.5 bottom-3 flex flex-col gap-[3px]">
+        <span class="h-0.5 w-6 rounded-full bg-(--dex-ink)"></span>
+        <span class="h-0.5 w-6 rounded-full bg-(--dex-ink)"></span>
+        <span class="h-0.5 w-6 rounded-full bg-(--dex-ink)"></span>
+      </span>
+    </div>
     <div class="flex flex-[1_1_220px] flex-col justify-center gap-2">
       <span class="eyebrow leading-none text-muted">No. {pokedex.number}</span>
       <h2 class="display m-0 text-[38px] leading-none tracking-[-0.03em]">{firstName}</h2>
@@ -54,3 +70,17 @@ const firstName = name.split(' ')[0];
     <button type="submit" class="eyebrow rounded-[10px] border border-border bg-transparent px-3.5 py-3 leading-none text-text">Close</button>
   </form>
 </dialog>
+
+<style>
+  /* Bottom-left corner cut, like the original device's screen. */
+  .dex-screen {
+    border-radius: 10px;
+    clip-path: polygon(0 0, 100% 0, 100% 100%, 26px 100%, 0 calc(100% - 26px));
+  }
+  /* LCD glass: a soft glare and faint scanlines over the photo. */
+  .dex-glass {
+    background:
+      linear-gradient(135deg, var(--dex-glare), transparent 42%),
+      repeating-linear-gradient(0deg, var(--dex-scanline) 0 1px, transparent 1px 3px);
+  }
+</style>
