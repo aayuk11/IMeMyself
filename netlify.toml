@@ -5,6 +5,9 @@
 [build.environment]
   # Astro 7 needs Node 22.12+.
   NODE_VERSION = "22"
+  # These AI settings aren't secrets ("groq", "80"…) and appear in the code and docs, so the secret
+  # scanner must skip them even if they're marked secret in the UI. AI_API_KEY is still scanned.
+  SECRETS_SCAN_OMIT_KEYS = "AI_PROVIDER,AI_MODEL,AI_BASE_URL,AI_DAILY_CAP,AI_GATEWAY_INJECTION"
 
 [functions]
   directory = "netlify/functions"

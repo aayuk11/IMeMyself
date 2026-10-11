@@ -75,7 +75,7 @@ Visitors can ask about my work, ZIGRAM, the case studies, skills, tools, educati
 **Set up (Groq free tier):**
 
 1. Create a key at [console.groq.com](https://console.groq.com) and turn on Zero Data Retention in its data controls.
-2. In Netlify (Site configuration → Environment variables, for Production and Deploy Previews): `AI_PROVIDER=groq`, `AI_API_KEY=<key>`, `AI_DAILY_CAP=80`, `AI_GATEWAY_INJECTION=false`. `AI_MODEL` is optional (default `openai/gpt-oss-120b`).
+2. In Netlify (Site configuration → Environment variables, for Production and Deploy Previews): `AI_PROVIDER=groq`, `AI_API_KEY=<key>`, `AI_DAILY_CAP=80`, `AI_GATEWAY_INJECTION=false`. `AI_MODEL` is optional (default `openai/gpt-oss-120b`). Mark only `AI_API_KEY` as a secret; the others are plain settings (the build's secret scanner skips them anyway).
 3. Redeploy. Without a key, questions get "The model's resting" and links to the right pages.
 
 `AI_GATEWAY_INJECTION=false` matters: on credit-based plans Netlify otherwise injects its own AI keys and bills calls to your Netlify credits. `AI_PROVIDER` can also be `openai` (any OpenAI-compatible API, with `AI_BASE_URL` and `AI_MODEL`), `anthropic` (Claude, paid) or `mock` (canned answers for testing; refused in production).

@@ -105,7 +105,7 @@ export const site: SiteConfig = {
   name: 'Aayush Kumar',
   tagline: 'PM who builds',
   handle: 'aayush.site',
-  url: 'https://aayushkumar.netlify.app',
+  url: 'https://wehaveaayush.netlify.app',
   title: 'Aayush Kumar — PM who builds',
   description:
     'Aayush Kumar is a product manager who builds: two B2B SaaS platforms by day, and the AI systems behind them.',

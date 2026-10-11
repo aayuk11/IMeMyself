@@ -44,8 +44,8 @@ function respond(reply: Reply, status = 200, cache = false): Response {
   return new Response(JSON.stringify(reply), { status, headers });
 }
 
-const unavailable = (status = 503): Response =>
-  respond({ verdict: 'unavailable', text: site.ask.lines.unavailable, links: [], commands: [], ai: false }, status);
+const unavailable = (status: number, reason: string): Response =>
+  respond({ verdict: 'unavailable', reason, text: site.ask.lines.unavailable, links: [], commands: [], ai: false }, status);
 
 /** Requests from other websites' pages are refused. Scripts can still call it: the rate limit and cap cover that. */
 function sameOrigin(req: Request): boolean {
@@ -79,14 +79,14 @@ export default async (req: Request, context: Context): Promise<Response> => {
   const log = (verdict: string, extra: Record<string, unknown> = {}): void =>
     console.log(JSON.stringify({ ask: verdict, provider: env?.provider ?? 'none', ms: Date.now() - started, ...extra }));
 
-  if (!site.ask.enabled) return unavailable(404);
+  if (!site.ask.enabled) return unavailable(404, 'disabled');
   if (!sameOrigin(req)) return new Response('Forbidden', { status: 403 });
 
   const input = await readInput(req);
-  if (!input) return unavailable(400);
+  if (!input) return unavailable(400, 'bad-input');
   const q = input.q.replace(/\s+/g, ' ').trim();
   const p = PAGE.test(input.p) ? input.p : '';
-  if (!q || q.length > MAX_QUESTION) return unavailable(400);
+  if (!q || q.length > MAX_QUESTION) return unavailable(400, 'bad-input');
   const cacheable = req.method === 'GET';
 
   // Guardrails first: none of these need the model.
@@ -106,13 +106,16 @@ export default async (req: Request, context: Context): Promise<Response> => {
   }
 
   // The model.
-  if (!env) return unavailable();
-  if (env.provider === 'mock' && context.deploy?.context === 'production') return unavailable();
+  if (!env) {
+    log('unavailable', { by: 'not-configured' });
+    return unavailable(503, 'not-configured');
+  }
+  if (env.provider === 'mock' && context.deploy?.context === 'production') return unavailable(503, 'mock-in-production');
   const cap = dailyCap();
   const budget = await canCall(cap);
   if (budget !== 'ok') {
     log('unavailable', { by: budget });
-    return unavailable();
+    return unavailable(503, budget);
   }
 
   const pool: Chunk[] = [...core.filter((c) => !c.core), ...(await siteChunks(req, context.deploy?.id ?? 'local'))];
@@ -125,7 +128,7 @@ export default async (req: Request, context: Context): Promise<Response> => {
     const reply = shapeReply(raw, q, [...alwaysOn, ...pool], commandSet);
     if (!reply) {
       log('unavailable', { by: 'unparsable' });
-      return unavailable(502);
+      return unavailable(502, 'unparsable');
     }
     log(reply.verdict, { by: 'model' });
     return respond(reply, 200, cacheable);
@@ -134,10 +137,10 @@ export default async (req: Request, context: Context): Promise<Response> => {
       if (error.kind === 'rate') await coolDown(error.retryAfter, cap);
       if (error.kind === 'auth') console.error('[ask] provider rejected the API key');
       log('unavailable', { by: error.kind });
-    } else {
-      console.error('[ask] unexpected error', error instanceof Error ? error.message : error);
+      return unavailable(503, error.kind);
     }
-    return unavailable();
+    console.error('[ask] unexpected error', error instanceof Error ? error.message : error);
+    return unavailable(503, 'error');
   }
 };
 

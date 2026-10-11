@@ -21,6 +21,8 @@ export interface Link {
 }
 export interface Reply {
   verdict: Verdict;
+  /** Why an answer is unavailable (not-configured, auth, rate, cap…). Never secret; helps debugging. */
+  reason?: string;
   text: string;
   links: Link[];
   commands: string[];

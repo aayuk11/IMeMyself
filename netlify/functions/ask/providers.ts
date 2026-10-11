@@ -30,10 +30,12 @@ export interface AiEnv {
 
 /** The provider settings, or null when AI answers aren't configured. */
 export function aiEnv(): AiEnv | null {
-  const provider = (process.env.AI_PROVIDER ?? '').trim().toLowerCase();
-  const apiKey = process.env.AI_API_KEY ?? '';
-  const model = process.env.AI_MODEL ?? '';
-  const baseUrl = process.env.AI_BASE_URL ?? '';
+  // Trimmed: a key pasted with a trailing space or newline would otherwise be rejected.
+  const value = (name: string): string => (process.env[name] ?? '').trim().replace(/^["']|["']$/g, '');
+  const provider = value('AI_PROVIDER').toLowerCase();
+  const apiKey = value('AI_API_KEY');
+  const model = value('AI_MODEL');
+  const baseUrl = value('AI_BASE_URL');
   if (provider === 'mock') return { provider, model: 'mock', apiKey: '', baseUrl: '' };
   if (!apiKey) return null;
   if (provider === 'groq') return { provider, apiKey, model: model || 'openai/gpt-oss-120b', baseUrl: baseUrl || 'https://api.groq.com/openai/v1' };
