@@ -22,14 +22,16 @@ const SYNONYMS: Record<string, string[]> = {
   tech: ['tools', 'skills'],
   tool: ['toolkit'],
   skill: ['toolkit'],
-  article: ['essay', 'notes'],
-  blog: ['notes', 'essay'],
-  writing: ['notes', 'essay'],
-  note: ['notes'],
+  article: ['essay', 'note'],
+  blog: ['note', 'essay'],
+  write: ['essay', 'note'],
+  writing: ['note', 'essay'],
+  written: ['essay', 'note'],
+  wrote: ['essay'],
   resume: ['résumé'],
   cv: ['résumé'],
   hobby: ['outside', 'personal'],
-  hobbie: ['outside', 'personal'],
+  hobbies: ['outside', 'personal'],
   free: ['outside'],
   study: ['education', 'degree'],
   college: ['education', 'degree'],
@@ -46,7 +48,23 @@ const SYNONYMS: Record<string, string[]> = {
   pokemon: ['pokédex'],
 };
 
-const stem = (w: string): string => (w.length > 4 ? w.replace(/(ings?|ed|es|s)$/, '') : w);
+/** The same crude stem for questions and content: "articles" and "article" must meet. */
+function stem(w: string): string {
+  let s = w;
+  if (s.length > 3 && s.endsWith('s') && !s.endsWith('ss')) s = s.slice(0, -1);
+  if (s.length > 5 && s.endsWith('ing')) s = s.slice(0, -3);
+  else if (s.length > 4 && s.endsWith('ed')) s = s.slice(0, -2);
+  return s;
+}
+
+// Broad questions always bring the matching summary from site.config along.
+const PINS: [RegExp, string][] = [
+  [/\b(tools?|stack|tech|skills?|toolkit|technolog)/, 'core:skills'],
+  [/\b(stud(y|ied)|college|university|degree|education|graduat)/, 'core:education'],
+  [/\b(hobb(y|ies)|outside work|free time|weekends?|fun|personal)\b/, 'core:personal'],
+  [/\b(resume|résumé|cv|experience|career|background)\b/, 'core:resume'],
+  [/\b(side projects?|lab|weekend builds?)\b/, 'core:lab'],
+];
 
 function tokens(text: string): string[] {
   return normalize(text)
@@ -100,6 +118,11 @@ export function retrieve(question: string, page: string, pool: readonly Chunk[])
   // Asking "what was hard here?" on a case study: that page's summary always comes along.
   const pageSummary = page ? pool.find((c) => c.id === `${page}:0`) : undefined;
   if (pageSummary) picked.push(pageSummary);
+  const q = normalize(question);
+  for (const [re, id] of PINS) {
+    const pin = re.test(q) ? pool.find((c) => c.id === id) : undefined;
+    if (pin && !picked.includes(pin) && picked.length < 2) picked.push(pin);
+  }
   for (const { chunk, score } of scored.sort((a, b) => b.score - a.score)) {
     if (picked.length >= TOP_K || score <= 0) break;
     if (!picked.includes(chunk)) picked.push(chunk);
