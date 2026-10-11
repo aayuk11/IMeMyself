@@ -112,7 +112,7 @@ export const site: SiteConfig = {
     'Aayush Kumar is a product manager who builds: two B2B SaaS platforms by day, and the AI systems behind them.',
   headline: 'Product, AI, and whatever I’m building this weekend.',
   bio: 'A PM who builds: two B2B SaaS platforms by day, solving problems by weekend. I learn in public, ship what I learn, and write it down.',
-  city: 'New Delhi',
+  city: 'Gurgaon',
   timezone: 'Asia/Kolkata',
   email: 'aayushkr117@gmail.com',
   phone: '+91 62028 53016',

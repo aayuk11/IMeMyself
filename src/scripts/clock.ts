@@ -1,4 +1,4 @@
-// Home greeting: "Good evening — it’s 21:04 in New Delhi", in Aayush's time zone, refreshed every 30s.
+// Home greeting: "Good evening — it’s 21:04 in Gurgaon", in Aayush's city and time zone (site.config), refreshed every 30s.
 export function initClock(): void {
   const el = document.querySelector<HTMLElement>('[data-greet]');
   if (!el) return;
