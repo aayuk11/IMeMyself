@@ -39,6 +39,7 @@ interface Message {
 }
 
 interface Lines {
+  contact: string;
   offtopic: string[];
   private: Record<string, string[]>;
   command: Record<string, string>;
@@ -96,11 +97,12 @@ export function initComposer(): void {
   const email = wrap.dataset.email ?? '';
   const notesName = wrap.dataset.notesName ?? 'Notes';
   const docKey = wrap.dataset.doc ?? '';
+  const linkedin = wrap.dataset.linkedin ?? '';
   const lines: Lines = (() => {
     try {
       return JSON.parse(wrap.dataset.lines ?? '') as Lines;
     } catch {
-      return { offtopic: ['Low priority. Ask me something else.'], private: { other: ['That stays off the site.'] }, command: {}, unavailable: 'These are the best places to start.', limit: 'That’s plenty for one visit.' };
+      return { contact: 'Email me at {email}.', offtopic: ['Low priority. Ask me something else.'], private: { other: ['That stays off the site.'] }, command: {}, unavailable: 'These are the best places to start.', limit: 'That’s plenty for one visit.' };
     }
   })();
   const fill = (line: string, cmd = ''): string => line.replaceAll('{email}', email).replaceAll('{cmd}', cmd);
@@ -406,9 +408,9 @@ export function initComposer(): void {
   async function ask(raw: string): Promise<void> {
     const question = raw.trim().slice(0, MAX_QUESTION);
     if (!question) return;
-    const { tier, kind = 'other' } = classify(question);
-    const shortcut = tier ? null : intent(question, triggers);
-    const needsModel = !tier && !shortcut && askEnabled && askCount() < SESSION_CAP;
+    const { tier, kind = 'other', contact } = classify(question);
+    const shortcut = tier || contact ? null : intent(question, triggers);
+    const needsModel = !tier && !contact && !shortcut && askEnabled && askCount() < SESSION_CAP;
     if (needsModel && inFlight) return toast('Still on the last one.');
     if (needsModel && Date.now() - lastAsk < COOLDOWN_MS) return toast('One second, then ask again.');
 
@@ -425,6 +427,12 @@ export function initComposer(): void {
     openChat(true);
     messages.push({ role: 'user', text: question });
 
+    if (contact) {
+      return reply(
+        { text: fill(lines.contact), links: [...routeLinks(['/resume']), ...(linkedin ? [{ href: linkedin, tag: 'linkedin', label: 'Profile' }] : [])] },
+        'contact',
+      );
+    }
     if (tier === 'offtopic') return reply({ text: fill(pickLine(lines.offtopic, question)) }, tier);
     if (tier === 'private') {
       const text = fill(pickLine(lines.private[kind] ?? lines.private.other ?? [], question));

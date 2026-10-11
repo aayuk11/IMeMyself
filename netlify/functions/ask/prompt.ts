@@ -3,7 +3,7 @@
 // varies goes in the user message.
 import { site } from '../../../site.config';
 import { ALIASES } from '../../../src/lib/commands';
-import { pickLine, PRIVATE_KINDS, redact, type PrivateKind } from '../../../src/lib/guard';
+import { EMAIL_RE, isPhoneLike, pickLine, PRIVATE_KINDS, redact, type PrivateKind } from '../../../src/lib/guard';
 import type { Chunk } from '../../../src/lib/knowledge';
 
 /** Must never appear in a reply. If it does, the model is repeating its instructions. */
@@ -41,6 +41,17 @@ export const privateLinks = (kind: PrivateKind): Link[] =>
         { href: '/experience/', tag: '/experience', label: 'Experience' },
       ]
     : [];
+/** Contact questions: email in the text, the résumé (phone) and LinkedIn as chips. */
+export const contactReply = (): Reply => ({
+  verdict: 'answer',
+  text: fill(site.ask.lines.contact),
+  links: [
+    { href: '/resume/', tag: '/resume', label: 'Résumé' },
+    { href: site.socials.linkedin, tag: 'linkedin', label: 'Profile' },
+  ],
+  commands: [],
+  ai: false,
+});
 export const commandLine = (cmd: string): string => fill(site.ask.lines.command[cmd] ?? site.ask.lines.command.default, cmd);
 
 const block = (c: Chunk): string => `[${c.id}] ${c.title} (${c.url})\n${c.text}`;
@@ -125,8 +136,12 @@ function cleanText(text: string): string {
     .replace(/[*_`#>]+/g, '')
     .replace(/\s+/g, ' ')
     .trim();
-  // Only the owner's email may appear; phone-like numbers never.
-  t = t.replace(/[\w.+-]+@[\w-]+\.[\w.-]+/g, (m) => (m.toLowerCase() === site.email.toLowerCase() ? m : '')).replace(/\+?\d[\d\s().-]{8,}\d/g, '');
+  // Only the owner's email may appear (a sentence's full stop isn't part of it); phone numbers never.
+  t = t
+    .replace(EMAIL_RE, (m) => (m.toLowerCase() === site.email.toLowerCase() ? m : ''))
+    .replace(/\+?\d[\d\s().-]{8,}\d/g, (m) => (isPhoneLike(m) ? 'the number on my résumé' : m))
+    .replace(/\s{2,}/g, ' ')
+    .trim();
   if (t.length <= MAX_TEXT) return t;
   const cut = t.slice(0, MAX_TEXT);
   const end = Math.max(cut.lastIndexOf('. '), cut.lastIndexOf('? '), cut.lastIndexOf('! '));

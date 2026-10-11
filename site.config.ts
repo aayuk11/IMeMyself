@@ -87,6 +87,8 @@ export interface SiteConfig {
       /** One list per kind of private question (src/lib/guard.ts PrivateKind). */
       private: Record<'personal' | 'pay' | 'clients' | 'people' | 'hiring' | 'other', string[]>;
       command: { default: string } & Record<string, string>;
+      /** Email, phone, "how do I reach him": answered without the model. */
+      contact: string;
       unavailable: string;
       limit: string;
     };
@@ -240,6 +242,7 @@ export const site: SiteConfig = {
         '/crash': 'That’s /crash. Type it and stand back.',
         '/sisyphus': '/sisyphus. One must imagine the PM happy.',
       },
+      contact: 'Email is the quickest way to reach me: {email}. My phone number is on my résumé, and LinkedIn works too.',
       unavailable: 'The model’s resting. These are the best places to start.',
       limit: 'That’s plenty for one visit. Email me at {email} for the rest.',
     },

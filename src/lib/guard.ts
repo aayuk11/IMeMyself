@@ -39,8 +39,7 @@ export const PRIVATE_KINDS: readonly PrivateKind[] = ['personal', 'pay', 'client
 const PRIVATE: [RegExp, PrivateKind][] = [
   [/\b(salary|ctc|compensation|pay (scale|package)|how much (do|does) (you|he) (earn|make|get paid))\b/, 'pay'],
   [/\b(hire|hired|hiring)\b|\b(open to|looking for) (a )?(new )?(job|role|opportunit)|\bnotice period\b|\brelocat/, 'hiring'],
-  [/\b(phone|mobile|contact|whatsapp) (number|no)\b|\bwhatsapp\b|\bcall you\b/, 'personal'],
-  [/\b(home|house|residential|your) address\b|\bwhere (do|does) (you|he) live\b/, 'personal'],
+  [/\b(home|house|residential) address\b|\bwhere (do|does) (you|he) live\b/, 'personal'],
   [/\bhow old\b|\b(your|his) age\b|\bage\b.{0,12}\b(you|he|him|aayush)\b|\bdate of birth\b|\bbirthday\b/, 'personal'],
   [/\b(religion|religious|caste)\b/, 'personal'],
   [/\b(married|girlfriend|boyfriend|wife|husband|dating|relationship status)\b/, 'personal'],
@@ -56,10 +55,15 @@ const OFFTOPIC: RegExp[] = [
   /\btell me a joke\b/,
 ];
 
-export function classify(question: string): { tier: Tier | null; kind?: PrivateKind } {
+// "What's his email?", "how do I reach him?": answered with the contact line (email, résumé for the phone).
+const CONTACT =
+  /\b(e-?mail( address| id)?|phone( number| no)?|mobile (number|no)|contact (details|info|information|number)|whatsapp|get in touch|reach (you|him|aayush|out)|how (can|do|should) (i|we) (contact|reach|connect)|call (you|him))\b/;
+
+export function classify(question: string): { tier: Tier | null; kind?: PrivateKind; contact?: boolean } {
   const raw = question.normalize('NFKC');
   const q = normalize(question);
   if (/\bDAN\b/.test(raw) || BREACH.some((re) => re.test(q))) return { tier: 'breach' };
+  if (CONTACT.test(q)) return { tier: null, contact: true };
   const hit = PRIVATE.find(([re]) => re.test(q));
   if (hit) return { tier: 'private', kind: hit[1] };
   if (OFFTOPIC.some((re) => re.test(q))) return { tier: 'offtopic' };
@@ -89,6 +93,12 @@ export function pickLine(lines: readonly string[], question: string): string {
   return lines[h % Math.max(1, lines.length)] ?? '';
 }
 
-/** Emails and phone-like numbers out of a question before it leaves for the model. */
+/** An email address, without the full stop that ends a sentence. */
+export const EMAIL_RE = /[\w.+-]+@[\w-]+(?:\.[\w-]+)+/g;
+/** Digit runs that could be a phone number. Only ones with 10+ digits count, so "2021 - 2025" survives. */
+const NUMBER_RE = /\+?\d[\d\s().-]{8,}\d/g;
+export const isPhoneLike = (s: string): boolean => s.replace(/\D/g, '').length >= 10;
+
+/** Emails and phone numbers out of a question before it leaves for the model. */
 export const redact = (text: string): string =>
-  text.replace(/[\w.+-]+@[\w-]+\.[\w.-]+/g, '[email]').replace(/\+?\d[\d\s().-]{7,}\d/g, '[number]');
+  text.replace(EMAIL_RE, '[email]').replace(NUMBER_RE, (m) => (isPhoneLike(m) ? '[number]' : m));

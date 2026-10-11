@@ -23,6 +23,29 @@ export interface Chunk {
 const MAX_CHUNK = 1200;
 const clean = (s: string): string => s.replace(/\s+/g, ' ').trim();
 
+const MONTHS = ['jan', 'feb', 'mar', 'apr', 'may', 'jun', 'jul', 'aug', 'sep', 'oct', 'nov', 'dec'];
+
+/** Months in a period like "Jan 2025 — Present" or "Jul 2025 — Feb 2026". 0 when it can't be read. */
+function monthsIn(period: string, now: Date): number {
+  const dates = [...period.toLowerCase().matchAll(/\b([a-z]{3})[a-z]*\.? (\d{4})\b/g)]
+    .map((m) => ({ month: MONTHS.indexOf(m[1] ?? ''), year: Number(m[2]) }))
+    .filter((d) => d.month >= 0);
+  const start = dates[0];
+  if (!start) return 0;
+  const end = /present|now|current/i.test(period) || !dates[1] ? { month: now.getUTCMonth(), year: now.getUTCFullYear() } : dates[1];
+  return Math.max(0, (end.year - start.year) * 12 + (end.month - start.month));
+}
+
+/** "1 year 9 months": total time across the roles in site.config, as of `now`. */
+export function experienceLength(periods: readonly string[], now = new Date()): string {
+  const total = periods.reduce((n, p) => n + monthsIn(p, now), 0);
+  if (!total) return '';
+  const years = Math.floor(total / 12);
+  const months = total % 12;
+  const part = (n: number, unit: string): string => (n ? `${n} ${unit}${n === 1 ? '' : 's'}` : '');
+  return [part(years, 'year'), part(months, 'month')].filter(Boolean).join(' ');
+}
+
 /** Profile, résumé, skills, lab and commands, straight from site.config. Contact: email only. */
 export function coreChunks(site: SiteConfig, commands: readonly Command[]): Chunk[] {
   const play = commands.filter((c) => c.group === 'Play');
@@ -45,10 +68,13 @@ export function coreChunks(site: SiteConfig, commands: readonly Command[]): Chun
       title: 'Where I work',
       url: '/experience/',
       text: clean(
-        site.experience
-          .map((r) => `${r.role} at ${r.org} (${r.kind}, ${r.place}), ${r.period}. ${r.summary}`)
-          .concat(site.resumePage.roles.map((r) => `${r.name}: ${r.what}.`))
-          .join(' '),
+        [
+          ...(experienceLength(site.experience.map((r) => r.period))
+            ? [`Work experience: ${experienceLength(site.experience.map((r) => r.period))} in product management, as of today.`]
+            : []),
+          ...site.experience.map((r) => `${r.role} at ${r.org} (${r.kind}, ${r.place}), ${r.period}. ${r.summary}`),
+          ...site.resumePage.roles.map((r) => `${r.name}: ${r.what}.`),
+        ].join(' '),
       ),
     },
     {

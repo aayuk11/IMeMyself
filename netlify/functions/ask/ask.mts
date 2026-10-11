@@ -12,7 +12,7 @@ import { buildCommands } from '../../../src/lib/commands';
 import { classify, intent, normalize } from '../../../src/lib/guard';
 import { coreChunks, type Chunk } from '../../../src/lib/knowledge';
 import { canCall, coolDown, countCall, dailyCap } from './budget';
-import { commandLine, offtopicLine, privateLine, privateLinks, shapeReply, systemPrompt, userMessage, type Reply } from './prompt';
+import { commandLine, contactReply, offtopicLine, privateLine, privateLinks, shapeReply, systemPrompt, userMessage, type Reply } from './prompt';
 import { aiEnv, callModel, UpstreamError } from './providers';
 import { retrieve, siteChunks } from './retrieve';
 
@@ -94,7 +94,11 @@ export default async (req: Request, context: Context): Promise<Response> => {
     log('breach', { by: 'rule' });
     return respond({ verdict: 'breach', text: '', links: [], commands: [], ai: false }, 200, cacheable);
   }
-  const { tier, kind = 'other' } = classify(q);
+  const { tier, kind = 'other', contact } = classify(q);
+  if (contact) {
+    log('answer', { by: 'contact' });
+    return respond(contactReply(), 200, cacheable);
+  }
   if (tier === 'offtopic') {
     log(tier, { by: 'rule' });
     return respond({ verdict: tier, text: offtopicLine(q), links: [], commands: [], ai: false }, 200, cacheable);
