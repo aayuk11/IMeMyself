@@ -32,16 +32,22 @@ const BREACH: RegExp[] = [
   /\bf+u+c+k+ ?(you|u|off)\b|\bkys\b|\bkill (yourself|you)\b|\b(nudes?|porn|xxx)\b/,
 ];
 
-const PRIVATE: RegExp[] = [
-  /\b(salary|ctc|compensation|how much (do|does) (you|he) (earn|make|get paid))\b/,
-  /\b(phone|mobile|contact|whatsapp) (number|no)\b|\bwhatsapp\b|\bcall you\b/,
-  /\b(home|house|residential|your) address\b|\bwhere (do|does) (you|he) live\b/,
-  /\bhow old\b|\byour age\b|\bdate of birth\b|\bbirthday\b/,
-  /\b(religion|religious|caste)\b/,
-  /\b(married|girlfriend|boyfriend|wife|husband|dating|relationship status)\b/,
-  /\b(vote|voted|politics|political (views?|party|opinions?))\b/,
-  /\bwhich (banks?|clients?|customers?)\b|\b(client|customer)s?\b.{0,20}\b(names?|list)\b/,
-  /\b(boss|manager|colleagues?|co-?workers?|team ?mates?)\b.{0,30}\b(bad|hate|toxic|think of|opinion)\b/,
+/** Which kind of private question, so the decline fits it (site.config → ask.lines.private). */
+export type PrivateKind = 'personal' | 'pay' | 'clients' | 'people' | 'hiring' | 'other';
+export const PRIVATE_KINDS: readonly PrivateKind[] = ['personal', 'pay', 'clients', 'people', 'hiring', 'other'];
+
+const PRIVATE: [RegExp, PrivateKind][] = [
+  [/\b(salary|ctc|compensation|pay (scale|package)|how much (do|does) (you|he) (earn|make|get paid))\b/, 'pay'],
+  [/\b(hire|hired|hiring)\b|\b(open to|looking for) (a )?(new )?(job|role|opportunit)|\bnotice period\b|\brelocat/, 'hiring'],
+  [/\b(phone|mobile|contact|whatsapp) (number|no)\b|\bwhatsapp\b|\bcall you\b/, 'personal'],
+  [/\b(home|house|residential|your) address\b|\bwhere (do|does) (you|he) live\b/, 'personal'],
+  [/\bhow old\b|\b(your|his) age\b|\bage\b.{0,12}\b(you|he|him|aayush)\b|\bdate of birth\b|\bbirthday\b/, 'personal'],
+  [/\b(religion|religious|caste)\b/, 'personal'],
+  [/\b(married|girlfriend|boyfriend|wife|husband|dating|relationship status)\b/, 'personal'],
+  [/\b(vote|voted|politics|political (views?|party|opinions?))\b/, 'personal'],
+  [/\bwhich (banks?|clients?|customers?)\b|\b(client|customer)s?\b.{0,20}\b(names?|list)\b/, 'clients'],
+  [/\b(boss|manager|colleagues?|co-?workers?|team ?mates?)\b.{0,30}\b(bad|hate|toxic|think of|opinion)\b/, 'people'],
+  [/\b(think of|opinion (of|on|about)|feel about)\b.{0,20}\b(boss|manager|colleagues?|co-?workers?|team ?mates?|employer)\b/, 'people'],
 ];
 
 const OFFTOPIC: RegExp[] = [
@@ -50,11 +56,12 @@ const OFFTOPIC: RegExp[] = [
   /\btell me a joke\b/,
 ];
 
-export function classify(question: string): { tier: Tier | null } {
+export function classify(question: string): { tier: Tier | null; kind?: PrivateKind } {
   const raw = question.normalize('NFKC');
   const q = normalize(question);
   if (/\bDAN\b/.test(raw) || BREACH.some((re) => re.test(q))) return { tier: 'breach' };
-  if (PRIVATE.some((re) => re.test(q))) return { tier: 'private' };
+  const hit = PRIVATE.find(([re]) => re.test(q));
+  if (hit) return { tier: 'private', kind: hit[1] };
   if (OFFTOPIC.some((re) => re.test(q))) return { tier: 'offtopic' };
   return { tier: null };
 }

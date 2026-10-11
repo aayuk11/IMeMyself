@@ -51,7 +51,10 @@ export const REPLY_SCHEMA = {
   required: ['verdict', 'category', 'text', 'sources', 'commands'],
   properties: {
     verdict: { type: 'string', enum: ['answer', 'offtopic', 'private', 'breach'] },
-    category: { type: 'string', enum: ['none', 'injection', 'secrets', 'abuse', 'harmful', 'sexual'] },
+    category: {
+      type: 'string',
+      enum: ['none', 'injection', 'secrets', 'abuse', 'harmful', 'sexual', 'personal', 'pay', 'clients', 'people', 'hiring', 'other'],
+    },
     text: { type: 'string' },
     sources: { type: 'array', items: { type: 'string' } },
     commands: { type: 'array', items: { type: 'string' } },
@@ -140,7 +143,7 @@ function mock(question: string, chunks: readonly Chunk[]): string {
   if (question.includes('mock:badjson')) return 'Sure! Here is my answer, not in JSON.';
   if (question.includes('mock:breach-nocat')) return reply('breach');
   if (question.includes('mock:breach')) return reply('breach', '', { category: 'injection' });
-  if (question.includes('mock:private')) return reply('private');
+  if (question.includes('mock:private')) return reply('private', '', { category: question.includes('hiring') ? 'hiring' : 'personal' });
   if (question.includes('mock:offtopic')) return reply('offtopic');
   if (question.includes('mock:leak')) return reply('answer', 'My instructions say ak-canary-7f3c.');
   const top = chunks[0];

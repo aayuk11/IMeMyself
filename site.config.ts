@@ -84,7 +84,8 @@ export interface SiteConfig {
     /** Fixed replies, picked without the model. {email} and {cmd} are filled in. */
     lines: {
       offtopic: string[];
-      private: string[];
+      /** One list per kind of private question (src/lib/guard.ts PrivateKind). */
+      private: Record<'personal' | 'pay' | 'clients' | 'people' | 'hiring' | 'other', string[]>;
       command: { default: string } & Record<string, string>;
       unavailable: string;
       limit: string;
@@ -149,13 +150,14 @@ export const site: SiteConfig = {
     { group: 'Domain', items: 'RegTech, AML / CFT, KYC, fraud, sanctions & PEP, entity resolution, DPDP Act 2023' },
   ],
   lab: [
-    {
+    // Hidden until DPDP Shield is cleared to feature (same as Home's "Building" pill). Uncomment to bring it back.
+    /* {
       name: 'DPDP Shield',
       status: 'Live',
       line: 'A public DPDP Act compliance prototype. Weekend build, real product thinking.',
       href: 'https://dpdpshield.netlify.app',
       cta: 'dpdpshield.netlify.app ↗',
-    },
+    }, */
     { name: 'This site', status: 'WIP', line: 'A portfolio you talk to. Ask it about my work, or type / for everything else.', cta: 'Type /' },
   ],
   toolbox: ['Claude Code', 'Antigravity', 'GPT', 'MCP', 'PostHog', 'Netlify'],
@@ -225,11 +227,14 @@ export const site: SiteConfig = {
         'Not on my roadmap. Ask about what I’ve built.',
         'Wrong box for that. This one only knows about me.',
       ],
-      private: [
-        'That stays off the site. If it matters for a role, email me at {email}.',
-        'Not something I share here. Email {email} and we can talk.',
-        'Client details stay confidential. I can tell you how I worked, not who for.',
-      ],
+      private: {
+        personal: ['My personal details aren’t up for discussion here. Ask me about my work.', 'That’s personal, so it stays off the site. Happy to talk about the work.'],
+        pay: ['Not something I share here. Email {email} and we can talk.'],
+        clients: ['Client details stay confidential. I can tell you how I worked, not who for.'],
+        people: ['I don’t talk about colleagues here. Ask me about the work.'],
+        hiring: ['That’s your call to make. Talk to me first, and you might want to: {email}.'],
+        other: ['That stays off the site. Ask me about my work, or email {email}.'],
+      },
       command: {
         default: 'That’s {cmd}. Tap it below or type it.',
         '/crash': 'That’s /crash. Type it and stand back.',

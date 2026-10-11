@@ -1,6 +1,7 @@
 // /api/knowledge.json — the site's published content as small text chunks, built at deploy time.
 // /api/ask reads it to answer questions; profile and commands come from site.config inside the function.
 // Drafts are never included (not even in dev), and nothing here is private: it's all on the site already.
+import { site } from '../../../site.config';
 import { getEssays, getFeed, getProjects } from '../../lib/content';
 import { formatDate } from '../../lib/format';
 import { sectionChunks, type Chunk } from '../../lib/knowledge';
@@ -54,6 +55,22 @@ export async function GET(): Promise<Response> {
       title: item.title,
       url: item.external ? (item.href ?? '/notes/') : (item.url ?? `/notes/#${item.id}`),
       text: clean(`${KIND[item.kind]}, ${formatDate(item.date)}: ${item.title}. ${item.dek}`),
+    });
+  }
+
+  // "What did he last write about?": everything published, newest first, in one place.
+  const written = feed.filter((item) => !item.draft).slice(0, 8);
+  if (written.length) {
+    chunks.push({
+      id: 'note:index',
+      kind: 'note',
+      title: `${site.notesName}: what I’ve written`,
+      url: '/notes/',
+      text: clean(
+        `Newest first. ${written
+          .map((item, i) => `${i === 0 ? 'Latest: ' : ''}${KIND[item.kind]} “${item.title}” (${formatDate(item.date)}): ${item.dek}`)
+          .join(' ')}`,
+      ),
     });
   }
 

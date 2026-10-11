@@ -40,7 +40,7 @@ interface Message {
 
 interface Lines {
   offtopic: string[];
-  private: string[];
+  private: Record<string, string[]>;
   command: Record<string, string>;
   unavailable: string;
   limit: string;
@@ -100,7 +100,7 @@ export function initComposer(): void {
     try {
       return JSON.parse(wrap.dataset.lines ?? '') as Lines;
     } catch {
-      return { offtopic: ['Low priority. Ask me something else.'], private: ['That stays off the site.'], command: {}, unavailable: 'These are the best places to start.', limit: 'That’s plenty for one visit.' };
+      return { offtopic: ['Low priority. Ask me something else.'], private: { other: ['That stays off the site.'] }, command: {}, unavailable: 'These are the best places to start.', limit: 'That’s plenty for one visit.' };
     }
   })();
   const fill = (line: string, cmd = ''): string => line.replaceAll('{email}', email).replaceAll('{cmd}', cmd);
@@ -406,7 +406,7 @@ export function initComposer(): void {
   async function ask(raw: string): Promise<void> {
     const question = raw.trim().slice(0, MAX_QUESTION);
     if (!question) return;
-    const tier = classify(question).tier;
+    const { tier, kind = 'other' } = classify(question);
     const shortcut = tier ? null : intent(question, triggers);
     const needsModel = !tier && !shortcut && askEnabled && askCount() < SESSION_CAP;
     if (needsModel && inFlight) return toast('Still on the last one.');
@@ -425,7 +425,12 @@ export function initComposer(): void {
     openChat(true);
     messages.push({ role: 'user', text: question });
 
-    if (tier === 'offtopic' || tier === 'private') return reply({ text: fill(pickLine(lines[tier], question)) }, tier);
+    if (tier === 'offtopic') return reply({ text: fill(pickLine(lines.offtopic, question)) }, tier);
+    if (tier === 'private') {
+      const text = fill(pickLine(lines.private[kind] ?? lines.private.other ?? [], question));
+      // "Should I hire him?" gets pointed at the work.
+      return reply({ text, links: kind === 'hiring' ? routeLinks(['/resume', '/experience']) : [] }, `private:${kind}`);
+    }
     if (shortcut) return reply({ text: commandText(shortcut), commands: [shortcut] }, 'command');
     if (!askEnabled) {
       const r = routeReply(question, notesName, email);

@@ -12,7 +12,7 @@ import { buildCommands } from '../../../src/lib/commands';
 import { classify, intent, normalize } from '../../../src/lib/guard';
 import { coreChunks, type Chunk } from '../../../src/lib/knowledge';
 import { canCall, coolDown, countCall, dailyCap } from './budget';
-import { commandLine, lineFor, shapeReply, systemPrompt, userMessage, type Reply } from './prompt';
+import { commandLine, offtopicLine, privateLine, privateLinks, shapeReply, systemPrompt, userMessage, type Reply } from './prompt';
 import { aiEnv, callModel, UpstreamError } from './providers';
 import { retrieve, siteChunks } from './retrieve';
 
@@ -94,10 +94,14 @@ export default async (req: Request, context: Context): Promise<Response> => {
     log('breach', { by: 'rule' });
     return respond({ verdict: 'breach', text: '', links: [], commands: [], ai: false }, 200, cacheable);
   }
-  const tier = classify(q).tier;
-  if (tier === 'private' || tier === 'offtopic') {
+  const { tier, kind = 'other' } = classify(q);
+  if (tier === 'offtopic') {
     log(tier, { by: 'rule' });
-    return respond({ verdict: tier, text: lineFor(tier, q), links: [], commands: [], ai: false }, 200, cacheable);
+    return respond({ verdict: tier, text: offtopicLine(q), links: [], commands: [], ai: false }, 200, cacheable);
+  }
+  if (tier === 'private') {
+    log(tier, { by: 'rule', kind });
+    return respond({ verdict: tier, text: privateLine(kind, q), links: privateLinks(kind), commands: [], ai: false }, 200, cacheable);
   }
   const shortcut = intent(q, commands);
   if (shortcut) {

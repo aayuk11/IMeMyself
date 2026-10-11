@@ -7,7 +7,7 @@ const TOP_K = 3;
 const MAX_CHARS = 4800; // ~1,200 tokens
 
 const STOP = new Set(
-  'a an and are as at be but by can could did do does for from had has have how i if in into is it its me my of on or our so tell that the their them then there these they this to us was we what when where which who why will with would you your about some any more much give show'.split(
+  'a an and are as at be but by can could did do does for from had has have how i if in into is it its me my of on or our so tell that the their them then there these they this to us was we what when where which who why will with would you your about some any more much give show he his him she her aayush kumar last latest recent ever'.split(
     ' ',
   ),
 );
@@ -57,10 +57,14 @@ function stem(w: string): string {
   return s;
 }
 
-// Broad questions always bring the matching summary from site.config along.
+// Synonym keys are written as plain words; look them up by their stem.
+const SYN = new Map(Object.entries(SYNONYMS).map(([word, alts]) => [stem(word), alts.map(stem)]));
+
+// Broad questions always bring the matching summary along (at most two).
 const PINS: [RegExp, string][] = [
+  [/\b(write|wrote|written|writing|articles?|essays?|blogs?|posts?|notes?)\b/, 'note:index'],
   [/\b(tools?|stack|tech|skills?|toolkit|technolog)/, 'core:skills'],
-  [/\b(stud(y|ied)|college|university|degree|education|graduat)/, 'core:education'],
+  [/\b(stud(y|ied|ies)|college|university|degree|education|graduat|qualification)/, 'core:education'],
   [/\b(hobb(y|ies)|outside work|free time|weekends?|fun|personal)\b/, 'core:personal'],
   [/\b(resume|résumé|cv|experience|career|background)\b/, 'core:resume'],
   [/\b(side projects?|lab|weekend builds?)\b/, 'core:lab'],
@@ -94,7 +98,7 @@ export async function siteChunks(req: Request, deployId: string): Promise<Chunk[
 /** Best chunks for the question. `page` ("project:transact-comply") is what the visitor is reading. */
 export function retrieve(question: string, page: string, pool: readonly Chunk[]): Chunk[] {
   if (!pool.length) return [];
-  const query = tokens(question).flatMap((t) => [t, ...(SYNONYMS[t] ?? []).map(stem)]);
+  const query = tokens(question).flatMap((t) => [t, ...(SYN.get(t) ?? [])]);
   const docs = pool.map((c) => tokens(`${c.title} ${c.title} ${c.text}`));
   const avg = docs.reduce((n, d) => n + d.length, 0) / docs.length;
   const df = new Map<string, number>();
