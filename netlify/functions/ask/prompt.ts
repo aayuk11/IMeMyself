@@ -109,9 +109,11 @@ function linksFor(sources: readonly string[], pool: readonly Chunk[]): Link[] {
   const links: Link[] = [];
   for (const id of sources) {
     const chunk = pool.find((c) => c.id === id);
-    if (!chunk || chunk.url === '/' || links.some((l) => l.href === chunk.url)) continue;
+    if (!chunk) continue;
+    const href = chunk.link?.href ?? chunk.url;
+    if (href === '/' || links.some((l) => l.href === href)) continue;
     const tag = TAG_BY_URL[chunk.url] ?? TAG_BY_KIND[chunk.kind] ?? '';
-    links.push({ href: chunk.url, tag: tag || '↗', label: chunk.title.split(': ')[0] ?? chunk.title });
+    links.push({ href, tag: tag || '↗', label: chunk.link?.label ?? chunk.title.split(': ')[0] ?? chunk.title });
     if (links.length === 3) break;
   }
   return links;

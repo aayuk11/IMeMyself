@@ -60,12 +60,15 @@ export async function GET(): Promise<Response> {
 
   // "What did he last write about?": everything published, newest first, in one place.
   const written = feed.filter((item) => !item.draft).slice(0, 8);
-  if (written.length) {
+  const latest = written[0];
+  if (latest) {
     chunks.push({
       id: 'note:index',
       kind: 'note',
       title: `${site.notesName}: what I’ve written`,
       url: '/notes/',
+      // The chip goes straight to the newest piece.
+      link: { href: latest.href ?? latest.url ?? `/notes/#${latest.id}`, label: latest.title },
       text: clean(
         `Newest first. ${written
           .map((item, i) => `${i === 0 ? 'Latest: ' : ''}${KIND[item.kind]} “${item.title}” (${formatDate(item.date)}): ${item.dek}`)

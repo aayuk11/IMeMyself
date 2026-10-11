@@ -16,6 +16,8 @@ export interface Chunk {
   text: string;
   /** Always sent to the model, whatever the question. */
   core?: boolean;
+  /** Where its link chip goes when that isn't `url`/`title`, e.g. the writing list links to the latest article. */
+  link?: { href: string; label: string };
 }
 
 const MAX_CHUNK = 1200;
